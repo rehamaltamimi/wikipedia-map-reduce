@@ -1,0 +1,1 @@
+this is a test document for testing the rolling hash function described by the rabin rolling hash algorithm.  it uses a rolling window to compute n hash functions, where n is the number of, in the case of this implementation, words in the input.  it tokenizes words into a list of words and then runs hashes on them using a window size, k, of 5.

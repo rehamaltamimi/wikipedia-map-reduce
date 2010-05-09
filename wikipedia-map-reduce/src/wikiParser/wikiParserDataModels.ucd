@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<editmodel:ClassDiagramEditModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:editmodel="editmodel.xmi" xmlns:options="options.xmi" name="wikiParserDataModels" size="1105,724" id="wikiParser" metadata="uml2-1.0" initialized="true" tag="10" key="32303037303533312D31302057696B69506172736572">
+  <children xsi:type="editmodel:ClassEditModel" name="Link" location="438,50" size="189,338" id="wikiParser/Link" runTimeClassModel="useruserAmentionB,toOutputString(),useruserAandBedittalk,userartUeditA,userartUmentionA,artuserAmentionedbyU,artuserAeditedbyU,useruserAandBedit,type,artartAtoB,Link(LwikiParser.Entity;LwikiParser.Entity;I),userartUpagelinkA,useruserApagelinkB,artuserAlinkedbyU,artartBtoA,useruserAeditsBtalk">
+    <children xsi:type="editmodel:CompartmentEditModel" size="166,252">
+      <children xsi:type="editmodel:AttributeEditModel" name="artartAtoB" id="wikiParser/Link#artartAtoB"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="artartBtoA" id="wikiParser/Link#artartBtoA"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="artuserAeditedbyU" id="wikiParser/Link#artuserAeditedbyU"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="artuserAlinkedbyU" id="wikiParser/Link#artuserAlinkedbyU"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="artuserAmentionedbyU" id="wikiParser/Link#artuserAmentionedbyU"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="type" id="wikiParser/Link#type"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="userartUeditA" id="wikiParser/Link#userartUeditA"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="userartUmentionA" id="wikiParser/Link#userartUmentionA"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="userartUpagelinkA" id="wikiParser/Link#userartUpagelinkA"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="useruserAandBedit" id="wikiParser/Link#useruserAandBedit"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="useruserAandBedittalk" id="wikiParser/Link#useruserAandBedittalk"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="useruserAeditsBtalk" id="wikiParser/Link#useruserAeditsBtalk"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="useruserAmentionB" id="wikiParser/Link#useruserAmentionB"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="useruserApagelinkB" id="wikiParser/Link#useruserApagelinkB"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="110,36">
+      <children xsi:type="editmodel:MethodEditModel" name="Link" id="wikiParser/Link#Link(LwikiParser.Entity;LwikiParser.Entity;I)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="toOutputString" id="wikiParser/Link#toOutputString()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="Revision" location="677,50" size="139,212" id="wikiParser/Revision" runTimeClassModel="id,timestamp,text,Revision(Ljava.lang.String;Ljava.lang.String;LwikiParser.User;Ljava.lang.String;Ljava.lang.String;Z),getAnchorLinks(Ljava.lang.String;),minor,getAnchorLinks(),comment,getMinor()">
+    <children xsi:type="editmodel:CompartmentEditModel" size="116,90">
+      <children xsi:type="editmodel:AttributeEditModel" name="comment" id="wikiParser/Revision#comment"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="id" id="wikiParser/Revision#id"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="minor" id="wikiParser/Revision#minor"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="text" id="wikiParser/Revision#text"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="timestamp" id="wikiParser/Revision#timestamp"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="114,72">
+      <children xsi:type="editmodel:MethodEditModel" name="Revision" id="wikiParser/Revision#Revision(Ljava.lang.String;Ljava.lang.String;LwikiParser.User;Ljava.lang.String;Ljava.lang.String;Z)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getAnchorLinks" id="wikiParser/Revision#getAnchorLinks()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getAnchorLinks" id="wikiParser/Revision#getAnchorLinks(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getMinor" id="wikiParser/Revision#getMinor()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="Article" location="50,456" size="138,248" id="wikiParser/Article" runTimeClassModel="isUserTalk(),isTalk(),isUser(),getContributors(),Article(Ljava.lang.String;Ljava.lang.String;Ljava.util.ArrayList;Ljava.util.ArrayList;),getUser(),getAnchorLinks(),isNormalPage(),Article(Ljava.lang.String;),Article(Ljava.lang.String;Ljava.lang.String;),getUsers()">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="115,198">
+      <children xsi:type="editmodel:MethodEditModel" name="Article" id="wikiParser/Article#Article(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="Article" id="wikiParser/Article#Article(Ljava.lang.String;Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="Article" id="wikiParser/Article#Article(Ljava.lang.String;Ljava.lang.String;Ljava.util.ArrayList;Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getAnchorLinks" id="wikiParser/Article#getAnchorLinks()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getContributors" id="wikiParser/Article#getContributors()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getUser" id="wikiParser/Article#getUser()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getUsers" id="wikiParser/Article#getUsers()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="isNormalPage" id="wikiParser/Article#isNormalPage()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="isTalk" id="wikiParser/Article#isTalk()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="isUser" id="wikiParser/Article#isUser()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="isUserTalk" id="wikiParser/Article#isUserTalk()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" targetConnections="//@children.4/@sourceConnections.0" autoLocated="true" id="wikiParser/Entity&lt;-wikiParser/Article" source="//@children.2" target="//@children.3" targetEnd="//@children.2/@sourceConnections.0/@children.1" sourceEnd="//@children.2/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="69,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel" location="87,356" anchorKind="FixedAtEdge"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" targetConnections="//@children.2/@sourceConnections.0" name="Entity" location="124,50" size="174,356" id="wikiParser/Entity" runTimeClassModel="getLinks(),toUnderscoredString(),toString(),id,setRevisions(Ljava.util.ArrayList;),Entity(Ljava.lang.String;Ljava.lang.String;),Entity(Ljava.lang.String;),getRevisions(),addToLinks(LwikiParser.Link;),Entity(Ljava.lang.String;Ljava.lang.String;Ljava.util.ArrayList;Ljava.util.ArrayList;),compareTo(Ljava.lang.Object;),name,equals(Ljava.lang.Object;),findCommonRevisions(LwikiParser.Entity;),hashCode(),setLinks(Ljava.util.ArrayList;),addToRevisions(LwikiParser.Revision;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="89,36">
+      <children xsi:type="editmodel:AttributeEditModel" name="id" id="wikiParser/Entity#id"/>
+      <children xsi:type="editmodel:AttributeEditModel" name="name" id="wikiParser/Entity#name"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="151,270">
+      <children xsi:type="editmodel:MethodEditModel" name="Entity" id="wikiParser/Entity#Entity(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="Entity" id="wikiParser/Entity#Entity(Ljava.lang.String;Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="Entity" id="wikiParser/Entity#Entity(Ljava.lang.String;Ljava.lang.String;Ljava.util.ArrayList;Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="addToLinks" id="wikiParser/Entity#addToLinks(LwikiParser.Link;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="addToRevisions" id="wikiParser/Entity#addToRevisions(LwikiParser.Revision;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="compareTo" id="wikiParser/Entity#compareTo(Ljava.lang.Object;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="equals" id="wikiParser/Entity#equals(Ljava.lang.Object;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="findCommonRevisions" id="wikiParser/Entity#findCommonRevisions(LwikiParser.Entity;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getLinks" id="wikiParser/Entity#getLinks()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getRevisions" id="wikiParser/Entity#getRevisions()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="hashCode" id="wikiParser/Entity#hashCode()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setLinks" id="wikiParser/Entity#setLinks(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="setRevisions" id="wikiParser/Entity#setRevisions(Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="toString" id="wikiParser/Entity#toString()"/>
+      <children xsi:type="editmodel:MethodEditModel" name="toUnderscoredString" id="wikiParser/Entity#toUnderscoredString()"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <children xsi:type="editmodel:ClassEditModel" name="User" location="218,456" size="170,140" id="wikiParser/User" runTimeClassModel="User(Ljava.lang.String;Ljava.lang.String;Ljava.util.ArrayList;Ljava.util.ArrayList;),User(Ljava.lang.String;),getRevisionsByArticle(LwikiParser.Article;),User(Ljava.lang.String;Ljava.lang.String;),isCoAuthor(LwikiParser.Article;LwikiParser.User;)">
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <children xsi:type="editmodel:CompartmentEditModel" size="147,90">
+      <children xsi:type="editmodel:MethodEditModel" name="User" id="wikiParser/User#User(Ljava.lang.String;Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="User" id="wikiParser/User#User(Ljava.lang.String;Ljava.lang.String;Ljava.util.ArrayList;Ljava.util.ArrayList;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="User" id="wikiParser/User#User(Ljava.lang.String;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="getRevisionsByArticle" id="wikiParser/User#getRevisionsByArticle(LwikiParser.Article;)"/>
+      <children xsi:type="editmodel:MethodEditModel" name="isCoAuthor" id="wikiParser/User#isCoAuthor(LwikiParser.Article;LwikiParser.User;)"/>
+    </children>
+    <children xsi:type="editmodel:CompartmentEditModel" size="0,0"/>
+    <sourceConnections xsi:type="editmodel:GeneralizationEditModel" autoLocated="true" id="wikiParser/Entity&lt;-wikiParser/User" source="//@children.4" target="//@children.2/@sourceConnections.0" targetEnd="//@children.4/@sourceConnections.0/@children.1" sourceEnd="//@children.4/@sourceConnections.0/@children.0" connectionRouterKind="GeneralizationManhattan">
+      <children xsi:type="editmodel:AssociationEndEditModel" location="85,0" anchorKind="FixedAtEdge" attachSource="true"/>
+      <children xsi:type="editmodel:AssociationEndEditModel"/>
+    </sourceConnections>
+    <classifierPreferences xsi:type="editmodel:UMLClassDiagramClassifierPreference" showStereotype="true" attributeSorter="Natural" methodSorter="Natural" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+  </children>
+  <diagramOptions xsi:type="options:ClassDiagramOptions" properties="wireOptions=1;Product=eUML2" autoName="false"/>
+  <boardSetting snapToGeometry="true" gridEnabled="true" gridSpacing="15,15" gridOrigin="0,0" rulerUnit="pixel" gridVisibility="false">
+    <leftRuler/>
+    <topRuler/>
+  </boardSetting>
+  <classDiagramPreferences xsi:type="editmodel:UMLClassDiagramPreference" showPopupBars="true" showConnectionHandles="true" attributeSorter="Natural" methodSorter="Natural" showClassStereotype="true" showPackageStereotype="true" showDependencyStereotype="true" showInterfaceStereotype="true" innerClassSorter="Natural" showPublicAttributes="true" showPackageAttributes="true" showStaticAttributes="true" showPublicMethods="true" showPackageMethods="true" showStaticMethods="true" showPublicInnerClasses="true" showPackageInnerClasses="true" showStaticInnerClasses="true" packageIndication="3" showAttributeProperty="true"/>
+</editmodel:ClassDiagramEditModel>
