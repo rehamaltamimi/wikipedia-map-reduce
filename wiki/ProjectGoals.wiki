@@ -1,4 +1,5 @@
 #summary Review of the goals of the wikipedia-map-reduce software library.
+#labels Featured,Phase-Requirements,Phase-Design
 
 = Introduction =
 
@@ -16,7 +17,7 @@ The goals of this library are
 
 How will these goals be accomplished?
 
-After the "basic next steps" reviewed in [http://code.google.com/p/wikipedia-map-reduce/wiki/NextStepTasks NextStepTasks] are completed, this software library will only partially meet the goals.  The first goal will be fully met; the second goal will also be met, except for the word "easily:" the whole analysis process, from data dump to hard-number results, is long and confusing unless you are explicitly familiar with the library; lastly, and building on the point just mentioned in the discussion of the second goal, the third goal will not be met, because the process will not have been simplified, but rather, only made possible.
+After the "basic next steps" reviewed in [http://code.google.com/p/wikipedia-map-reduce/wiki/NextStepTasks NextStepTasks] are completed, this software library will only partially meet these goals.  The first goal will be fully met; the second goal will also be met, except for the word "easily:" the whole analysis process, from data dump to hard-number results, is long and confusing unless you are explicitly familiar with the library; lastly, and building on the point just mentioned in the discussion of the second goal, the third goal will not be met, because the process will not have been simplified, but rather, only made possible.
 
 Larger, broader steps need to be taken to fully meet our development goals.  These will be enumerated in the [http://code.google.com/p/wikipedia-map-reduce/wiki/NextStepTasks NextStepTasks] wiki page.
 
