@@ -1,0 +1,18 @@
+#labels Phase-Requirements
+A general list of possible next-step tasks for the wikipedia-map-reduce software library.
+
+= Introduction =
+
+Now that the original paper is complete, there are different places to take the library, things to finish, and the like.  This wiki page is here as a gathering place for ideas of what to do with the library.
+
+
+= Details =
+
+Next steps:
+  * Clean up the library.
+  * Investigate bugs.
+  * API for reading the entire link graph into memory.
+  * Further metrical analysis.
+  * Re-approach edge cases in parsing.
+
+Add more if you think of them!
