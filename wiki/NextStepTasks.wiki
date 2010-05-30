@@ -9,10 +9,9 @@ Now that the original paper is complete, there are different places to take the 
 = Next Steps =
 
 Basic (obvious) next steps:
-  * Clean up the library.
-  * Investigate bugs.
-  * API for reading the entire link graph into memory.
-  * Further metrical analysis.
+  * Clean up the code.
+  * Submit and investigate bugs.
+  * Write API for reading the entire link graph into memory.
   * Re-approach edge cases in parsing.
 
-The completion of these steps will finish the polishing of the original project.  Where to take it from here?
+The completion of these steps will finish the polishing of the original project.  Where to take it from here?  [http://code.google.com/p/wikipedia-map-reduce/w/ProjectGoals ProjectGoals] discusses this larger design question.
