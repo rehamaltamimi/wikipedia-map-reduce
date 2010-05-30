@@ -1,5 +1,5 @@
+#summary A general list of possible next-step tasks for the wikipedia-map-reduce software library.
 #labels Phase-Requirements
-A general list of possible next-step tasks for the wikipedia-map-reduce software library.
 
 = Introduction =
 
