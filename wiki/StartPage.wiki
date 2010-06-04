@@ -8,7 +8,7 @@ Welcome to the wiki for the wikipedia-map-reduce software library.  This is the 
 = News =
 === 6/04/2010 ===
   * Features, goals, and next steps further explored.
-  * Wiki reorganized around central http://code.google.com/p/wikipedia-map-reduce/wiki/StartPage StartPage].
+  * Wiki reorganized around central StartPage.
 
 === 5/30/2010 ===
   * Wiki launched
