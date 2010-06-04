@@ -15,3 +15,16 @@ Basic (obvious) next steps:
   * Re-approach edge cases in parsing.
 
 The completion of these steps will finish the polishing of the original project.  Where to take it from here?  [http://code.google.com/p/wikipedia-map-reduce/wiki/ProjectGoals ProjectGoals] discusses this larger design question.
+
+
+Larger, feature-based next steps need to help meet the goals below, as enumerated in [http://code.google.com/p/wikipedia-map-reduce/wiki/ProjectGoals ProjectGoals].
+
+  # to offer a library which parses Wikipedia at the revision-text level;
+  # to create a platform which can be easily used with M/R to perform analyses; and
+  # to generally simplify the process of procuring analysis-friendly Wikipedia data.
+
+Feature-based tasks:
+  * Finish polishing the original project, as in the basic steps listed above.
+  * Revisit the manner in which analysis can be performed.
+  * Determine the ways in which analysis is most often performed.
+  * Explore ways of simplifying the data-parsing flow.
