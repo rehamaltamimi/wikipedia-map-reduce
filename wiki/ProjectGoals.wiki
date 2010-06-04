@@ -1,5 +1,5 @@
 #summary Review of the goals of the wikipedia-map-reduce software library.
-#labels Featured,Phase-Requirements,Phase-Design
+#labels Phase-Requirements,Phase-Design
 
 = Introduction =
 
