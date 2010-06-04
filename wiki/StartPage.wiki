@@ -1,0 +1,20 @@
+#summary Front page for the wiki.
+#labels Featured
+
+= Introduction =
+
+Welcome to the wiki for the wikipedia-map-reduce software library.  This is the front page, where you can find updates and an index of other wiki pages.
+
+= News =
+=== 6/04/2010 ===
+  * Features, goals, and next steps further explored.
+  * Wiki reorganized around central http://code.google.com/p/wikipedia-map-reduce/wiki/StartPage StartPage].
+
+=== 5/30/2010 ===
+  * Wiki launched
+  * Revisitation of design decisions started
+  * Exploration of future steps begun
+
+= Page Index =
+
+test NextStepTasks test
