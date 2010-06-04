@@ -21,7 +21,7 @@ After the "basic next steps" reviewed in [http://code.google.com/p/wikipedia-map
 
 Larger, broader steps need to be taken to fully meet our development goals.  These will be enumerated in the [http://code.google.com/p/wikipedia-map-reduce/wiki/NextStepTasks NextStepTasks] wiki page.
 
-The features of the library (as they relate to the goals listed here) can be found in [http://code.google.com/p/wikipedia-map-reduce/wiki/Features Features].
+The features of the library (as they relate to the goals listed here) can be found in ProjectFeatures.
 
 
 == Projects ==
