@@ -17,4 +17,6 @@ Welcome to the wiki for the wikipedia-map-reduce software library.  This is the 
 
 = Page Index =
 
-test NextStepTasks test
+  * Goals -- Discussion and enumeration of the goals of the software library.
+  * Features -- The features that the library currently supports and would like to support.
+  * NextStepTasks -- List of steps to take to meet goals.
