@@ -10,6 +10,7 @@ Now that the original paper is complete, there are different places to take the 
 
 Basic (obvious) next steps:
   * Clean up the code.
+  * Refactor data classes into a graph-oriented structure. 
   * Submit and investigate bugs.
   * Write API for reading the entire link graph into memory.
   * Re-approach edge cases in parsing.
