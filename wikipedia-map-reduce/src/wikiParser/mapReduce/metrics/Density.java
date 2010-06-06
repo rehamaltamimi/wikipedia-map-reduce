@@ -34,8 +34,6 @@ public class Density {
 	 *  	-need to stream, since the files are large, but loop-friendly
 	 */
 	
-	//TODO: library to read in graph
-	
 	public static void main (String [] args) throws IOException {
 		calculateDensity(new File("/data/colin/comm_links.txt"), new File("/data/colin/results/density.txt"));
 	}

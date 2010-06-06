@@ -32,7 +32,7 @@ public class Revision {
 	private boolean minor;
 
         /**
-         * TODO: setMe properly
+         * TODO: set isVandalism properly
          */
         private boolean isVandalism = false;
 	
