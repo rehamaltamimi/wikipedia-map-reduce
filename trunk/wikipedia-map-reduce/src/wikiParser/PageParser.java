@@ -298,7 +298,7 @@ public class PageParser {
 			}
 			stripped.append(text.substring(i, j));
 			int k = text.indexOf(END_COMMENT, j);
-			// FIXME: this could be better
+			// FIXME: handling comments and end_comments could be better
 			if (k < 0) {
 				System.err.println("no end comment found!");
 				break;

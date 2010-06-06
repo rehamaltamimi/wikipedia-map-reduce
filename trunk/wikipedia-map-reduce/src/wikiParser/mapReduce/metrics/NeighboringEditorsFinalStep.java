@@ -47,8 +47,6 @@ public class NeighboringEditorsFinalStep {
 					for (String value : splitValues) {
 						boolean cA = false;
 						boolean t = false;
-						//TODO: ask danny about this again.... coauthor with a particular
-						//		user given that you've talked to that same user
 						if (value.startsWith("c")) {
 							coAuthorCount++;
 							cA = true;
