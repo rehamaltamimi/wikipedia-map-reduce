@@ -15,7 +15,7 @@ Basic (obvious) next steps:
   * Write API for reading the entire link graph into memory.
   * Re-approach edge cases in parsing.
 
-The completion of these steps will finish the polishing of the original project, corresponding to a 1.0 release.  Where to take it from here?  [http://code.google.com/p/wikipedia-map-reduce/wiki/ProjectGoals ProjectGoals] discusses this larger design question.
+The completion of these steps will finish the polishing of the original project, corresponding to a [http://code.google.com/p/wikipedia-map-reduce/wiki/1_0_ReleaseReqs 1.0 release].  Where to take it from here?  [http://code.google.com/p/wikipedia-map-reduce/wiki/ProjectGoals ProjectGoals] discusses this larger design question.
 
 
 Larger, feature-based next steps need to help meet the goals below, as enumerated in [http://code.google.com/p/wikipedia-map-reduce/wiki/ProjectGoals ProjectGoals].
