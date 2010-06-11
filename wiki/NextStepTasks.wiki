@@ -24,8 +24,11 @@ Larger, feature-based next steps need to help meet the goals below, as enumerate
   # to create a platform which can be easily used with M/R to perform analyses; and
   # to generally simplify the process of procuring analysis-friendly Wikipedia data.
 
-Feature-based tasks:
+'Big idea' tasks:
   * Finish polishing the original project, as in the basic steps listed above.
+  * Document the code, parsing process and analytical process.
   * Revisit the manner in which analysis can be performed.
   * Determine the ways in which analysis is most often performed.
   * Explore ways of simplifying the data-parsing flow.
+
+Implementations of these 'big ideas' will happen in later releases.
