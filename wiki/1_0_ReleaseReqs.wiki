@@ -2,5 +2,9 @@
 #labels Phase-Requirements
 
 = Feature Requirements =
-  *
-  *
+  * Code cleaned.
+  * Data classes refactored into a graph-oriented structure.
+  * API written for reading the entire link graph into memory.
+  * Parsing edge cases revisited.
+
+== Release to be completed: 7/1/2010 ==
