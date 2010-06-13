@@ -6,6 +6,9 @@
 Welcome to the wiki for the wikipedia-map-reduce software library.  This is the front page, where you can find updates and an index of other wiki pages.
 
 = News =
+=== 6/13/2010 ===
+  * Created a document listing the requirements for a [http://code.google.com/p/wikipedia-map-reduce/wiki/1_0_ReleaseReqs 1.0 Release].
+
 === 6/04/2010 ===
   * Features, goals, and next steps further explored.
   * Wiki reorganized around central StartPage.
@@ -20,3 +23,4 @@ Welcome to the wiki for the wikipedia-map-reduce software library.  This is the 
   * ProjectGoals -- Discussion and enumeration of the goals of the software library.
   * ProjectFeatures -- The features that the library currently supports and would like to support.
   * NextStepTasks -- List of steps to take to meet goals.
+  * 1_0_ReleaseReqs -- Requirements for release 1.0.
