@@ -5,7 +5,7 @@
 
 Welcome to the wiki for the wikipedia-map-reduce software library.  This is the front page, where you can find updates and an index of other wiki pages.
 
-Current Release Work: [http://code.google.com/p/wikipedia-map-reduce/wiki/1_0_ReleaseReqs 1.0 Requirements]
+== Current Release Work: [http://code.google.com/p/wikipedia-map-reduce/wiki/1_0_ReleaseReqs 1.0 Requirements] ==
 
 = News =
 === 6/17/2010 ===
