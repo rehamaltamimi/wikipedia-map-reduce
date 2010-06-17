@@ -1,5 +1,5 @@
 #summary Requirements for the 1.0 Release
-#labels Phase-Requirements,Milestone1.0
+#labels Phase-Requirements,Milestone-Release1.0
 
 = Feature Requirements =
   * Code cleaned.
