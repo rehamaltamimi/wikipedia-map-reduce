@@ -7,4 +7,4 @@
   * API written for reading the entire link graph into memory.
   * Parsing edge cases revisited.
 
-== Release to be completed: 7/1/2010 ==
+== Release to be completed: 7/15/2010 ==
