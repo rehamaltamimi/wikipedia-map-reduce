@@ -22,19 +22,8 @@ public class Edge {
 	public static final int USER_COEDIT_USER = 12;  // UNUSED!
 	public static final int USER_TALKSWITH_USER = 13;
         
-	/**
-	 * @uml.property  name="one"
-	 * @uml.associationEnd  multiplicity="(1 1)" inverse="links:wikiParser.Entity"
-	 */
 	private Vertex one;
-	/**
-	 * @uml.property  name="two"
-	 * @uml.associationEnd  multiplicity="(1 1)"
-	 */
 	private Vertex two;
-	/**
-	 * @uml.property  name="type"
-	 */
 	private int type;
 
 	public Edge(Vertex one, Vertex two, int type) {
@@ -43,31 +32,21 @@ public class Edge {
 		this.type = type;
 	}
 
-	/**
-	 * @return
-	 * @uml.property  name="one"
-	 */
 	public Vertex getOne() {
 		return one;
 	}
-	/**
-	 * @return
-	 * @uml.property  name="two"
-	 */
+
 	public Vertex getTwo() {
 		return two;
 	}
-	/**
-	 * @return
-	 * @uml.property  name="type"
-	 */
+
 	public int getType() {
 		return type;
 	}
         
 	/**
 	 * Returns the edge in the following format:
-	 * "destTypelinkTypedest"
+	 * "destType"+"edgeType"+"dest"
 	 * Frex:
 	 * "a03Albert_Einstein"
 	 * @return coded output string.

@@ -52,11 +52,11 @@ public class RevisionTest {
 		article = new Page("Capo di tutti capo", "10414100");
 		article.addToRevisions(revision);
 		link = new Edge(article, user, Edge.ART_EDITEDBY_USER);
-		user.addToLinks(link);
-		article.addToLinks(link);
+		user.addToEdges(link);
+		article.addToEdges(link);
 		link = new Edge(user, article, Edge.USER_EDIT_ART);
-		user.addToLinks(link);
-		article.addToLinks(link);
+		user.addToEdges(link);
+		article.addToEdges(link);
 		parser = new PageParser(new BufferedInputStream(new FileInputStream("virginislandecon.xml")));
 	}
 	
