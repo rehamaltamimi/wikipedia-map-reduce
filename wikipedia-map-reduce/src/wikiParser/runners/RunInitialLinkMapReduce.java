@@ -51,7 +51,7 @@ public class RunInitialLinkMapReduce extends WikiLineReader {
 			if (rev == null) {
 				break;
 			}
-			for (Edge link : lp.findLinks(fparser, article, rev)) {
+			for (Edge link : lp.findEdges(fparser, article, rev)) {
 				this.out.write(link.toOutputString() + " ");
 			}
 			fparser.update(rev);

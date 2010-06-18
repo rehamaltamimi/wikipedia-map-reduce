@@ -7,17 +7,11 @@ import java.util.ArrayList;
 
 public class GraphParser {
 	
-	/**
-	 * @uml.property  name="links"
-	 */
-	private ArrayList<Edge> links;
-	/**
-	 * @uml.property  name="reader"
-	 */
+	private ArrayList<Edge> edges;
 	private BufferedReader reader;
 	
 	public GraphParser(String path) throws IOException {
-		this.links = new ArrayList<Edge>();
+		this.edges = new ArrayList<Edge>();
 		reader = new BufferedReader(new FileReader(path));
 	}
 	
@@ -25,24 +19,24 @@ public class GraphParser {
 		String line = new String("");
 		while (line != null) {
 			line = reader.readLine();
-			links.addAll(processLine(line));
+			edges.addAll(processLine(line));
 		}
-		return links;
+		return edges;
 	}
 
 	protected static ArrayList<Edge> processLine(String line) {
-		ArrayList<Edge> links = null;
+		ArrayList<Edge> edges = null;
 		Vertex e1 = null;
 		e1 = extractEntity(line.split("\t")[0]);
 		if (e1.equals(null)) {
 			return null;
 		}
-		links = extractLinks(line.split("\t")[1], e1);
-		return links;
+		edges = extractEdges(line.split("\t")[1], e1);
+		return edges;
 	}
 
-	protected static ArrayList<Edge> extractLinks(String valueString, Vertex e1) {
-		ArrayList<Edge> links = new ArrayList<Edge>();
+	protected static ArrayList<Edge> extractEdges(String valueString, Vertex e1) {
+		ArrayList<Edge> edges = new ArrayList<Edge>();
 		String[] values = valueString.split(" ");
 		Vertex e2 = null;
 		for (String value : values) {
@@ -50,15 +44,15 @@ public class GraphParser {
 			if (e2.equals(null)) {
 				return null;
 			}
-			int linkType = Integer.parseInt(value.substring(1, 3));
-			links.add(new Edge(e1, e2, linkType));
+			int edgeType = Integer.parseInt(value.substring(1, 3));
+			edges.add(new Edge(e1, e2, edgeType));
 			/*
 			 * 1. Determine entity type and create
-			 * 2. Determine link type
+			 * 2. Determine edge type
 			 * 3. Create and add to list
 			 */
 		}
-		return links;
+		return edges;
 	}
 
 	protected static Vertex extractEntity(String key) {

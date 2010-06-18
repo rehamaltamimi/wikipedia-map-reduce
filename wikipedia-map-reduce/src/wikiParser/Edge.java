@@ -10,18 +10,18 @@ public class Edge {
 	public static final int USER_LINK_ART = 4;
 	public static final int USER_MENTION_ART = 5;
 
-        // Page-User (A to U):
+	// Page-User (A to U):
 	public static final int ART_EDITEDBY_USER = 6;
 	public static final int ART_LINKEDBY_USER = 7;
 	public static final int ART_MENTIONEDBY_USER = 8;
 
-        // User-User (user A to user B):
+	// User-User (user A to user B):
 	public static final int USER_EDITSTALKOF_USER = 9;
 	public static final int USER_LINKSTO_USER = 10;
 	public static final int USER_MENTIONS_USER = 11;
 	public static final int USER_COEDIT_USER = 12;  // UNUSED!
 	public static final int USER_TALKSWITH_USER = 13;
-        
+
 	private Vertex one;
 	private Vertex two;
 	private int type;
@@ -43,7 +43,7 @@ public class Edge {
 	public int getType() {
 		return type;
 	}
-        
+
 	/**
 	 * Returns the edge in the following format:
 	 * "destType"+"edgeType"+"dest"

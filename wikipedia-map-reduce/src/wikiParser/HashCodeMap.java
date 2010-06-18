@@ -9,64 +9,57 @@ import java.util.Map;
  */
 public class HashCodeMap {
 
-    /**
-	 * @uml.property  name="hashMap"
-	 * @uml.associationEnd  multiplicity="(1 1)" inverse="this$0:wikiParser.HashCodeMap$LinkedHashCodeMap"
-	 */
-    private LinkedHashCodeMap<Integer, Revision> hashMap;
-    /**
-	 * @uml.property  name="maxEntries"
-	 */
-    private int maxEntries;
+	private LinkedHashCodeMap<Integer, Revision> hashMap;
+	private int maxEntries;
 
-    public HashCodeMap(int maxEntries) {
-        this.maxEntries = maxEntries;
-        this.hashMap = new LinkedHashCodeMap<Integer, Revision>(maxEntries);
-    }
+	public HashCodeMap(int maxEntries) {
+		this.maxEntries = maxEntries;
+		this.hashMap = new LinkedHashCodeMap<Integer, Revision>(maxEntries);
+	}
 
-    public Revision get(Integer hash) {
-        return this.hashMap.get(hash);
-    }
+	public Revision get(Integer hash) {
+		return this.hashMap.get(hash);
+	}
 
-    public void add(Integer hash, Revision revision) {
-        if (this.hashMap.get(hash) == null) {
-            this.hashMap.put(hash, revision);
-        }
-    }
+	public void add(Integer hash, Revision revision) {
+		if (this.hashMap.get(hash) == null) {
+			this.hashMap.put(hash, revision);
+		}
+	}
 
-    public HashMap<Integer, Revision> getHashMap() {
-        return this.hashMap;
-    }
+	public HashMap<Integer, Revision> getHashMap() {
+		return this.hashMap;
+	}
 
-    public void addAll(HashCodeMap h) {
-        for (Integer k : h.getHashMap().keySet()) {
-            this.hashMap.put(k, h.get(k));
-        }
-    }
+	public void addAll(HashCodeMap h) {
+		for (Integer k : h.getHashMap().keySet()) {
+			this.hashMap.put(k, h.get(k));
+		}
+	}
 
-    public int size() {
-        return this.hashMap.size();
-    }
+	public int size() {
+		return this.hashMap.size();
+	}
 
-    public boolean isKeyValuePair(Integer hashcode, Revision revision) {
-        Revision r = this.hashMap.get(new Integer(hashcode));
-        return (r != null && revision.equals(r));
-    }
+	public boolean isKeyValuePair(Integer hashcode, Revision revision) {
+		Revision r = this.hashMap.get(new Integer(hashcode));
+		return (r != null && revision.equals(r));
+	}
 
-    public boolean isNew(Integer hashcode) {
-        return (!this.hashMap.containsKey(hashcode));
-    }
+	public boolean isNew(Integer hashcode) {
+		return (!this.hashMap.containsKey(hashcode));
+	}
 
-    private class LinkedHashCodeMap<K, V> extends LinkedHashMap<K, V> {
+	private class LinkedHashCodeMap<K, V> extends LinkedHashMap<K, V> {
 
-        private static final long serialVersionUID = 1L;
+		private static final long serialVersionUID = 1L;
 
-        protected LinkedHashCodeMap(int initialCapacity) {
-            super(initialCapacity);
-        }
+		protected LinkedHashCodeMap(int initialCapacity) {
+			super(initialCapacity);
+		}
 
-        protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-            return size() > maxEntries;
-        }
-    }
+		protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+			return size() > maxEntries;
+		}
+	}
 }
