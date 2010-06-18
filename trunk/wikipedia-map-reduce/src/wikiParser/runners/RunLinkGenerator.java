@@ -36,7 +36,7 @@ public class RunLinkGenerator extends WikiLineReader {
             if (rev == null) {
                 break;
             }
-            for (Edge link : lparser.findLinks(fparser, article, rev)) {
+            for (Edge link : lparser.findEdges(fparser, article, rev)) {
 //                System.out.println(link.toOutputString());
             }
             fparser.update(rev);

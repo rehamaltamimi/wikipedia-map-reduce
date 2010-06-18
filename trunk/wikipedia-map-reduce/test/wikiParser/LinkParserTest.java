@@ -30,7 +30,7 @@ public class LinkParserTest {
 	}
 	
 	@Test public void findLinks() throws XMLStreamException {
-		ArrayList<Edge> links = this.parser.findLinks(ap);
+		ArrayList<Edge> links = this.parser.findEdges(ap);
 		for (Edge link : links) {
 			System.out.println(link.toOutputString());
 		}

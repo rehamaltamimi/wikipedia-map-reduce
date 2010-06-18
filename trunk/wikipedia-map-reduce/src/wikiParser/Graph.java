@@ -9,15 +9,15 @@ public class Graph {
 	@Deprecated
 	private List<Graph> subGraphs;
 	private List<Edge> edges;
-	
+
 	public Graph() {
 		this.edges = new ArrayList<Edge>();
 	}
-	
+
 	public Graph(List<Edge> edges) {
 		this.edges = new ArrayList<Edge>(edges);
 	}
-	
+
 	public Graph(List<Page> articles, List<User> users) {
 		TreeSet<Edge> uniqueEdges = new TreeSet<Edge>();
 		for (Page each : articles) {
@@ -32,7 +32,7 @@ public class Graph {
 	public List<Edge> getEdges() {
 		return edges;
 	}
-	
+
 	public void addToEdges(Edge edge) {
 		this.edges.add(edge);
 	}
@@ -40,7 +40,7 @@ public class Graph {
 	public void setUsers(ArrayList<Edge> edges) {
 		this.edges = edges;
 	}
-	
+
 	public List<Vertex> getVertices() {
 		TreeSet<Vertex> uniqueVertices = new TreeSet<Vertex>();
 		for (Edge each : edges) {
@@ -49,5 +49,5 @@ public class Graph {
 		}
 		return new ArrayList<Vertex>(uniqueVertices);
 	}
-	
+
 }

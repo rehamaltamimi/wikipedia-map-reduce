@@ -51,7 +51,7 @@ public class InitialLinkMapReduce {
                     if (rev == null) {
                         break;
                     }
-                    for (Edge link : lp.findLinks(fparser, article, rev)) {
+                    for (Edge link : lp.findEdges(fparser, article, rev)) {
                         if (article.isUserTalk() || article.isUser()) {
                             output.collect(new Text("u" + article.getUser().getId()), new Text(link.toOutputString()));
                         } else {

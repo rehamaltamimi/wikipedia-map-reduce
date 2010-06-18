@@ -27,7 +27,7 @@ public class WorkingClass {
 		InputStream stream = new FileInputStream(new File(filename));
 		PageParser parser = new PageParser(stream);
 		EdgeParser lp = new EdgeParser();
-		for (Edge link : lp.findLinks(parser)) {
+		for (Edge link : lp.findEdges(parser)) {
 			System.out.println("link is " + link);
 		}
 	}
