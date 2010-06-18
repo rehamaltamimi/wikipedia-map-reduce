@@ -39,10 +39,10 @@ public class EntityTest {
 		user.addToRevisions(revision);
 		article = new Page("Capo di tutti capo", "10414100");
 		link = new Edge(article, user, Edge.ART_EDITEDBY_USER);
-		user.addToLinks(link);
-		article.addToLinks(link);
+		user.addToEdges(link);
+		article.addToEdges(link);
 		link = new Edge(user, article, Edge.USER_EDIT_ART);
-		user.addToLinks(link);
+		user.addToEdges(link);
 	}
 	
 	@Test public void testAddToRevisions() {
@@ -52,14 +52,14 @@ public class EntityTest {
 	}
 	
 	@Test public void testAddToLinks() {
-		article.addToLinks(link);
-		Edge tmpLink = article.getLinks().get(1);
+		article.addToEdges(link);
+		Edge tmpLink = article.getEdges().get(1);
 		assertEquals(tmpLink, link);
 	}
 	
 	@Test public void testFindCommonRevisions() {
 		article.addToRevisions(revision);
-		article.addToLinks(link);
+		article.addToEdges(link);
 		assertTrue(!article.findCommonRevisions(article).isEmpty());
 		Revision tmpRevision = article.findCommonRevisions(article).get(0);
 		assertEquals(tmpRevision, revision);
@@ -73,7 +73,7 @@ public class EntityTest {
 	
 	@Test public void testToUnderscoredString() {
 		article.addToRevisions(revision);
-		article.addToLinks(link);
+		article.addToEdges(link);
 		String underscoredString = article.toUnderscoredString();
 		assertEquals(underscoredString, "Capo_di_tutti_capo");
 		assertEquals(underscoredString, article.getName().replaceAll(" ", "_"));

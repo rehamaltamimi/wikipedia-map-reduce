@@ -11,24 +11,10 @@ import java.util.List;
  */
 public class Vertex {
 
-    /**
-     * @uml.property  name="name"
-     */
     private String name;
-    /**
-     * @uml.property  name="id"
-     */
     private String id;
-    /**
-     * @uml.property  name="revisions"
-     * @uml.associationEnd  multiplicity="(0 -1)" elementType="wikiParser.Revision"
-     */
     private List<Revision> revisions = new ArrayList<Revision>();
-    /**
-     * @uml.property  name="links"
-     * @uml.associationEnd  multiplicity="(0 -1)" inverse="one:wikiParser.Edge"
-     */
-    private List<Edge> links = new ArrayList<Edge>();
+    private List<Edge> edges = new ArrayList<Edge>();
 
     public Vertex(String id) {
         this.id = id;
@@ -39,22 +25,14 @@ public class Vertex {
         this.id = id;
     }
 
-    /**
-     * @return
-     * @uml.property  name="id"
-     */
     public String getId() {
         return id;
     }
 
-    public List<Edge> getLinks() {
-        return links;
+    public List<Edge> getEdges() {
+        return edges;
     }
 
-    /**
-     * @return
-     * @uml.property  name="name"
-     */
     public String getName() {
         return name;
     }
@@ -80,8 +58,8 @@ public class Vertex {
         this.revisions.add(newRevision);
     }
 
-    public void addToLinks(Edge newLink) {
-        this.links.add(newLink);
+    public void addToEdges(Edge newEdge) {
+        this.edges.add(newEdge);
     }
 
     public String toUnderscoredString() {

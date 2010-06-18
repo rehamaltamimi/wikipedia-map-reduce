@@ -43,11 +43,11 @@ public class HashCodeMapTest {
 		article = new Page("Capo di tutti capo", "10414100");
 		article.addToRevisions(revision);
 		link = new Edge(article, user, Edge.ART_EDITEDBY_USER);
-		user.addToLinks(link);
-		article.addToLinks(link);
+		user.addToEdges(link);
+		article.addToEdges(link);
 		link = new Edge(user, article, Edge.USER_EDIT_ART);
-		user.addToLinks(link);
-		article.addToLinks(link);
+		user.addToEdges(link);
+		article.addToEdges(link);
 		hashCodeMap = new HashCodeMap(100);
 		for (int i=0;i<50;i++) {
 			hashCodeMap.add(new Integer(i), revision);

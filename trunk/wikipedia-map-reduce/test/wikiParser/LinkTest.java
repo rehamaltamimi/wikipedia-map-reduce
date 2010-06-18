@@ -45,11 +45,11 @@ public class LinkTest {
 		article = new Page("Capo di tutti capo", "10414100");
 		article.addToRevisions(revision);
 		link1 = new Edge(article, user, Edge.ART_EDITEDBY_USER);
-		user.addToLinks(link1);
-		article.addToLinks(link1);
+		user.addToEdges(link1);
+		article.addToEdges(link1);
 		link2 = new Edge(user, article, Edge.USER_EDIT_ART);
-		user.addToLinks(link2);
-		article.addToLinks(link2);
+		user.addToEdges(link2);
+		article.addToEdges(link2);
 	}
 	
 	@Test public void testToOutputString() {

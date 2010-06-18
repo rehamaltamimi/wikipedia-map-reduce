@@ -1,56 +1,53 @@
 package wikiParser;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.TreeSet;
 
 public class Graph {
 
-	/**
-	 * @uml.property  name="subGraphs"
-	 */
-	private ArrayList<Graph> subGraphs;
-	/**
-	 * @uml.property  name="articles"
-	 */
-	private ArrayList<Page> articles;
-	/**
-	 * @uml.property  name="users"
-	 */
-	private ArrayList<User> users;
+	@Deprecated
+	private List<Graph> subGraphs;
+	private List<Edge> edges;
 	
 	public Graph() {
-		this.subGraphs = new ArrayList<Graph>();
-		this.articles = new ArrayList<Page>();
-		this.users = new ArrayList<User>();
+		this.edges = new ArrayList<Edge>();
 	}
 	
-	public Graph(ArrayList<Graph> subGraphs, ArrayList<Page> articles, ArrayList<User> users) {
-		this.subGraphs = subGraphs;
-		this.articles = articles;
-		this.users = users;
+	public Graph(List<Edge> edges) {
+		this.edges = new ArrayList<Edge>(edges);
+	}
+	
+	public Graph(List<Page> articles, List<User> users) {
+		TreeSet<Edge> uniqueEdges = new TreeSet<Edge>();
+		for (Page each : articles) {
+			uniqueEdges.addAll(each.getEdges());
+		}
+		for (User each : users) {
+			uniqueEdges.addAll(each.getEdges());
+		}
+		this.edges = new ArrayList<Edge>(uniqueEdges);
 	}
 
-	public ArrayList<Page> getArticles() {
-		return articles;
+	public List<Edge> getEdges() {
+		return edges;
+	}
+	
+	public void addToEdges(Edge edge) {
+		this.edges.add(edge);
 	}
 
-	public void setArticles(ArrayList<Page> articles) {
-		this.articles = articles;
+	public void setUsers(ArrayList<Edge> edges) {
+		this.edges = edges;
 	}
-
-	public ArrayList<Graph> getSubGraphs() {
-		return subGraphs;
-	}
-
-	public void setSubGraphs(ArrayList<Graph> subGraphs) {
-		this.subGraphs = subGraphs;
-	}
-
-	public ArrayList<User> getUsers() {
-		return users;
-	}
-
-	public void setUsers(ArrayList<User> users) {
-		this.users = users;
+	
+	public List<Vertex> getVertices() {
+		TreeSet<Vertex> uniqueVertices = new TreeSet<Vertex>();
+		for (Edge each : edges) {
+			uniqueVertices.add(each.getOne());
+			uniqueVertices.add(each.getTwo());
+		}
+		return new ArrayList<Vertex>(uniqueVertices);
 	}
 	
 }
