@@ -3,6 +3,10 @@ package wikiParser;
 import java.util.ArrayList;
 
 public class User extends Vertex {
+	
+	public User() {
+		super();
+	}
 
 	public User(String id) {
 		//FIXME: correctly handle single-input creations: should they be names or ids?

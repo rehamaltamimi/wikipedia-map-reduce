@@ -16,6 +16,10 @@ public class Vertex {
 	private List<Revision> revisions = new ArrayList<Revision>();
 	private List<Edge> edges = new ArrayList<Edge>();
 
+	public Vertex() {
+		
+	}
+	
 	public Vertex(String id) {
 		this.id = id;
 	}
