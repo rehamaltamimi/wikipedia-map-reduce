@@ -5,11 +5,11 @@ import wikiParser.Page;
 import wikiParser.Edge;
 import wikiParser.Revision;
 
-public interface LinkGenerator {	
+public interface EdgeGenerator {	
 
     /**
-     * Generates links for a particular revision of an article.
-     * Returns null if the link generator does not apply to this article.
+     * Generates edges for a particular revision of an article.
+     * Returns null if the edge generator does not apply to this article.
      * @param article
      * @param revision
      * @return

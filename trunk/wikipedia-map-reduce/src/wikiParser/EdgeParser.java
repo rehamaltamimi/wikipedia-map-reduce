@@ -9,15 +9,15 @@ import wikiParser.edges.ArticleArticleGenerator;
 import wikiParser.edges.ContributorEditGenerator;
 import wikiParser.edges.ContributorMentionGenerator;
 import wikiParser.edges.ConversationGenerator;
-import wikiParser.edges.FingerprintingLinkGenerator;
-import wikiParser.edges.LinkGenerator;
+import wikiParser.edges.FingerprintingEdgeGenerator;
+import wikiParser.edges.EdgeGenerator;
 import wikiParser.edges.UserArticleLinkGenerator;
 import wikiParser.edges.UserUserRefGenerator;
 import wikiParser.edges.UserUserTalkGenerator;
 
 public class EdgeParser {
 
-	List<LinkGenerator> generators = new ArrayList<LinkGenerator>();
+	List<EdgeGenerator> generators = new ArrayList<EdgeGenerator>();
 
 	public EdgeParser() {
 		generators.add(new ArticleArticleGenerator());
@@ -61,9 +61,9 @@ public class EdgeParser {
 	 */
 	public ArrayList<Edge> findEdges(RevisionFingerprinter fparser, Page article, Revision rev) throws XMLStreamException {
 		ArrayList<Edge> edges = new ArrayList<Edge>();
-		for (LinkGenerator generator : generators) {
-			if (generator instanceof FingerprintingLinkGenerator) {
-				((FingerprintingLinkGenerator)generator).setFingerprintingParser(fparser);
+		for (EdgeGenerator generator : generators) {
+			if (generator instanceof FingerprintingEdgeGenerator) {
+				((FingerprintingEdgeGenerator)generator).setFingerprintingParser(fparser);
 			}
 			List<Edge> l = generator.generate(article, rev);
 			if (l != null) {

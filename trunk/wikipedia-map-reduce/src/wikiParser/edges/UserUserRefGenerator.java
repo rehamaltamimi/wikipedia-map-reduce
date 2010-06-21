@@ -8,19 +8,19 @@ import wikiParser.Edge;
 import wikiParser.Revision;
 import wikiParser.User;
 
-public class UserUserRefGenerator implements LinkGenerator {
+public class UserUserRefGenerator implements EdgeGenerator {
 
 	public List<Edge> generate(Page article, Revision revision) {
-		List<Edge> links = null;
+		List<Edge> edges = null;
 		if (article.isUserTalk()) {
-			links = new ArrayList<Edge>();
+			edges = new ArrayList<Edge>();
 			for (String ref : revision.getAnchorLinks()) {
 				if (ref.contains("User:") || ref.contains("User talk:")) {
-					links.add(new Edge(article.getUser(), new User(ref), Edge.USER_LINKSTO_USER));
+					edges.add(new Edge(article.getUser(), new User(ref), Edge.USER_LINKSTO_USER));
 				}
 			}
 		}
-		return links;
+		return edges;
 	}
 
 }

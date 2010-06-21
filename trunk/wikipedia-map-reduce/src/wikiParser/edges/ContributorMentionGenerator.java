@@ -8,7 +8,7 @@ import wikiParser.RevisionFingerprinter;
 import wikiParser.Edge;
 import wikiParser.Revision;
 
-public class ContributorMentionGenerator implements FingerprintingLinkGenerator {
+public class ContributorMentionGenerator implements FingerprintingEdgeGenerator {
     /**
 	 * @uml.property  name="parser"
 	 * @uml.associationEnd  
@@ -23,17 +23,17 @@ public class ContributorMentionGenerator implements FingerprintingLinkGenerator 
     }
 
     public List<Edge> generate(Page article, Revision revision) {
-        List<Edge> links = null;
+        List<Edge> edges = null;
         if (article.isUserTalk()) {
-            links = new ArrayList<Edge>();
+            edges = new ArrayList<Edge>();
             for (String text : parser.findUniqueText(revision)) {
                 for (String ref : Revision.getAnchorLinks(text)) {
-                    links.add(
+                    edges.add(
                             new Edge(revision.getContributor(),
                                      new Page(ref), Edge.USER_MENTION_ART));
                 }
             }
         }
-        return links;
+        return edges;
     }
 }

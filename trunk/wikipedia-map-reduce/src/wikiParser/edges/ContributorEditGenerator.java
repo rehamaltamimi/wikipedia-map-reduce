@@ -7,15 +7,15 @@ import wikiParser.Page;
 import wikiParser.Edge;
 import wikiParser.Revision;
 
-public class ContributorEditGenerator implements LinkGenerator {
+public class ContributorEditGenerator implements EdgeGenerator {
 
 	public List<Edge> generate(Page article, Revision revision) {
-		List<Edge> links = null;
+		List<Edge> edges = null;
 		if (article.isNormalPage() || article.isTalk()) {
-			links = new ArrayList<Edge>();
-			links.add(new Edge(article, revision.getContributor(), Edge.ART_EDITEDBY_USER));
+			edges = new ArrayList<Edge>();
+			edges.add(new Edge(article, revision.getContributor(), Edge.ART_EDITEDBY_USER));
 		}
-		return links;
+		return edges;
 	}
 
 }
