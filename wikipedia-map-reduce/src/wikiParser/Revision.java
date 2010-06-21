@@ -12,19 +12,16 @@ public class Revision {
 	private String timestamp;
 	private String comment;
 	private boolean minor;
-
-	/**
-	 * TODO: set isVandalism properly
-	 */
 	private boolean isVandalism = false;
 
-	public Revision (String id, String timestamp, User contributor, String text, String comment, boolean minor) {
+	public Revision (String id, String timestamp, User contributor, String text, String comment, boolean minor, boolean isVandalism) {
 		this.id = id;
 		this.contributor = contributor;
 		this.text = text;
 		this.timestamp = timestamp;
 		this.comment = comment;
 		this.minor = minor;
+		this.isVandalism = isVandalism;
 	}
 
 	public String getId() {

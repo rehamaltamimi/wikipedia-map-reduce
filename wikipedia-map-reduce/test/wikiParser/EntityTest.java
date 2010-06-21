@@ -35,7 +35,7 @@ public class EntityTest {
 
 	@Before public void setUp() {
 		user = new User("Just H", "2033654");
-		revision = new Revision("119623749", "2007-04-02T01:52:36Z", user, "#REDIRECT[[Capo di tutti capi]]", "Capo di tutti capi", false);
+		revision = new Revision("119623749", "2007-04-02T01:52:36Z", user, "#REDIRECT[[Capo di tutti capi]]", "Capo di tutti capi", false, false);
 		user.addToRevisions(revision);
 		article = new Page("Capo di tutti capo", "10414100");
 		link = new Edge(article, user, Edge.ART_EDITEDBY_USER);

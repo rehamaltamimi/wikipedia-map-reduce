@@ -100,16 +100,18 @@ public class PageParser {
 		User contributor = readContributor();
 		String minor = matchTextElement("minor", false);
 		String comment = matchTextElement("comment", false);
+		String vandalism = matchTextElement("isVandalism", false); //FIXME: not right
 		String text = matchTextElement("text", true);
 		text = stripComments(text);
 		boolean isMinor = (minor != null) && minor.equals("1");
+		boolean isVandalism = (vandalism != null) && vandalism.equals("1");
 		//		System.err.println("rev is " + text);
 
-		Revision rev = new Revision(id, timestamp, contributor, text, comment, isMinor);
+		Revision rev = new Revision(id, timestamp, contributor, text, comment, isMinor, isVandalism);
 		if (storeFullTextInArticle) {
 			article.addToRevisions(rev);
 		} else if (storeRevisionMetadata) {
-			article.addToRevisions(new Revision(id, timestamp, contributor, null, comment, isMinor));
+			article.addToRevisions(new Revision(id, timestamp, contributor, null, comment, isMinor, isVandalism));
 		}
 		return rev;
 	}

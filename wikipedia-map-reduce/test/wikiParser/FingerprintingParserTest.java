@@ -44,10 +44,10 @@ public class FingerprintingParserTest {
 	@Before public void setUp() {
 		fParser =  new RevisionFingerprinter();
 		user1 = new User("colin");
-		rev1 = new Revision("0", "0", user1, "this isn't", "", false);
+		rev1 = new Revision("0", "0", user1, "this isn't", "", false, false);
 		user2 = new User("shilad");
-		rev2 = new Revision("1", "1", user2, "[this | is all] new text, but this isn't", "", false);
-		rev3 = new Revision("1", "1", user1, "here's some more text, oh, and old stuff: [this | is all] new text, but this isn't", "", false);
+		rev2 = new Revision("1", "1", user2, "[this | is all] new text, but this isn't", "", false, false);
+		rev3 = new Revision("1", "1", user1, "here's some more text, oh, and old stuff: [this | is all] new text, but this isn't", "", false, false);
 	}
 	
 	@Test public void testNeighboringEditors() {
