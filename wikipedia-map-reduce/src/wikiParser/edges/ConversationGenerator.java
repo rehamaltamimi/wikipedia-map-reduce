@@ -9,7 +9,7 @@ import wikiParser.Edge;
 import wikiParser.Revision;
 import wikiParser.User;
 
-public class ConversationGenerator implements FingerprintingLinkGenerator {
+public class ConversationGenerator implements FingerprintingEdgeGenerator {
     /**
 	 * @uml.property  name="parser"
 	 * @uml.associationEnd  
@@ -27,10 +27,10 @@ public class ConversationGenerator implements FingerprintingLinkGenerator {
         if (!article.isTalk() && !article.isUserTalk()) {
             return null;
         }
-        List<Edge> links = new ArrayList<Edge>();
+        List<Edge> edges = new ArrayList<Edge>();
         for (User neighbor : parser.neighboringContributors(revision)) {
-            links.add(new Edge(neighbor, revision.getContributor(), Edge.USER_TALKSWITH_USER));
+            edges.add(new Edge(neighbor, revision.getContributor(), Edge.USER_TALKSWITH_USER));
         }
-        return links;
+        return edges;
     }
 }
