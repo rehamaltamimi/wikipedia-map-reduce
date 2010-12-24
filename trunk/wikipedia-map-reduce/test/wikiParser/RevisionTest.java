@@ -6,6 +6,7 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -66,7 +67,7 @@ public class RevisionTest {
 		assertEquals(tmpLink, "Capo di tutti capi");
 		
 		Revision rev = parser.getNextRevision();
-		ArrayList<String> links = rev.getAnchorLinks();
+		List<String> links = rev.getAnchorLinks();
 		for (String l : links) {
 			System.out.println(l);
 		}
