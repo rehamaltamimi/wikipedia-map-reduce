@@ -102,7 +102,7 @@ public class PageParser {
 		String comment = matchTextElement("comment", false);
 		String vandalism = matchTextElement("isVandalism", false); //FIXME: not right
 		String text = matchTextElement("text", true);
-		text = stripComments(text);
+		text = stripComments(text, timestamp);
 		boolean isMinor = (minor != null) && minor.equals("1");
 		boolean isVandalism = (vandalism != null) && vandalism.equals("1");
 		//		System.err.println("rev is " + text);
@@ -289,7 +289,7 @@ public class PageParser {
 
 	private static final String BEGIN_COMMENT = "<!--";
 	private static final String END_COMMENT = "-->";
-	private String stripComments(String text) {
+	private String stripComments(String text, String timestamp) {
 		StringBuilder stripped = new StringBuilder();
 		int i = 0;
 		while (true) {
@@ -302,7 +302,7 @@ public class PageParser {
 			int k = text.indexOf(END_COMMENT, j);
 			// FIXME: handling comments and end_comments could be better
 			if (k < 0) {
-				System.err.println("no end comment found!");
+				System.err.println("no end comment found in " + article.getName() + " (" + timestamp + ")");
 				break;
 			}
 			i = k + END_COMMENT.length();
