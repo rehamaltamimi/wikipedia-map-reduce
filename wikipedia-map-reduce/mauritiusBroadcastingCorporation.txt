@@ -1,0 +1,140 @@
+{{Refimprove|date=July 2008}}
+{{Infobox Network
+|network_name        = Mauritius Broadcasting Corporation
+|name                = 
+|network_logo        = [[Image:MBC Mauritius.jpg]]
+|logo                = 
+|image               = 
+|network_type        = [[Terrestrial television|Broadcast]] [[radio]] and [[television]]
+|branding            = 
+|airdate             = 
+|country             = {{flagicon|Mauritius}} [[Mauritius]]
+|available           = 
+|founded             = June 8, 1964 
+|founder             = 
+|slogan              = 
+|motto               = 
+|market_share        = 
+|license_area        = 
+|broadcast_area      = National
+|area                = 
+|erp                 = 
+|owner               = 
+|key_people          = Danjay Calikhan <br>[[Director General]]
+|foundation          = 
+|launch_date         = 1964
+|closure_date        = 
+|dissolved           = 
+|past_names          = Mauritius Broadcasting Service (Prior to 1964)
+|digital             = 
+|analog              = 
+|servicename1        = 
+|service1            = 
+|servicename2        = 
+|service2            = 
+|servicename3        = 
+|service3            = 
+|servicename4        = 
+|service4            = 
+|callsigns           = 
+|callsign            = 
+|callsign_meaning    = 
+|former_callsigns    = 
+|affiliates          = 
+|groups              = 
+|affiliation         = 
+|affiliations        = 
+|former_affiliations = 
+|website             = [http://www.mbcradio.tv/ www.mbcradio.tv]
+|footnotes           = 
+}}
+
+The '''Mauritius Broadcasting Corporation''' (MBC) is the [[public broadcasting|public broadcaster]] of the [[Mauritius|Republic of Mauritius]], formed on June 8, 1964.  Its funding comes from the levying of a [[television licence]] fee (60%) and [[television commercial|commercials]] (40%) <ref>[http://mbc.intnet.mu/corporate_info.htm]{{Dead link|date=March 2008}}</ref>.  However, the amount of funding received from commercials has come under pressure since the introduction of private commercial broadcasters in 2002 <ref>http://www.gov.mu/portal/goc/pmo/file/mbc.doc</ref>.   
+
+MBC's television network currently consists of three analog channels, MBC1, MBC2 and MBC3, as well as six digital channels, MBCDigital1, MBCDigital2, MBCDigital3, MBCDigital4, MBCDigital5 and MBCDigital6. Two new digital terrestrial channels are to be launched in mid-March. These innovative channels will be the 'Movie Channel' and the 'Sports Channel'. A project for a 24-hour rolling news station is under way and will provide an interactive platform for local, regional and international news.
+
+The MBC radio network currently consists of five stations, RM1, RM2, Kool FM, Taal FM and World Hit FM.
+
+== History of MBC ==
+===Introduction===
+
+The Mauritius Broadcasting Corporation (MBC) is the national public broadcasting service (Radio and TV) of the Republic of Mauritius and its outer islands including Rodrigues.
+
+It was established as a body corporate on 8 June 1964 under the Mauritius Broadcasting Corporation Ordinance no. 7 (1964). Prior to that date it operated as a Government Service under the name of Mauritius Broadcasting Service.
+
+The original Ordinance establishing the Mauritius Broadcasting Corporation was amended and consolidated by Acts of Parliament: Act no. 65 of 1970, Act no. 22 of 1982 and Act no. 65 of 1985. These amendments were necessary to accommodate interalia changes at both technological and social levels as well as to satisfy the aspirations of all segments of the Mauritian nation.
+
+The objects of the MBC and the parameters within which these objects are to be achieved are spelt out at Section 4 of MBC Act no. 22 of 1982 which broadly are to ensure broadcasting services of information, education, culture and entertainment.
+
+The MBC is administered and controlled by a Board of seven members. The execution of its policy and its day to day control and management rest with the Director General who is the Chief Executive Officer of the Corporation and who has under his direction an establishment of about 500 employees.
+
+It is estimated that the number of Radio and TV sets (Mauritius and Rodrigues) as at 30 June 1999 was 450,000 and 265,000 respectively.
+
+The MBC derives its income mainly from licence fees and advertising. A monthly licence fee is payable by all domestic electricity consumers (Act no. 56 of 1954) possessing a TV set – this accounts for 60% of its total income. Advertisement on Radio and TV contributes to about 35% of its income.
+
+Radio and TV programmes cover a wide range of subjects and are broadcast in different languages including French, English, Hindustani, Creole, Chinese and a host of other Indian languages. Programmes are mostly purchased from foreign suppliers whilst a fair proportion is produced by the Corporation and another slot is relayed on the Corporation’s channels following bilateral agreements with broadcasting organisations concerned.
+
+News bulletins including local and foreign items are broadcast daily at specific times.
+
+The Corporation also ensures broadcast on both Radio and TV of educational programmes devised and produced by the Mauritius College of the Air.
+
+Live Broadcast (Radio and TV) of local events are carried out on regular basis.
+
+The MBC maintains close and cordial relations with a number of Broadcasting Associations. MBC is a member of the [[Commonwealth Broadcasting Association]] (CBA), the [[European Broadcasting Union]] (EBU), the Asian Broadcasting Union (ABU), the South African Broadcasting Association (SABA) and of the [[Conseil International des Radios-Télévisions d’Expression Française]] (CIRTEF).
+
+===Radio Broadcast===
+
+Radio Broadcasting in Mauritius started on a private basis on 9 August 1927 by one Mr. Charles Jollivet with a Medium Wave radio transmitter of 1 kilowatt assembled by himself, two manual record payers and a carbon granule microphone. The station was lodged at his residence in Beau Bassin and was known as "Radio Maurice". It was later transferred to the attic of the Plaza Theatre in Rose Hill. The daily programme consisted mainly of music and news and lasted for 2 hours.
+
+A second station under the aegis of the "Société des Radiophilles" set up by one Mr. P. Adam came into operation around 1937. It was originally located at his residence in Forest Side and was later moved to the Town Hall in Curepipe. The broadcast was made by a Philips Transmitter of 60 watts – wavelengths 42 metres. It was mainly used to send messages to the members of the Société.
+
+In the wake of the Second World War hostilities in 1939, the British Ministry of Defence took over the control of these two stations. About the same time, delegated by Général de Gaulle, Mr. H. Montocchio together with Mr. F. M. d’Unienville operated another Radio Station known as "France Libre d’Outremer" located near the Highlands sugar factory. The equipment used was a second hand short wave transmitter of 1 kilowatt purchased from the South African Broadcasting Company.
+
+By the end of the Second World War, "France Libre d’Outremer" was taken over by Government and was merged with the "Société des Radiophilles" of Curepipe. This was the prelude for the birth and development of a national broadcasting station, for as from 1 July 1944 the Mauritius Broadcasting Service (MBS) was set up as a sub-department of the Government Public Relations Office, then managed by Mr. H. Ardill and Dr. Vaughn – Head of Information Services. Transmission was done from the studio in Plaza, Rose Hill until 1946 when the station was transferred to the then Teachers’ Training College at Forest Side – now PSC building. Three segments of programmes (Morning, Midday and Evening) were broadcast daily using a second hand Short Wave transmitter converted to a Medium Wave – 225 metres wavelengths. At about the same time the Globe Reuters News Service, formerly the Government Press Service, was annexed to the MBS and administered jointly.
+
+Over the years broadcasting expanded considerably in terms of structure (building and equipment), broadcast hours and variety of programmes both in content and languages.
+
+===TV Broadcasting===
+
+TV Broadcasting was introduced in Mauritius as an act of faith by the then Prime Minister to consolidate the spirit of nationhood so as to face the struggle for and afterwards the challenges of the Independence of the country.
+
+TV Broadcast on a pilot basis started late in the year 1964, pending completion of the installation and operation of the three Repeater Stations (Fort George, Mount Thérése and Jurançon). With the operation of Jurançon on 31 December 1964 this phase was completed. Subsequently on 8 February 1965, Television was officially launched with a daily evening transmission of about 3 hours.
+
+The first TV outside Live broadcast was launched on the occasion of the royal visit of Her Royal Highness Princess Alexandra in 1968.
+
+Broadcast of formal educational TV programmes started in 1969 when it was necessary to increase the daily duration of programmes by one hour.
+
+Midday transmissions, during weekdays only, originally of half-hour duration and later extended to two hours include a News bulletin started in 1974. At first the broadcast was intended to TV dealers to enable them to provide a service to their clients. During weekends and public holidays the afternoon transmission was of a longer duration.
+
+In the years which followed Independence, the roles and obligations of Television as a tool to stimulate socio-economic development and cultural synthesis of the nation was enhanced. The utilisation of Television was optimised. Thus both the number and variety of local programmes have continuously been increasing.
+
+The phasing out process of black and white television started in 1973 and indeed the OCAMM Conference which was held at the Mahatma Gandhi Institute in the same year was broadcast Live in colour (SECAM System). Since then colorisation of all equipment was an on-going process so much so that the eve of Christmas 1975 heralded the colour broadcast of a considerable number of programmes. By 1978 the colorisation process was fully completed. Thus the quality of programmes as well as their content were improved.
+
+On 7 November, 1987, television was introduced in [[Rodrigues (island)|Rodrigues]]. Nowadays, the duration of broadcast average 13 hours daily. 
+
+The development of television was speeded up as from 1990, following the implementation of a 2nd Channel (MBC 2) on 30 July 1990. This was followed in October 1995 by the operation of two PayTV Channels: Canal+ and SkyNews. A third Channel (MBC 3) became operational in March 1996. 
+
+Moreover maximum TV coverage of the island has been ensured by the installation of additional Repeater Stations at strategic locations. 
+
+The TV landscape is fast changing due to the development in the field of electronics and broadcast via satellite. Private companies are investing in the broadcast business. Thus MCVision, a local private company, is running two PayTV Channels. It is operational since 1 February 1999. MBC owns 15% share of the MCVision Company. 
+
+Since 1996, the main MBC News bulletin is broadcast Live in Rodrigues.
+
+Since August 1998, a microwave link installed in the island of Agalega is operational to provide TV signals for the daily reception of the main MBC News Bulletin and also from time to time of other important events as may be broadcast by MBC.
+
+Canal France Internationale (CFI), [[Doordarshan]], [[Sky News]] and [[Deutsche Welle]], [[BBC]], are received daily and relayed on MBC Channels since this year.
+
+MBC transmits on an around the clock basis since the 5th September 1999. The broadcasting station has now embarked on a major process to shift from analogic to digital technology.
+
+==Notes and references==
+{{Reflist}}
+
+== External links ==
+* [http://www.mbcradio.tv/ Official Site] (The radio stations Kool FM, Taal FM and World Hit FM are available to listen to online from their website for free. An archive from the daily 7:30pm news is also available)
+
+[[Category:Companies of Mauritius]]
+[[Category:Publicly funded broadcasters]]
+[[Category:Mauritian media]]
+
+[[es:Mauritius Broadcasting Corporation]]
+[[fr:Mauritius Broadcasting Corporation]]

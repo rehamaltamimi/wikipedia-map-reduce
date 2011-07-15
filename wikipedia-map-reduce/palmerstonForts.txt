@@ -1,0 +1,346 @@
+{{Location map+|Isle of Wight
+  |caption = Locations of Palmerston Forts on the [[Isle of Wight]].
+  |float   = right 
+  |width   = 400
+  |places = 
+
+{{Location map~|Isle of Wight
+       |long    = -1.512466
+       |lat     =   50.669497
+       |background = white
+}}
+{{Location map~|Isle of Wight
+       |long    = -1.58399
+       |lat     =   50.66213
+       |background = white
+}}            
+{{Location map~|Isle of Wight
+       |long    = -1.564813
+       |lat     =   50.670603
+       |background = white
+}}           
+{{Location map~|Isle of Wight
+       |long    = -1.54411
+       |lat     =   50.68805
+       |background = white
+}} 
+{{Location map~|Isle of Wight
+       |long    = -1.521639
+       |lat     =   50.689333
+       |background = white
+}} 
+{{Location map~|Isle of Wight
+       |long    = -1.52914
+       |lat     =   50.700141
+       |background = white
+}} 
+{{Location map~|Isle of Wight
+       |long    = -1.531968
+       |lat     =   50.699576
+       |background = white
+}} 
+{{Location map~|Isle of Wight
+       |long    = -1.521111
+       |lat     =   50.706667 
+       |background = white
+}} 
+{{Location map~|Isle of Wight
+       |long    = -1.464167
+       |lat     =   50.709722
+       |background = white
+}} 
+{{Location map~|Isle of Wight
+       |long    = -1.129319
+       |lat     =   50.727517
+       |background = white
+}} 
+{{Location map~|Isle of Wight
+       |long    = -1.10212
+       |lat     =   50.70437
+       |background = white
+}} 
+{{Location map~|Isle of Wight
+       |long    = -1.09413
+       |lat     =   50.67823
+       |background = white
+}} 
+{{Location map~|Isle of Wight
+       |long    = -1.097917
+       |lat     =   50.666128
+       |background = white
+}} 
+{{Location map~|Isle of Wight
+       |long    = -1.117616
+       |lat     =   50.671673
+       |background = white
+}} 
+{{Location map~|Isle of Wight
+       |long    = -1.097917
+       |lat     =   50.666128
+       |background = white
+}} 
+{{Location map~|Isle of Wight
+       |long    = -1.13354
+       |lat     =   50.66703
+       |background = white
+}} 
+{{Location map~|Isle of Wight
+       |long    = -1.156175
+       |lat     =   50.652174
+       |background = white
+}} 
+{{Location map~|Isle of Wight
+       |long    = -1.16045
+       |lat     =   50.650406
+       |background = white
+}} 
+ }}
+The '''[[Palmerston Forts]]''' are a group of forts and associated structures built during the Victorian period on the recommendations of the [[1860]] [[Royal Commission on the Defence of the United Kingdom]]. The name comes from their association with [[Henry Temple, 3rd Viscount Palmerston|Lord Palmerston]], who was [[Prime Minister of the United Kingdom|Prime Minister]] at the time and promoted the idea. 
+
+The structures were built as a response to a perceived threat of a French invasion. The works were also known as Palmerston's Follies as, by the time they were completed the threat (if it had ever existed) had passed, largely due to the [[Franco-Prussian war]] of 1870 and technological advancements leading to the guns becoming out-of-date.<ref name="Palmerston's Follies">{{cite web|url=http://www.napoleon.org/en/reading_room/articles/files/hicks_portsdown_forts.asp|title='Palmerston's Follies': a reply to the French 'threat'|publisher=www.napoleon.org|accessdate=2009-09-03}}</ref>
+
+As well as new structure, extensive modifications were made to existing defences.
+
+The defences on the '''[[Isle of Wight]]''' were built to protect the approaches to the [[Solent]], [[Southampton]] and [[Portsmouth]]. They consist of three separate groups, those at the western end of the island, those at the eastern end, and four built in the [[Solent]].
+
+The information in the tables is taken from documents for each site, from the Palmerston Forts Society.<ref name="figures">''Palmerston Forts Society'' citation sheets for each location. Retrieved 2009-09-04. ([[PDF]] files).
+
+{|
+| valign="top" | 
+*<small>{{cite web | title=Freshwater Redoubt | url=http://www.palmerstonforts.org.uk/pdf/fresh.pdf}}
+*<small>{{cite web | title=Old Needles Battery | url=http://www.islandeye.co.uk/uploads/pdf/hpoi_f4f740e28b.pdf}}
+*<small>{{cite web | title=Hatherwood Battery | url=http://www.palmerstonforts.org.uk/pdf/hath.pdf}}
+*<small>{{cite web | title=Warden Point Battery | url=http://www.palmerstonforts.org.uk/pdf/wardenpoint.pdf}}
+*<small>{{cite web | title=Golden Hill Fort | url=http://www.palmerstonforts.org.uk/pdf/wardenpoint.pdf}}
+*<small>{{cite web | title=Cliff End Battery | url=http://www.islandeye.co.uk/uploads/pdf/hpoi_15ea54043c.pdf}}
+*<small>{{cite web | title=Fort Albert | url=http://www.islandeye.co.uk/uploads/pdf/hpoi_72c7caeafb.pdf}}
+*<small>{{cite web | title=Fort Victoria | url=http://www.islandeye.co.uk/uploads/pdf/hpoi_f38e88154a.pdf}}
+*<small>{{cite web | title=Bouldnor Battery | url=http://www.islandeye.co.uk/uploads/pdf/hpoi_298a497d8d.pdf}}
+| valign="top" |
+*<small>{{cite web | title=Puckpool Battery | url=http://www.islandeye.co.uk/uploads/pdf/hpoi_242b2a81e9.pdf}}
+*<small>{{cite web | title=Nodes Point Battery | url=http://www.islandeye.co.uk/uploads/pdf/hpoi_90b20eb202.pdf}}
+*<small>{{cite web | title=Steynewood Battery | url=http://www.islandeye.co.uk/uploads/pdf/hpoi_c9acdbd2af.pdf}}
+*<small>{{cite web | title=Culver Battery | url=http://www.islandeye.co.uk/uploads/pdf/hpoi_6013b674f1.pdf}}
+*<small>{{cite web | title=Bembridge Fort | url=http://www.undergroundkent.co.uk/bemb.pdf}}
+*<small>{{cite web | title=Redcliff Battery | url=http://www.islandeye.co.uk/uploads/pdf/hpoi_4bdb683615.pdf}}
+*<small>{{cite web | title=Yaverland Battery | url=http://www.undergroundkent.co.uk/yaver.pdf}}
+*<small>{{cite web | title=Sandown Fort | url=http://www.islandeye.co.uk/uploads/pdf/hpoi_a83bb82d7f.pdf}}
+*<small>{{cite web | title=Sandown Barrack Battery | url=http://www.islandeye.co.uk/uploads/pdf/hpoi_8646f3e031.pdf}}
+|}</ref>
+
+==Western end==
+[[Image:12andahalf inch muzzle loading rifled gun (1875) .jpg|thumb|right|A 12.5 inch gun from Cliff End Battery]]
+
+{| class="wikitable sortable"
+|-
+! class="unsortable" |Site name
+! class="unsortable" |Location
+! class="unsortable" |Open to the public?
+! Construction began
+! Construction ended
+! Cost
+! class="unsortable" |Grid reference
+! class="unsortable" |Map
+|-
+| [[Fort Victoria (Isle of Wight)|Fort Victoria]]
+| [[Yarmouth, Isle of Wight|Sconce Point, Yarmouth]]
+| align="center" |{{tick}}
+| align="center" |1852
+| align="center" |1855
+| align="center" |£40,000<ref name=Cantwell>*{{cite book |first=Anthony |last=Cantwell |title=Fort Victoria: 1852–1969 |publisher=Isle of Wight County Council Cultural Service |year=1985 |isbn=0906328322}}</ref>
+| align="center" |{{gbmappingsmall|SZ338897}}
+| align="center" |[http://www.multimap.com/s/7utVBDl0 ]
+|-
+| [[Fort Albert]]
+| [[Freshwater, Isle of Wight|Cliff End, Freshwater]]
+| align="center" |{{cross}}
+| align="center" |1854<ref name=Cantwell/>
+| align="center" |1856
+| align="center" |Unknown
+| align="center" |{{gbmappingsmall|SZ329890}}
+| align="center" |[http://www.multimap.com/s/6vsU7Biw ]
+|-
+| [[Freshwater Redoubt]]
+| [[Freshwater Bay]]
+| align="center" |{{cross}}
+| align="center" |1855
+| align="center" |1856
+| align="center" |Unknown
+| align="center" |{{gbmappingsmall|SZ344855}}
+| align="center" |[http://www.multimap.com/s/6rwcy7tC ]
+|-
+| [[The Needles Battery]]
+| [[Alum Bay]]
+| align="center" |{{tick}}
+| align="center" |1861
+| align="center" |1863
+| align="center" |£7,656
+| align="center" |{{gbmappingsmall|SZ295848}}
+| align="center" |[http://www.multimap.com/maps/?lat=50.662577&lon=-1.58328&zoom=14#map=50.66263,-1.58305|19|32&bd=useful_information&loc=:50.66273:-1.58312:undefined ]
+|-
+| [[Warden Point Battery]]
+| [[Freshwater, Isle of Wight|Warden Point, Freshwater]]
+| align="center" |{{cross}}
+| align="center" |1862
+| align="center" |1863
+| align="center" |£12,899
+| align="center" |{{gbmappingsmall|SZ325876}}
+| align="center" |[http://www.multimap.com/s/D4uJbPJk ]
+|-
+| [[Cliff End Battery]]
+| [[Freshwater, Isle of Wight|Cliff End, Freshwater]]
+| align="center" |{{cross}}
+| align="center" |1862
+| align="center" |1868
+| align="center" |£32,714
+| align="center" |{{gbmappingsmall|SZ332890}}
+| align="center" |[http://www.multimap.com/s/6vsU14gz ]
+|-
+| [[Golden Hill Fort]]
+| [[Afton Down]]
+| align="center" |{{cross}}
+| align="center" |1863
+| align="center" |1868
+| align="center" |£38,022
+| align="center" |{{gbmappingsmall|SZ339879}}
+| align="center" |[http://www.multimap.com/s/9sxV8Dn7 ]
+|-
+| [[Hatherwood Battery]]
+| [[Alum Bay]]
+| align="center" |{{tick}}
+| align="center" |1865
+| align="center" |1869
+| align="center" |£5,825
+| align="center" |{{gbmappingsmall|SZ307858}}
+| align="center" |[http://www.multimap.com/s/7qxd66s1 ]
+|-
+| [[The Needles Battery|The New Needles Battery]]
+| [[Alum Bay]]
+| align="center" |{{tick}}
+| align="center" |1893
+| align="center" |1895
+| align="center" |£9,821<ref>{{cite web|url=http://www.theneedlesbattery.org.uk/newbtty.shtml|title=The Needles Battery – History of the New Battery|accessdate=2010-02-07}} {{Dead link|date=October 2010|bot=H3llBot}}</ref>
+| align="center" |{{gbmappingsmall|SZ299847}}
+| align="center" |[http://www.multimap.com/maps/?lat=50.661658&lon=-1.577629&zoom=14#map=50.66165,-1.57757|18|32&bd=useful_information&loc=:50.66205:-1.57794:undefined ]
+|-
+| [[Bouldnor Battery]]
+| [[Bouldnor, Isle of Wight|Bouldnor]]
+| align="center" |{{cross}}
+| align="center" |1937
+| align="center" |1938
+| align="center" |Unknown
+| align="center" |{{gbmappingsmall|SZ379902}}
+| align="center" |[http://www.multimap.com/s/DCACq1Eu ]
+|}
+
+==Eastern end==
+
+{| class="wikitable sortable"
+|-
+! class="unsortable" |Site name
+! class="unsortable" |Location
+! class="unsortable" |Open to the public?
+! Construction began
+! Construction ended
+! Cost
+! class="unsortable" |Grid reference
+! class="unsortable" |Map
+|-
+| [[Puckpool Battery]]
+| [[Puckpool|Puckpool Point]]
+| align="center" |{{tick}}
+| align="center" |1863
+| align="center" |1865
+| align="center" |20,864
+| align="center" |{{gbmappingsmall|SZ615923}}
+| align="center" |[http://www.multimap.com/s/cNwKUeF6 ]
+|-
+| [[Nodes Point Battery]]
+| [[Nodes Point]]
+| align="center" |{{tick}}
+| align="center" |1901
+| align="center" |1904
+| align="center" |£21,654
+| align="center" |{{gbmappingsmall|SZ635898}}
+| align="center" |[http://www.multimap.com/s/8twUA9iB ]
+|-
+| [[Steynewood Battery]]
+| [[Whitecliff Bay]]
+| align="center" |{{cross}}
+| align="center" |1889
+| align="center" |1893
+| align="center" |Unknown
+| align="center" |{{gbmappingsmall|SZ641869}}
+| align="center" |[http://www.multimap.com/s/eLsHSRIz ]
+|-
+| [[Culver Battery]]
+| [[Culver Down]]
+| align="center" |{{tick}}
+| align="center" |1904
+| align="center" |1906
+| align="center" |Unknown
+| align="center" |{{gbmappingsmall|SZ638855}}
+| align="center" |[http://www.multimap.com/s/eLsQWSH8 ]
+|-
+| [[Bembridge Fort]]
+| [[Bembridge Down]]
+| align="center" |{{cross}}
+| align="center" |1862
+| align="center" |1867
+| align="center" |£48,925
+| align="center" |{{gbmappingsmall|SZ624861}}
+| align="center" |[http://www.multimap.com/s/ABBzxqiJ ]
+|-
+| [[Redcliff Battery]]
+| [[Culver Down]]
+| align="center" |{{tick}}
+| align="center" |1861
+| align="center" |1863
+| align="center" |£4,776
+| align="center" |{{gbmappingsmall|SZ638855}}
+| align="center" |[http://www.multimap.com/s/fOxIpqMA ]
+|-
+| [[Yaverland Battery]]
+| [[Yaverland]]
+| align="center" |{{tick}}
+| align="center" |1861
+| align="center" |1864
+| align="center" |15,183
+| align="center" |{{gbmappingsmall|SZ612849}}
+| align="center" |[http://www.multimap.com/s/6rwc7BpB ]
+|-
+| [[Sandown Fort]]
+| [[Sandown Bay]]
+| align="center" |{{tick}}
+| align="center" |1861
+| align="center" |1864
+| align="center" |£73,876
+| align="center" |{{gbmappingsmall|SZ597839}}
+| align="center" |[http://www.multimap.com/s/6vscB3tF ]
+|-
+| [[Sandown Barrack Battery]]
+| [[Sandown Bay]]
+| align="center" |{{tick}}
+| align="center" |1861
+| align="center" |1863
+| align="center" |£62,331
+| align="center" |{{gbmappingsmall|SZ594837}}
+| align="center" |[http://www.multimap.com/s/cJsRdcEF ]
+|}
+
+==Solent==
+*[[Spitbank Fort]]
+*[[St Helens Fort]]
+*[[Horse Sand Fort]]
+*[[No Mans Land Fort]]
+
+==References==
+<references/>
+
+==External links==
+*[http://www.palmerstonforts.org.uk/index.htm Palmerston Forts Society]
+
+{{Palmerston Forts on the Isle of Wight}}
+
+[[Category:Lists of Palmerston Forts|*Isle of Wight]]
+[[Category:Forts on the Isle of Wight]]

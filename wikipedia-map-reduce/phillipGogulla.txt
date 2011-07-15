@@ -1,0 +1,327 @@
+{{Infobox Ice Hockey Player
+| image = Philip Gogulla.jpg
+| image_size = 225px
+| team = [[Kölner Haie]]
+| former_teams =  [[Portland Pirates]] 
+| league = [[Deutsche Eishockey Liga|DEL]]
+| position = [[Winger (ice hockey)|Left Wing]]
+| shoots = Left
+| height_ft = 6
+| height_in = 2
+| weight_lb = 200
+| nickname = 
+| ntl_team = DEU
+| birth_date = {{Birth date and age|1987|7|31|mf=y}}
+| birth_place = [[Düsseldorf]], [[Germany]]
+| draft = 48th overall 
+| draft_year = 2005 
+| draft_team = [[Buffalo Sabres]]
+| career_start = 2004
+}}
+'''Philip Gogulla''' (born July 31, 1987) is a German professional [[ice hockey]] player currently playing for [[Kölner Haie]] of the [[Deutsche Eishockey Liga]].
+
+==Playing career==
+Gogulla began his professional career with the [[Krefeld Pinguine]] at the age of 15 in [[2002]], although his professional league debut in the DEL came first with the Kölner Haie two years later. He has since become a regular player for the team, and also represented the [[Germany men's national ice hockey team|Germany national ice hockey team]] on several occasions.
+
+Gogulla was drafted in the second round, 48th overall, by the [[Buffalo Sabres]] in the [[2005 NHL Entry Draft]]. He signed an entry-level contact with the Buffalo Sabres on June 1 2007, to prevent him from re-entering the NHL entry draft in 2007, although there was some confusion as to whether he had signed. NHL rules state prospects must be signed before 5:00pm EDT on June 1 or the team's rights to the player expire and he is free to re-enter the draft or become a free agent. Gogulla was signed by this deadline, but the contract had to be approved by the NHL. There was a delay in the approval process meaning the deal could not be announced and so it was assumed that the management had failed to sign Gogulla in time. On June 2, 2007, the deal was approved and announced as a three-year entry-level contract.<ref>{{citeweb| url = http://hockeysfuture.com/prospect/philippe_gogulla | title =  Hockey's Future feature- Philip Gogulla | publisher = ''hockeysfuture.com'' | date = 2008-02-03 | accessdate = 2010-01-02}}</ref> 
+
+In the first two seasons of his deal, Gogulla remained in Kölner on loan from the Sabres.<ref>{{citeweb| url = http://sabres.nhl.com/club/news.htm?id=437630 | title = Six assigned to Rochester Americans | publisher = ''[[Buffalo Sabres]]'' | date = 2007-09-25 | accessdate = 2010-01-02}}</ref> In the [[2009-10 AHL season|2009–10]] season, Philip stayed in North America after attending the Buffalo Sabres' 2009 Prospect camp held at [[Dwyer Arena]], home of [[Niagara University|Niagara University Purple Eagles]], from 6-10 July 2009. Upon completing his third NHL training camp he was re-assigned to AHL affiliate, the [[Portland Pirates]].<ref>{{citeweb| url = http://sabres.nhl.com/club/news.htm?id=499938 | title =Sabres sign Mark Mancari | publisher = ''[[Buffalo Sabres]]'' | date = 2009-09-26 | accessdate = 2010-01-02}}</ref> 
+
+Gogulla spent the entirety of the season with the Pirates and contributed 15 goals and 35 points in 76 games. Gogulla was recalled by the Sabres to their taxi squad for the playoffs following the conclusion of the Pirates post-season. Despite being unable to make his NHL debut, Gogulla was still named to the German extended squad to take part in the [[Vancouver Winter Olympics|Vancouver Winter Olympics]].<ref>{{citeweb| url = http://sabres.nhl.com/club/news.htm?id=511685|title = Gogulla named to German roster | publisher = ''[[Buffalo Sabres]]'' |date = 2009-12-30 | accessdate = 2011-03-30}}</ref>  
+
+On June 8, 2010, as a restricted free agent from the Sabres, Gogulla opted to return to Kölner and the DEL and signed a three-year deal to start in the [[2010–11 Deutsche Eishockey Liga season|2010–11]] season.<ref>{{citeweb| url = http://www.haie.de/index.php?type=article&articleId=5353 | language = German | publisher = ''[[Kölner Haie]]'' | title = Philip Gogulla first new signing of the KEC | date = 2010-06-08 | accessdate = 2010-06-08}}</ref>
+
+==Career statistics==
+===Regular season and playoffs===
+{| border="0" cellpadding="1" cellspacing="0" style="text-align:center; width:75%"
+|- bgcolor="#e0e0e0"
+! colspan="3" bgcolor="#ffffff" |
+! rowspan="99" bgcolor="#ffffff" |
+! colspan="5" | [[Regular season]]
+! rowspan="99" bgcolor="#ffffff" |
+! colspan="5" | [[Playoffs]]
+|- bgcolor="#e0e0e0"
+! [[Season (sports)|Season]]
+! Team
+! League
+! GP
+! [[Goal (ice hockey)|G]]
+! [[Assist (ice hockey)|A]]
+! [[Point (ice hockey)|Pts]]
+! [[Penalty (ice hockey)|PIM]]
+! GP
+! G
+! A
+! Pts
+! PIM
+|- ALIGN="center" 
+| ALIGN="center" | [[2004-05 Deutsche Eishockey Liga season|2004–05]]
+| ALIGN="center" | [[Kölner Haie]]
+| ALIGN="center" | [[Deutsche Eishockey Liga|DEL]]
+| ALIGN="center" | 47
+| ALIGN="center" | 1
+| ALIGN="center" | 1
+| ALIGN="center" | 2
+| ALIGN="center" | 14
+| ALIGN="center" | 7
+| ALIGN="center" | 0
+| ALIGN="center" | 0
+| ALIGN="center" | 0
+| ALIGN="center" | 2
+|- ALIGN="center" bgcolor="#f0f0f0"
+| 2004–05
+| ESC Essen Moskitos
+| [[2nd Bundesliga (ice hockey)|2.GBun]]
+| 3
+| 0
+| 0
+| 0
+| 0
+| —
+| —
+| —
+| —
+| —
+|- ALIGN="center" 
+| ALIGN="center" | [[2005-06 Deutsche Eishockey Liga season|2005–06]]
+| ALIGN="center" | Kölner Haie
+| ALIGN="center" | DEL
+| ALIGN="center" | 48
+| ALIGN="center" | 7
+| ALIGN="center" | 15
+| ALIGN="center" | 22
+| ALIGN="center" | 49
+| ALIGN="center" | 9
+| ALIGN="center" | 3
+| ALIGN="center" | 2
+| ALIGN="center" | 5
+| ALIGN="center" | 40
+|- ALIGN="center" bgcolor="#f0f0f0"
+| ALIGN="center" | [[2006-07 Deutsche Eishockey Liga season|2006–07]]
+| ALIGN="center" | Kölner Haie
+| ALIGN="center" | DEL
+| ALIGN="center" | 44
+| ALIGN="center" | 8
+| ALIGN="center" | 13
+| ALIGN="center" | 21
+| ALIGN="center" | 26
+| ALIGN="center" | 7
+| ALIGN="center" | 0
+| ALIGN="center" | 0
+| ALIGN="center" | 0
+| ALIGN="center" | 8
+|- ALIGN="center"
+| ALIGN="center" | [[2007-08 Deutsche Eishockey Liga season|2007–08]]
+| ALIGN="center" | Kölner Haie
+| ALIGN="center" | DEL
+| ALIGN="center" | 51
+| ALIGN="center" | 11
+| ALIGN="center" | 33
+| ALIGN="center" | 44
+| ALIGN="center" | 30
+| ALIGN="center" | 14
+| ALIGN="center" | 3
+| ALIGN="center" | 9
+| ALIGN="center" | 12
+| ALIGN="center" | 6
+|- ALIGN="center"  bgcolor="#f0f0f0"
+| ALIGN="center" | [[2008-09 Deutsche Eishockey Liga season|2008–09]]
+| ALIGN="center" | Kölner Haie
+| ALIGN="center" | DEL
+| ALIGN="center" | 48
+| ALIGN="center" | 17
+| ALIGN="center" | 21
+| ALIGN="center" | 38
+| ALIGN="center" | 58
+| —
+| —
+| —
+| —
+| —
+|- ALIGN="center" 
+| ALIGN="center" | [[2009-10 AHL season|2009–10]]
+| ALIGN="center" | [[Portland Pirates]]
+| ALIGN="center" | [[American Hockey League|AHL]]
+| ALIGN="center" | 76
+| ALIGN="center" | 15
+| ALIGN="center" | 20
+| ALIGN="center" | 35
+| ALIGN="center" | 27
+| ALIGN="center" | 3
+| ALIGN="center" | 0
+| ALIGN="center" | 0
+| ALIGN="center" | 0
+| ALIGN="center" | 0
+|- ALIGN="center"  bgcolor="#f0f0f0"
+| ALIGN="center" | [[2010–11 Deutsche Eishockey Liga season|2010–11]]
+| ALIGN="center" | Kölner Haie
+| ALIGN="center" | DEL
+| ALIGN="center" | 52
+| ALIGN="center" | 13
+| ALIGN="center" | 33
+| ALIGN="center" | 46
+| ALIGN="center" | 50
+| 5
+| 2
+| 2
+| 4
+| 0
+|- bgcolor="#e0e0e0"
+! colspan="3" | DEL totals
+! 290
+! 57
+! 116
+! 173
+! 227
+! 42
+! 8
+! 13
+! 21
+! 56
+|}
+===International===
+{| BORDER="0" CELLPADDING="2" CELLSPACING="0" width=40%
+|- ALIGN="center" bgcolor="#e0e0e0"
+! Year
+! Team
+! Comp
+! GP
+! G
+! A
+! Pts
+! PIM
+|- ALIGN="center"
+| [[2004 World U-17 Hockey Challenge|2004]]
+| [[Germany men's national junior ice hockey team|Germany]]
+| [[World U17 Hockey Challenge|U17]]
+| 5
+| 1
+| 3
+| 4
+| 0
+|- ALIGN="center" bgcolor="#f0f0f0"
+| [[2004 IIHF World U18 Championships|2004]]
+| Germany
+| [[IIHF World U18 Championships|WJC18-D1]]
+| 5
+| 2
+| 5
+| 7
+| 16
+|- ALIGN="center" 
+| [[2005 IIHF World U18 Championships|2005]]
+| Germany
+| WJC18
+| 6
+| 1
+| 2
+| 3
+| 4
+|- ALIGN="center" bgcolor="#f0f0f0"
+| [[2006 World Junior Ice Hockey Championships|2006]]
+| Germany
+| [[World Junior Ice Hockey Championships|WJC-D1]] 
+| 5
+| 1
+| 6
+| 7
+| 30
+|- ALIGN="center"
+| [[2006 Men's World Ice Hockey Championships|2006]]
+| Germany
+| [[IIHF World Championships|WC-D1]] 
+| 5 
+| 1 
+| 3 
+| 4 
+| 8
+|- ALIGN="center" bgcolor="#f0f0f0"
+| [[2007 World Junior Ice Hockey Championships|2007]]
+| Germany
+| WJC
+| 6
+| 0
+| 6
+| 6
+| 8
+|- ALIGN="center" 
+| [[2007 Men's World Ice Hockey Championships|2007]]
+| Germany
+| WC
+| 6 
+| 0 
+| 5 
+| 5 
+| 4
+|- ALIGN="center" bgcolor="#f0f0f0"
+| [[2008 Men's World Ice Hockey Championships|2008]]
+| Germany
+| WC
+| 6 
+| 1 
+| 3 
+| 4 
+| 6
+|- ALIGN="center" 
+| [[2009 Men's World Ice Hockey Championships|2009]]
+| Germany
+| WC 
+| 6 
+| 0 
+| 1 
+| 1 
+| 2
+|- ALIGN="center" bgcolor="#f0f0f0"
+| [[2010 Men's World Ice Hockey Championships|2010]]
+| Germany
+| WC
+| 7 
+| 1 
+| 0 
+| 1 
+| 0
+|- bgcolor="#e0e0e0" 
+! colspan="3" | Junior int'l totals 
+!  27
+!  5
+!  22
+!  27
+!  58
+|- bgcolor="#e0e0e0" 
+! colspan="3" | Senior int'l totals 
+!  30
+!  3
+!  12
+!  15
+!  20
+|}
+
+==References==
+{{reflist}}
+
+==External links==
+*{{hockeydb|80718}}
+*{{eurohockey|62177}}
+
+{{Persondata <!-- Metadata: see [[Wikipedia:Persondata]]. -->
+| NAME              = Gogulla, Philip
+| ALTERNATIVE NAMES =
+| SHORT DESCRIPTION =
+| DATE OF BIRTH     = July 31, 1987
+| PLACE OF BIRTH    = [[Düsseldorf]], [[Germany]]
+| DATE OF DEATH     =
+| PLACE OF DEATH    =
+}}
+{{DEFAULTSORT:Gogulla, Philip}}
+[[Category:1987 births]]
+[[Category:Buffalo Sabres draft picks]]
+[[Category:German ice hockey players]]
+[[Category:Kölner Haie players]]
+[[Category:Living people]]
+[[Category:Portland Pirates players]]
+
+[[de:Philip Gogulla]]
+[[fr:Philip Gogulla]]
+[[ru:Гогулла, Филип]]
+[[sk:Philip Gogulla]]
+[[uk:Філіп Гогулла]]
