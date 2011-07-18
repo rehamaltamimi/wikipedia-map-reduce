@@ -22,6 +22,8 @@ public class LzmaPipe {
 	 * @uml.property  name="compressed" multiplicity="(0 -1)" dimension="1"
 	 */
 	private byte [] compressed = null;
+        private int compressedLength = -1;
+        
 	/**
 	 * @uml.property  name="inputStream"
 	 */
@@ -33,6 +35,12 @@ public class LzmaPipe {
 	
 	public LzmaPipe(byte [] compressed) {
 		this.compressed = compressed;
+                compressedLength = compressed.length;
+	}
+	
+	public LzmaPipe(byte [] compressed, int length) {
+		this.compressed = compressed;
+                compressedLength = length;
 	}
 	
 	/**
@@ -68,7 +76,7 @@ public class LzmaPipe {
 	}
 	
 	private void launchDecompressor(PipedOutputStream outputStream) throws Exception {
-		ByteArrayInputStream byteStream = new ByteArrayInputStream(compressed);
+		ByteArrayInputStream byteStream = new ByteArrayInputStream(compressed, 0, compressedLength);
 		BufferedInputStream inStream = new BufferedInputStream(byteStream);
 		int propertiesSize = 5;
 		byte[] properties = new byte[propertiesSize];
