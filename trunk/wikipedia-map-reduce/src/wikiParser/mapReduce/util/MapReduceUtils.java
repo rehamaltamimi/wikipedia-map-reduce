@@ -75,6 +75,26 @@ public class MapReduceUtils {
 		}
 		return unescaped;
 	}
+        
+	public static int unescapeInPlace(byte [] escaped, int length) {
+		int j = 0;	// index into unescaped string
+		for (int i = 0; i < length; i++) {
+			byte b = escaped[i];
+			if (escaped[i] == '\\') {
+				switch (escaped[i+1]) {
+				case 'r': b = '\r'; break;
+				case '\\': b = '\\'; break;
+				case 'n': b = '\n'; break;
+				case 't': b = '\t'; break;
+				default:
+					throw new RuntimeException("unexpected character following escape " + escaped[i+1]);
+				}
+				i++;
+			}
+			escaped[j++] = b;
+		}
+		return j;
+	}
 
         /**
          * Convert a map-reduce key such as "324242.xml.7z" to 324242

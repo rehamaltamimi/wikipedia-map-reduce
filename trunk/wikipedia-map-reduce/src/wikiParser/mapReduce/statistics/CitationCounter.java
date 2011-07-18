@@ -41,8 +41,8 @@ public class CitationCounter extends Configured implements Tool {
             
             LzmaPipe pipe = null;
             try {
-                byte[] unescaped = MapReduceUtils.unescape(value.getBytes(), value.getLength());
-                pipe = new LzmaPipe(unescaped);
+                int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
+                pipe = new LzmaPipe(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();
                 if (article.isNormalPage()) {//main namespace only
