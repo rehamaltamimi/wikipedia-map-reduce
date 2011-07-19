@@ -6,13 +6,16 @@ package wikiParser.mapReduce.statistics;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.regex.Pattern;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.*;
+import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import wikiParser.*;
@@ -32,15 +35,14 @@ public class CitationCounter extends Configured implements Tool {
     /*
      * Takes key-value 7zip hashes and outputs url-id pairs.
      */
-    public static class MyMapper extends MapReduceBase implements Mapper<Text, Text, Text, Text> {
+    public static class MyMapper extends Mapper<Text, Text, Text, Text> {
 
         Map<String, Map<String,Integer>> citeCounts = new HashMap<String, Map<String,Integer>>();
-        public void map(Text key, Text value, OutputCollector<Text, Text> output,
-                Reporter reporter) throws IOException {
+        public void map(Text key, Text value, Mapper.Context context) throws IOException {
             
             LzmaPipe pipe = null;
             try {
-                reporter.progress();
+                context.progress();
                 int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
                 pipe = new LzmaPipe(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
@@ -49,9 +51,9 @@ public class CitationCounter extends Configured implements Tool {
                 if (article.isNormalPage()) {//main namespace only
                     Set <String> urls = new HashSet<String>();
                     while (true) {
-                        reporter.progress();
+                        context.progress();
                         Revision rev = parser.getNextRevision();
-                        reporter.progress();
+                        context.progress();
                         if (rev == null) {
                             break;
                         }
@@ -59,13 +61,14 @@ public class CitationCounter extends Configured implements Tool {
                         urls = processRevision(parser.getArticle(), rev, urls);
                     }
                     for (String url : citeCounts.keySet()) {
-                        output.collect(new Text(url + "@" + article.getId()), new Text(citeCounts.get(url).get("added") +
-                                "\t"+ citeCounts.get(url).get("removed") + "\t" + citeCounts.get(url).get("revisions")));
+                        context.write(
+                                new Text(url + "@" + article.getId()),
+                                new Text(citeCounts.get(url).get("added") + "\t"+ citeCounts.get(url).get("removed") + "\t" + citeCounts.get(url).get("revisions")));
                     }
                     citeCounts.clear();
                 }
             } catch (Exception e) {
-                reporter.progress();
+                context.progress();
                 System.err.println("error when processing " + key + ":");
                 e.printStackTrace();
             } finally {
@@ -124,29 +127,28 @@ public class CitationCounter extends Configured implements Tool {
         Path inputPath = new Path(args[0]);
         Path outputPath = new Path(args[1]);
 
-        JobConf job = new JobConf(getConf(), this.getClass());
-        job.setJobName(this.getClass().toString());
+        Configuration conf = getConf();
+        Job job = new Job(conf, this.getClass().toString());
 
         FileInputFormat.setInputPaths(job, inputPath);
         FileOutputFormat.setOutputPath(job, outputPath);
 
-        job.setInputFormat(KeyValueTextInputFormat.class);
-        job.setOutputFormat(TextOutputFormat.class);
+        
+        job.setInputFormatClass(TextInputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
         job.setMapperClass(MyMapper.class);
-        job.setReducerClass(IdentityReduce.class);
-        FileSystem hdfs = FileSystem.get(outputPath.toUri(), job);
+        job.setReducerClass(Reducer.class); // identity reducer
+        FileSystem hdfs = FileSystem.get(outputPath.toUri(), conf);
         if (hdfs.exists(outputPath)) {
             hdfs.delete(outputPath, true);
         }
 
-        JobClient.runJob(job);
-
-        return 0;
+        return job.waitForCompletion(true) ? 0 : 1;
     }
 
     /**
@@ -156,6 +158,5 @@ public class CitationCounter extends Configured implements Tool {
     public static void main(String[] args) throws Exception {
         int res = ToolRunner.run(new Configuration(), new CitationCounter(), args);
         System.exit(res);
-        return;
     }
 }
