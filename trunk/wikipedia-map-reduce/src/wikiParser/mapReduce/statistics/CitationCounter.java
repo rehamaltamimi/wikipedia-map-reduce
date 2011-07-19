@@ -156,7 +156,7 @@ public class CitationCounter extends Configured implements Tool {
      * <code>ToolRunner</code>.
      */
     public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new Configuration(), new CitationCounter(), args);
+        int res = ToolRunner.run(new CitationCounter(), args);
         System.exit(res);
     }
 }
