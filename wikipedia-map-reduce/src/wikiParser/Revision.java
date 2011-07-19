@@ -149,7 +149,7 @@ public class Revision {
         public List<Template> getCites() {
             List<Template> cites = new LinkedList<Template>();
             for (int i = 0; i < text.length() - 4; i++) {
-                /*if (text.substring(i, i + 2).equals("{{")) {//Not looking for unreferenced cite templates
+                if (text.substring(i, i + 2).equals("{{")) {
                     int cnt = 2;
                     int j = i + 2;
                     while (cnt > 0 & j < text.length()) {
@@ -165,7 +165,7 @@ public class Revision {
                         cites.add(Template.processTemplate(template, i+2, j-2));
                     }
                     i = j;
-                } else {*/
+                } else {
                 Matcher startMatcher = REF_START.matcher(text.substring(i));
                 if (startMatcher.find(0)) {
                     Matcher endMatcher = REF_END.matcher(text.substring(i));
@@ -181,7 +181,7 @@ public class Revision {
                         System.err.println("No end of reference found in revision " + this.getId() + " at time " + this.getTimestamp());
                     }
                 }
-                //}
+                }
             }
             return cites;
         }

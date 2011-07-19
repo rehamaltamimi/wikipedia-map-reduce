@@ -35,31 +35,27 @@ public class CitationCounter extends Configured implements Tool {
     public static class MyMapper extends MapReduceBase implements Mapper<Text, Text, Text, Text> {
 
         Map<String, Map<String,Integer>> citeCounts = new HashMap<String, Map<String,Integer>>();
-        int rprt = 0;
         public void map(Text key, Text value, OutputCollector<Text, Text> output,
                 Reporter reporter) throws IOException {
             
             LzmaPipe pipe = null;
             try {
+                reporter.progress();
                 int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
                 pipe = new LzmaPipe(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();
+                System.err.println("processing article " + key + "(" + parser.getArticle().getName() + ")");
                 if (article.isNormalPage()) {//main namespace only
                     Set <String> urls = new HashSet<String>();
-    //                System.err.println("processing article " + key + "(" + parser.getArticle().getName() + ")");
                     while (true) {
                         Revision rev = parser.getNextRevision();
-    //                    System.err.println("doing revision " + rev.getId() + " at " + rev.getTimestamp());
                         if (rev == null) {
                             break;
                         }
+                        System.err.println("doing revision " + rev.getId() + " at " + rev.getTimestamp());
                         urls = processRevision(parser.getArticle(), rev, urls);
-                        rprt++;
-                        if (rprt > 24) {
-                            reporter.progress();
-                            rprt = 0;
-                        }
+                        reporter.progress();
                     }
                     for (String url : citeCounts.keySet()) {
                         output.collect(new Text(url + "@" + article.getId()), new Text(citeCounts.get(url).get("added") +
@@ -68,6 +64,7 @@ public class CitationCounter extends Configured implements Tool {
                     citeCounts.clear();
                 }
             } catch (Exception e) {
+                reporter.progress();
                 System.err.println("error when processing " + key + ":");
                 e.printStackTrace();
             } finally {

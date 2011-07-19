@@ -66,6 +66,7 @@ public class MapReduceUtils {
 				case '\\': b = '\\'; break;
 				case 'n': b = '\n'; break;
 				case 't': b = '\t'; break;
+                                    
 				default:
 					throw new RuntimeException("unexpected character following escape " + escaped[i+1]);
 				}
