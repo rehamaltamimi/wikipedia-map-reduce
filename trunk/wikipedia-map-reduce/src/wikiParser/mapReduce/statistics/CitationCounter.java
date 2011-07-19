@@ -49,13 +49,14 @@ public class CitationCounter extends Configured implements Tool {
                 if (article.isNormalPage()) {//main namespace only
                     Set <String> urls = new HashSet<String>();
                     while (true) {
+                        reporter.progress();
                         Revision rev = parser.getNextRevision();
+                        reporter.progress();
                         if (rev == null) {
                             break;
                         }
-                        System.err.println("doing revision " + rev.getId() + " at " + rev.getTimestamp());
+//                        System.err.println("doing revision " + rev.getId() + " at " + rev.getTimestamp());
                         urls = processRevision(parser.getArticle(), rev, urls);
-                        reporter.progress();
                     }
                     for (String url : citeCounts.keySet()) {
                         output.collect(new Text(url + "@" + article.getId()), new Text(citeCounts.get(url).get("added") +
@@ -125,7 +126,6 @@ public class CitationCounter extends Configured implements Tool {
 
         JobConf job = new JobConf(getConf(), this.getClass());
         job.setJobName(this.getClass().toString());
-        SecondarySortOnHash.setupSecondarySortOnHash(job);
 
         FileInputFormat.setInputPaths(job, inputPath);
         FileOutputFormat.setOutputPath(job, outputPath);
