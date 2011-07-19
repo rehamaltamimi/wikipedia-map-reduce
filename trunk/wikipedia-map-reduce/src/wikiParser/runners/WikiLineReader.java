@@ -6,12 +6,14 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PipedInputStream;
 import java.util.Arrays;
 import javax.xml.stream.XMLStreamException;
 import wikiParser.PageParser;
 import wikiParser.Revision;
 import wikiParser.mapReduce.util.MapReduceUtils;
 import wikiParser.util.LzmaPipe;
+import wikiParser.util.SevenUnzip;
 
 /**
  * Reads in a wikipedia file in the standard hadoop format.
@@ -44,8 +46,9 @@ public class WikiLineReader {
                 String key = readKey();
                 byte[] value = readValue();
                 System.err.println("processing line " + numLines + ": " + key);
-//              System.out.println("contents is " + SevenUnzip.unzip(line.substring(i+1).getBytes()));
-                processLine(value);
+//              System.out.println("contents is " + SevenUnzip.unzip(value));
+//                processLine(value);
+                printLine(value);
             } catch (Exception e) {
                 System.err.println("\nfailure:");
                 e.printStackTrace();
@@ -86,11 +89,36 @@ public class WikiLineReader {
         return Arrays.copyOfRange(buff, 0, nUsed);
     }
 
+    public void printLine(byte[] escaped) {
+        LzmaPipe pipe = null;
+        try {
+            byte[] unescaped = MapReduceUtils.unescape(escaped, escaped.length);
+            System.err.println("unescaped length is " + unescaped.length);
+            pipe = new LzmaPipe(unescaped);
+            PipedInputStream in = pipe.decompress();
+            byte[] buff = new byte[80];
+            while (true) {
+                int r = in.read(buff);
+                if (r <= 0) {
+                    break;
+                }
+                System.out.println("read " + new String(buff));
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        } finally {
+            if (pipe != null) {
+                pipe.cleanup();
+            }
+        }
+        
+    }
 
     public void processLine(byte[] escaped) {
         LzmaPipe pipe = null;
         try {
             byte[] unescaped = MapReduceUtils.unescape(escaped, escaped.length);
+            System.err.println("unescaped length is " + unescaped.length);
             pipe = new LzmaPipe(unescaped);
             PageParser parser = new PageParser(pipe.decompress());
             processArticle(parser);
@@ -111,7 +139,7 @@ public class WikiLineReader {
                 break;
             i++;
         }
-        System.out.println("number of revisions is " + i);
+        System.err.println("number of revisions is " + i);
     }
     
     public void cleanup() throws IOException {
@@ -119,7 +147,7 @@ public class WikiLineReader {
     }
 
 	public static void run() throws IOException {
-		WikiLineReader wlr = new WikiLineReader(new File("runners_data/big.txt"));
+		WikiLineReader wlr = new WikiLineReader(new File("/Users/research/wikipedia.txt.tiny"));
         wlr.readLines();
 	}
 

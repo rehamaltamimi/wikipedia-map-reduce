@@ -84,7 +84,7 @@ public class PageParser {
 	 * @return
 	 * @throws XMLStreamException
 	 */
-	public Revision getNextRevision() throws XMLStreamException {
+            public Revision getNextRevision() throws XMLStreamException {
 		if (reader == null) {
 			return null;
 		}
@@ -105,7 +105,7 @@ public class PageParser {
 		text = stripComments(text, timestamp);
 		boolean isMinor = (minor != null) && minor.equals("1");
 		boolean isVandalism = (vandalism != null) && vandalism.equals("1");
-		//		System.err.println("rev is " + text);
+		// System.err.println("rev is " + text);
 
 		Revision rev = new Revision(id, timestamp, contributor, text, comment, isMinor, isVandalism);
 		if (storeFullTextInArticle) {
