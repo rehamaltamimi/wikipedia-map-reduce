@@ -62,8 +62,7 @@ public class CiteDomainCounter  extends Configured implements Tool {
 
         JobConf job = new JobConf(getConf(), this.getClass());
         job.setJobName(this.getClass().toString());
-        SecondarySortOnHash.setupSecondarySortOnHash(job);
-
+        
         FileInputFormat.setInputPaths(job, inputPath);
         FileOutputFormat.setOutputPath(job, outputPath);
 

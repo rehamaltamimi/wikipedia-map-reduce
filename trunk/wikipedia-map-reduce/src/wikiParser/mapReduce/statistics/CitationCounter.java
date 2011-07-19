@@ -53,7 +53,6 @@ public class CitationCounter extends Configured implements Tool {
                     while (true) {
                         context.progress();
                         Revision rev = parser.getNextRevision();
-                        context.progress();
                         if (rev == null) {
                             break;
                         }
@@ -135,13 +134,13 @@ public class CitationCounter extends Configured implements Tool {
 
         
         job.setJarByClass(CitationCounter.class);
-        job.setInputFormatClass(TextInputFormat.class);
+        job.setInputFormatClass(KeyValueTextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
-
+        
         job.setMapperClass(MyMapper.class);
         job.setReducerClass(Reducer.class); // identity reducer
         FileSystem hdfs = FileSystem.get(outputPath.toUri(), conf);
