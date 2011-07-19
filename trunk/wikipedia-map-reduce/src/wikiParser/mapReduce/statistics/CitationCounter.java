@@ -134,6 +134,7 @@ public class CitationCounter extends Configured implements Tool {
         FileOutputFormat.setOutputPath(job, outputPath);
 
         
+        job.setJarByClass(CitationCounter.class);
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setMapOutputKeyClass(Text.class);
