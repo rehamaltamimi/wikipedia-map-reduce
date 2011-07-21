@@ -38,7 +38,6 @@ public class LzmaPipe {
         /*
          * 
          */
-        private Object lock = new Object();
         
 	public LzmaPipe(byte [] compressed) {
 		this.compressed = compressed;
@@ -76,9 +75,6 @@ public class LzmaPipe {
 						e1.printStackTrace();
 					}
 				}
-                                synchronized (lock) {
-                                    lock.notify();
-                                }
 			}
 		};
 		t.start();
