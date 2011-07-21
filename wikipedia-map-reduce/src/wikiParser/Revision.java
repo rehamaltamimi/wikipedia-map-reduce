@@ -138,7 +138,7 @@ public class Revision {
 	}
         
         private static final Pattern REF_START = Pattern.compile("^<[\\s]*ref[^/]*?>");
-        private static final Pattern REF_END = Pattern.compile(".*?(<[\\s]*/[\\s]*ref[\\s]*>)");
+        private static final Pattern REF_END = Pattern.compile("(<[\\s]*/[\\s]*ref[\\s]*>)");
         /**
          * Some information may be omitted or overwritten in the following cases:
          * 1. More than one template is included in a single citation and the template field names overlap
@@ -166,21 +166,21 @@ public class Revision {
                     }
                     i = j;
                 } else {
-                Matcher startMatcher = REF_START.matcher(text.substring(i));
-                if (startMatcher.find(0)) {
-                    Matcher endMatcher = REF_END.matcher(text.substring(i));
-                    try {
-                        endMatcher.find(0);
-                        //Must call this or matcher will return null for start and end
-                        int start = endMatcher.start(1);
-                        int end = endMatcher.end(1);
-                        String ref = text.substring(i+startMatcher.end(), i+start);//need to do something a little smarter with starting index...
-                        cites.add(processRef(ref,i+5,i+start+1));
-                        i = i+end;
-                    } catch (IllegalStateException e) {
-                        System.err.println("No end of reference found in revision " + this.getId() + " at time " + this.getTimestamp());
+                    Matcher startMatcher = REF_START.matcher(text.substring(i));
+                    if (startMatcher.find(0)) {
+                        Matcher endMatcher = REF_END.matcher(text.substring(i));
+                        if (endMatcher.find()) {
+                            //Must call this or matcher will return null for start and end
+                            int start = endMatcher.start(1);
+                            int end = endMatcher.end(1);
+                            String ref = text.substring(i+startMatcher.end(), i+start);//need to do something a little smarter with starting index...
+                            cites.add(processRef(ref,i+5,i+start+1));
+                            i = i+end;
+                        } else {
+                            System.err.println("No end of reference found in revision " + this.getId() + " at time " + this.getTimestamp());
+                            break;
+                        }
                     }
-                }
                 }
             }
             return cites;
@@ -199,7 +199,7 @@ public class Revision {
                 if (substring.substring(i, i + 2).equals("{{")) {
                     int cnt = 2;
                     int j = i + 2;
-                    while (cnt > 0 & j < substring.length()) {
+                    while (cnt > 0 && j < substring.length()) {
                         if (substring.charAt(j) == '{') {
                             cnt++;
                         } else if (substring.charAt(j) == '}') {

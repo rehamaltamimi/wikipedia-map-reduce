@@ -33,20 +33,12 @@ public class Template {
         LinkedHashMap<String,String> map = new LinkedHashMap<String,String>();
         map.put("templateName", mapText[0].trim());
         for (int i = 1; i < mapText.length; i++) { //skip first because that is template name
-            String[] keyVal = mapText[i].split("=");
-            if (keyVal.length > 1) {
-                String val;
-                if (keyVal.length > 2) {
-                    val = keyVal[1];
-                    for (int j = 2; j < keyVal.length; j++) {
-                        val = val + "=" + keyVal[j];
-                    }
-                } else {
-                    val = keyVal[1];
-                }
-                val = val.trim();
-                if (val.length() > 0) {
-                    map.put(keyVal[0].trim(),val);
+            String[] keyVal = mapText[i].split("=", 2);
+            if (keyVal.length == 2) {
+                String key = keyVal[0].trim();
+                String val = keyVal[1].trim();
+                if (!val.isEmpty()) {
+                    map.put(key, val);
                 }
             }
         }
