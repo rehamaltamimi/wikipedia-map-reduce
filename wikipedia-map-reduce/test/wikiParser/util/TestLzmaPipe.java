@@ -86,5 +86,45 @@ public class TestLzmaPipe {
 		assertEquals(input.read(), 'r');
 		assertEquals(input.read(), -1);
 	}
+        
+        
+	@Test public void testCleanup() throws Exception {
+		File tmpIn = File.createTempFile("lzmaIn", null);
+		File tmpOut = File.createTempFile("lzmaOut", null);
+		File tmpTest = File.createTempFile("lzmaTest", null);
+		
+		tmpIn.deleteOnExit();
+		tmpOut.deleteOnExit();
+		tmpTest.deleteOnExit();
+		
+		FileWriter writer = new FileWriter(tmpIn);
+		writer.write("foo bar");
+                for (int i = 0; i < 100000; i++) {
+                    writer.write("writing: " + i);
+                }
+		writer.flush();
+		writer.close();
+		
+		LzmaAlone.main(new String[] {"e", tmpIn.getAbsolutePath(), tmpOut.getAbsolutePath()});
+                int trueLength = (int)tmpOut.length();                
+		
+                String garbage = "GARBAGE!!!!\n\n";
+                writer = new FileWriter(tmpOut, true);
+                writer.write(garbage);
+                writer.flush();
+                writer.close();
+                
+		byte [] contents = new byte[(int) tmpOut.length()];
+                assertEquals(contents.length, trueLength + garbage.length());
+		FileInputStream stream = new FileInputStream(tmpOut);
+		int r = stream.read(contents);
+		assertEquals(r, contents.length);
+		
+		LzmaPipe pipe = new LzmaPipe(contents, trueLength);
+		InputStream input = pipe.decompress();
+                int c = input.read();
+                assertEquals((char)c, 'f');
+                pipe.cleanup();
+	}
 
 }
