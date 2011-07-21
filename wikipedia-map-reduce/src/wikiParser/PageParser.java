@@ -277,13 +277,20 @@ public class PageParser {
 		this.storeRevisionMetadata = storeRevisionMetadata;
 	}
 
+        private static final int MAX_LENGTH = 500000;
 	private String getCoalescedText() throws XMLStreamException {
+                boolean tooLong = false;
 		StringBuilder sb = new StringBuilder();
 		while (reader.isCharacters()) {
-			sb.append(reader.getText());
-			//                System.out.println("len coalesced is " + sb.length());
-			advance();
-		}
+                    String t = reader.getText();
+                    if (sb.length() < MAX_LENGTH) {
+                        sb.append(t);
+                    } else if (!tooLong) {
+                        tooLong = true;
+                        System.err.println("PageParser.getCoalescedText(): Text to retrieve was too long.");
+                    }
+                    advance();
+		} 
 		return sb.toString();
 	}
 
