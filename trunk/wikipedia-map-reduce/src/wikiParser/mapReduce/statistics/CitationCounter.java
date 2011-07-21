@@ -39,10 +39,9 @@ public class CitationCounter extends Configured implements Tool {
 
         Map<String, Map<String,Integer>> citeCounts = new HashMap<String, Map<String,Integer>>();
         public void map(Text key, Text value, Mapper.Context context) throws IOException {
-            
             LzmaPipe pipe = null;
             try {
-                context.write(new Text("JunkKey"), new Text("0\t 0\t 0"));
+                context.progress();
                 int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
                 pipe = new LzmaPipe(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
@@ -51,12 +50,12 @@ public class CitationCounter extends Configured implements Tool {
                 if (article.isNormalPage()) {//main namespace only
                     Set <String> urls = new HashSet<String>();
                     while (true) {
-                        context.write(new Text("JunkKey"), new Text("0\t 0\t 0"));
+                        context.progress();
                         Revision rev = parser.getNextRevision();
                         if (rev == null) {
                             break;
                         }
-//                        System.err.println("doing revision " + rev.getId() + " at " + rev.getTimestamp());
+                        //System.err.println("doing revision " + rev.getId() + " at " + rev.getTimestamp());
                         urls = processRevision(parser.getArticle(), rev, urls);
                     }
                     for (String url : citeCounts.keySet()) {
