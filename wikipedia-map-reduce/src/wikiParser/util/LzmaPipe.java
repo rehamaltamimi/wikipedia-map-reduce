@@ -5,6 +5,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Creates a decompressed input stream from a sequence of lzma compressed bytes by
@@ -32,7 +34,12 @@ public class LzmaPipe {
 	 * @uml.property  name="outputStream"
 	 */
 	private PipedOutputStream outputStream;
-	
+        
+        /*
+         * 
+         */
+        private Object lock = new Object();
+        
 	public LzmaPipe(byte [] compressed) {
 		this.compressed = compressed;
                 compressedLength = compressed.length;
@@ -69,6 +76,9 @@ public class LzmaPipe {
 						e1.printStackTrace();
 					}
 				}
+                                synchronized (lock) {
+                                    lock.notify();
+                                }
 			}
 		};
 		t.start();
@@ -103,6 +113,12 @@ public class LzmaPipe {
 	public void cleanup() {
 		if (t != null) {
 			t.stop();
+                        t.interrupt();
+                        try {
+                            t.join(10000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(LzmaPipe.class.getName()).log(Level.SEVERE, null, ex);
+                        }
 			t = null;
 			try {
 				inputStream.close();
