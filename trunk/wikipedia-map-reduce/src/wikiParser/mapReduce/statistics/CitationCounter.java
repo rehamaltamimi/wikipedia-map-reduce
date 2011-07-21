@@ -42,7 +42,7 @@ public class CitationCounter extends Configured implements Tool {
             
             LzmaPipe pipe = null;
             try {
-                context.progress();
+                context.write(new Text("JunkKey"), new Text("0\t 0\t 0"));
                 int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
                 pipe = new LzmaPipe(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
@@ -51,7 +51,7 @@ public class CitationCounter extends Configured implements Tool {
                 if (article.isNormalPage()) {//main namespace only
                     Set <String> urls = new HashSet<String>();
                     while (true) {
-                        context.progress();
+                        context.write(new Text("JunkKey"), new Text("0\t 0\t 0"));
                         Revision rev = parser.getNextRevision();
                         if (rev == null) {
                             break;
