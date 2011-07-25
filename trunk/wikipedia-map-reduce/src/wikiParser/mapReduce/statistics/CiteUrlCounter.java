@@ -11,11 +11,11 @@ import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
 import org.apache.hadoop.util.*;
-import wikiParser.mapReduce.util.SecondarySortOnHash;
 
 /**
  *
- * @author research
+ * @author Nathaniel Miller
+ * 
  */
 public class CiteUrlCounter extends Configured implements Tool {
 
@@ -34,13 +34,15 @@ public class CiteUrlCounter extends Configured implements Tool {
             int added = 0;
             int removed = 0;
             int revisions = 0;
+            int articles = 0;
             while (values.hasNext()) {
                 String[] v = values.next().toString().split("\t");
                 added = added + Integer.parseInt(v[0]);
                 removed = removed + Integer.parseInt(v[1]);
                 revisions = revisions + Integer.parseInt(v[2]);
+                articles++;
             }
-            output.collect(key, new Text(added + "\t" + removed + "\t" + revisions));
+            output.collect(key, new Text(added + "\t" + removed + "\t" + revisions + "\t" + articles));
         }
     }
 
