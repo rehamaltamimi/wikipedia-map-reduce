@@ -14,7 +14,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.*;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import wikiParser.mapReduce.util.SecondarySortOnHash;
 
 public class CiteDomainCounter  extends Configured implements Tool {
 
@@ -27,8 +26,10 @@ public class CiteDomainCounter  extends Configured implements Tool {
             if (split.length > 2) {
                 url = split[2];
             }
+            if (url.length() <  6 || !"wiki:".equals(url.substring(0,5))) {
+                url = url.toLowerCase();
+            }
             output.collect(new Text(url), value);
-            reporter.progress();
         }
         
     }
@@ -39,13 +40,15 @@ public class CiteDomainCounter  extends Configured implements Tool {
             int added = 0;
             int removed = 0;
             int revisions = 0;
+            int articles = 0;
             while (values.hasNext()) {
                 String[] v = values.next().toString().split("\t");
                 added = added + Integer.parseInt(v[0]);
                 removed = removed + Integer.parseInt(v[1]);
                 revisions = revisions + Integer.parseInt(v[2]);
+                articles++;
             }
-            output.collect(key, new Text(added + "\t" + removed + "\t" + revisions));
+            output.collect(key, new Text(added + "\t" + removed + "\t" + revisions + "\t" + articles));
         }
     }
 
