@@ -6,6 +6,8 @@ Depending on what jobs you are running the time taken can vary wildly.
   * *CiteDomainCounter* - This job took under 15 minutes on a cluster of about 15 machines at Macalester College
 
 = Arguments =
+These arguments are important for stage 1 jobs that process the full revision text.  For smaller jobs, such as jobs that process the output from stage 1, they may not be important.
+
 Arguments beyond the input and output directories can be specified as follows: -D setting=value
 
 Some commonly used arguments to set are as follows:
