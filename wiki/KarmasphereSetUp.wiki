@@ -16,7 +16,7 @@ calculate the similarity of our wikipedia pages.
   * Choose checkout.  The URL is "http://wikipedia-map-reduce.googlecode.com/svn/trunk/" for read-only access and "https://wikipedia-map-reduce.googlecode.com/svn/trunk/" to allow commits as well 
   * Enter your username and password and checkout the project
   * Create a Java Project with Existing Sources
-  * When asked to add source folders, choose the existing folder containing the wikiMiner project
+  * When asked to add source folders, choose the existing folder containing the wikipedia-map-reduce project
   * Continue to the finish
 
 == Setting up an Amazon Account ==
