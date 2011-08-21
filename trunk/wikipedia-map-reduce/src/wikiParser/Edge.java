@@ -25,12 +25,21 @@ public class Edge {
 	private Vertex one;
 	private Vertex two;
 	private int type;
+        private int weight;
 
 	public Edge(Vertex one, Vertex two, int type) {
 		this.one = one;
 		this.two = two;
 		this.type = type;
+                weight = 1;
 	}
+        
+        public Edge(Vertex one, Vertex two, int type, int weight) {
+            this.one = one;
+            this.two = two;
+            this.type = type;
+            this.weight = weight;
+        }
 
 	public Vertex getOne() {
 		return one;
@@ -43,12 +52,24 @@ public class Edge {
 	public int getType() {
 		return type;
 	}
+        
+        public int getWeight() {
+            return weight;
+        }
+        
+        public void incrementWeight() {
+            weight = weight + 1;
+        }
+        
+        public void incrementWeight(int weight) {
+            this.weight += weight;
+        }
 
 	/**
 	 * Returns the edge in the following format:
-	 * "destType"+"edgeType"+"dest"
+	 * "destType"+"edgeType"+"|"+"weight"+"|"+"dest"
 	 * Frex:
-	 * "a03Albert_Einstein"
+	 * "a03|1|Albert_Einstein"
 	 * @return coded output string.
 	 */
 	public String toOutputString() {
@@ -66,6 +87,7 @@ public class Edge {
 			output += "0";
 		}
 		output += this.type;
+                output += ("|" + weight + "|");
 		output += this.two.toUnderscoredString();
 		return output;
 	}

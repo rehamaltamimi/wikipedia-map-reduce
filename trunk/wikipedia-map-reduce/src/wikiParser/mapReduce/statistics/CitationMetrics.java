@@ -56,10 +56,10 @@ public class CitationMetrics {
             if (!name.equals("nourl") && !name.equals("citation needed") && (name.length() < 5 || !"wiki:".equals(name.substring(0,5)))) {
                 totDomains++;
             }
-            added = addTo(added, name, a);
-            removed = addTo(removed, name, rem);
-            present = addTo(present, name, a - rem);
-            revisions = addTo(revisions, name, rev);
+            addTo(added, name, a);
+            addTo(removed, name, rem);
+            addTo(present, name, a - rem);
+            addTo(revisions, name, rev);
             if (a > 1000) {
                 checkResilience(name, (1.0*rev)/a);
                 checkResRA(name, (1.0*rem)/a);
