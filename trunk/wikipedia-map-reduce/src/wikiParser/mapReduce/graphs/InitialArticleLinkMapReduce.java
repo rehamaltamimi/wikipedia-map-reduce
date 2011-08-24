@@ -90,6 +90,11 @@ public class InitialArticleLinkMapReduce {
                     edges.put(k, split[0] + "|" + Math.max(Integer.parseInt(split[1]), Integer.parseInt(v.split("\\|")[1])) + "|" + k);
                 }
             }
+            StringBuilder result = new StringBuilder();
+            for (String v  : edges.values()) {
+                result.append(v).append(" ");
+            }
+            output.collect(key, new Text(result.toString()));
         }
         
     }
