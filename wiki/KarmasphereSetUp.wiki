@@ -5,7 +5,7 @@ calculate the similarity of our wikipedia pages.
 
 == Installing Karmasphere == 
   * Install Netbeans (http://netbeans.org/downloads/index.html -choose the java version)
-  * In Netbeans go to plugins  and clique settings
+  * In Netbeans go to plugins and click settings
   * On settings click the button add and enter the following information
   * Name: "Karmasphere for Hadoop" and URL: "http://hadoopstudio.org/updates/updates.xml"
   * Click ok and go to available plugins tab and search for karmasphere
