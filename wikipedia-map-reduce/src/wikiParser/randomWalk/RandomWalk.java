@@ -17,7 +17,7 @@ import java.util.HashSet;
  */
 public class RandomWalk {
     
-    private HashMap<String,NodePair> vectors = new HashMap<String,NodePair>();//for use in accessing a single row of the matrix later
+    //private HashMap<HashSet<String>,HashSet<NodePair>> vectors = new HashMap<HashSet<String>,HashSet<NodePair>>();//for use in accessing a single row of the matrix later - not necessary?
     public static final int NUMBER_OF_STEPS = 14;//possible value. should experiment on sample in order to find better one...
     
     public HashMap<NodePair,Integer> randomWalk(InputStream is) throws IOException {
@@ -42,14 +42,32 @@ public class RandomWalk {
             for (String nodeOne : nodes) {
                 for (String nodeTwo : nodes) {
                     if (!nodeOne.equals(nodeTwo)) {
-                        NodePair np = new NodePair(nodeOne, nodeTwo);
+                        NodePair np = new NodePair(nodeOne,nodeTwo);
+                        //adds pair to sparse similarity matrix
                         if (similarities.get(np) == null) {
                             similarities.put(np, 1);
-                            vectors.put(np.getNodeOne(), np);
-                            vectors.put(np.getNodeTwo(), np);
                         } else {
                             similarities.put(np, similarities.get(np) + 1);
                         }
+                        /*
+                        //adds pair to vector for node one
+                        HashSet<String> one = new HashSet<String>();
+                        one.add(nodeOne);
+                        if (vectors.get(one) == null) {
+                            vectors.put(one, new HashSet<NodePair>());
+                            vectors.get(one).add(np);
+                        } else if (!vectors.get(one).contains(np)) {
+                            vectors.get(one).add(np);
+                        }
+                        //adds pair to vector for node two
+                        HashSet<String> two = new HashSet<String>();
+                        two.add(nodeTwo);
+                        if (vectors.get(two) == null) {
+                            vectors.put(two, new HashSet<NodePair>());
+                            vectors.get(two).add(np);
+                        } else if (!vectors.get(two).contains(np)) {
+                            vectors.get(two).add(np);
+                        }*/
                     }
                 }
             }
@@ -57,9 +75,9 @@ public class RandomWalk {
         return similarities;
     }
     
-    public HashMap<String,NodePair> getVectors() {
+    /*public HashMap<HashSet<String>,HashSet<NodePair>> getVectors() {
         return vectors;
-    }
+    }*/
     
     
 }
