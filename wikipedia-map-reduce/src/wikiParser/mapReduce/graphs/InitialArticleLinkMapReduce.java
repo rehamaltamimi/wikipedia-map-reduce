@@ -50,12 +50,16 @@ public class InitialArticleLinkMapReduce {
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();
                 ArticleArticleGenerator edgeGenerator = new ArticleArticleGenerator();
+                Revision latest = null;
                 while (true) {
                     Revision rev = parser.getNextRevision();
                     if (rev == null) {
                         break;
                     }
-                    for (Edge link : edgeGenerator.generateWeighted(article, rev)) {
+                    latest = rev;
+                }
+                if (latest != null) {
+                    for (Edge link : edgeGenerator.generateWeighted(article, latest)) {
                         if (article.isUserTalk() || article.isUser()) {
                             output.collect(new Text("u" + article.getUser().getId()), new Text(link.toOutputString()));
                         } else {
