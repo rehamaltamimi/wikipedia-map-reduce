@@ -4,19 +4,29 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileSystem;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.MapReduceBase;
-import org.apache.hadoop.mapred.Mapper;
 import org.apache.hadoop.mapred.OutputCollector;
-import org.apache.hadoop.mapred.Reducer;
 import org.apache.hadoop.mapred.Reporter;
+import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
+import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.util.Tool;
+import org.apache.hadoop.util.ToolRunner;
 import wikiParser.Page;
 
 import wikiParser.PageParser;
 import wikiParser.Edge;
 import wikiParser.Revision;
 import wikiParser.edges.ArticleArticleGenerator;
-import wikiParser.mapReduce.util.UniqueConcatenateReduce;
+import wikiParser.mapReduce.util.KeyValueTextInputFormat;
 import wikiParser.mapReduce.util.MapReduceUtils;
 import wikiParser.mapReduce.util.SimpleJobConf;
 import wikiParser.util.LzmaPipe;
@@ -24,12 +34,12 @@ import wikiParser.util.LzmaPipe;
  * Creates Article to Article graph with directed edges using links only
  * @author Nathaniel Miller
  */
-public class InitialArticleLinkMapReduce {
+public class InitialArticleLinkMapReduce extends Configured implements Tool {
 
     /*
      * Takes key-value 7zip hashes and outputs ID-links pairs.
      */
-    public static class Map extends MapReduceBase implements Mapper<Text, Text, Text, Text> {
+    public static class Map extends Mapper<Text,Text,Text,Text> {
 
         public void map(Text key, Text value, OutputCollector<Text, Text> output,
                 Reporter reporter) throws IOException {
@@ -45,10 +55,12 @@ public class InitialArticleLinkMapReduce {
              */
             LzmaPipe pipe = null;
             try {
-                byte[] unescaped = MapReduceUtils.unescape(value.getBytes(), value.getLength());
-                pipe = new LzmaPipe(unescaped);
+                reporter.progress();
+                int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
+                pipe = new LzmaPipe(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();
+                System.err.println("processing article " + key + "(" + parser.getArticle().getName() + ")");
                 ArticleArticleGenerator edgeGenerator = new ArticleArticleGenerator();
                 Revision latest = null;
                 while (true) {
@@ -78,9 +90,8 @@ public class InitialArticleLinkMapReduce {
         }
     }
 
-    public static class Reduce extends MapReduceBase implements Reducer<Text,Text,Text,Text> {
+    public static class Reduce extends Reducer<Text,Text,Text,Text> {
 
-        @Override
         public void reduce(Text key, Iterator<Text> values, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
             
             HashMap<String,String> edges = new HashMap<String, String>();
@@ -104,7 +115,52 @@ public class InitialArticleLinkMapReduce {
     }
     
     public static void runMe(String inputFiles[], String outputDir, String jobName) throws IOException {
-        SimpleJobConf conf = new SimpleJobConf(Map.class, UniqueConcatenateReduce.class, inputFiles, outputDir, jobName);
+        SimpleJobConf conf = new SimpleJobConf(Map.class, Reduce.class, inputFiles, outputDir, jobName);
         conf.run();
+    }
+    
+    public int run(String args[]) throws Exception {
+
+        if (args.length < 2) {
+            System.out.println("usage: [input output]");
+            ToolRunner.printGenericCommandUsage(System.out);
+            return -1;
+        }
+
+        Path inputPath = new Path(args[0]);
+        Path outputPath = new Path(args[1]);
+
+        Configuration conf = getConf();
+        Job job = new Job(conf, this.getClass().toString());
+
+        FileInputFormat.setInputPaths(job, inputPath);
+        FileOutputFormat.setOutputPath(job, outputPath);
+
+        
+        job.setJarByClass(InitialArticleLinkMapReduce.class);
+        job.setInputFormatClass(KeyValueTextInputFormat.class);
+        job.setOutputFormatClass(TextOutputFormat.class);
+        job.setMapOutputKeyClass(Text.class);
+        job.setMapOutputValueClass(Text.class);
+        job.setOutputKeyClass(Text.class);
+        job.setOutputValueClass(Text.class);
+        
+        job.setMapperClass(Map.class);
+        job.setReducerClass(Reduce.class);
+        FileSystem hdfs = FileSystem.get(outputPath.toUri(), conf);
+        if (hdfs.exists(outputPath)) {
+            hdfs.delete(outputPath, true);
+        }
+
+        return job.waitForCompletion(true) ? 0 : 1;
+    }
+
+    /**
+     * Dispatches command-line arguments to the tool via the
+     * <code>ToolRunner</code>.
+     */
+    public static void main(String[] args) throws Exception {
+        int res = ToolRunner.run(new InitialArticleLinkMapReduce(), args);
+        System.exit(res);
     }
 }
