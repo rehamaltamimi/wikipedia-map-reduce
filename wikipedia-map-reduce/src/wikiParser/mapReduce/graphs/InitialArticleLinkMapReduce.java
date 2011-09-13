@@ -12,7 +12,6 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.mapreduce.Job;
@@ -28,7 +27,6 @@ import wikiParser.Revision;
 import wikiParser.edges.ArticleArticleGenerator;
 import wikiParser.mapReduce.util.KeyValueTextInputFormat;
 import wikiParser.mapReduce.util.MapReduceUtils;
-import wikiParser.mapReduce.util.SimpleJobConf;
 import wikiParser.util.LzmaPipe;
 /**
  * Creates Article to Article graph with directed edges using links only
@@ -39,7 +37,7 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
     /*
      * Takes key-value 7zip hashes and outputs ID-links pairs.
      */
-    public static class Map extends Mapper<Text,Text,Text,Text> {
+    public static class MyMap extends Mapper<Text,Text,Text,Text> {
 
         public void map(Text key, Text value, OutputCollector<Text, Text> output,
                 Reporter reporter) throws IOException {
@@ -62,16 +60,12 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
                 Page article = parser.getArticle();
                 System.err.println("processing article " + key + "(" + parser.getArticle().getName() + ")");
                 ArticleArticleGenerator edgeGenerator = new ArticleArticleGenerator();
-                Revision latest = null;
-                while (true) {
-                    Revision rev = parser.getNextRevision();
-                    if (rev == null) {
-                        break;
-                    }
-                    latest = rev;
+                Revision rev = null;
+                while (parser.hasNextRevision()) {
+                    rev = parser.getNextRevision();
                 }
-                if (latest != null) {
-                    for (Edge link : edgeGenerator.generateWeighted(article, latest)) {
+                if (rev != null) {
+                    for (Edge link : edgeGenerator.generateWeighted(article, rev)) {
                         if (article.isUserTalk() || article.isUser()) {
                             output.collect(new Text("u" + article.getUser().getId()), new Text(link.toOutputString()));
                         } else {
@@ -90,7 +84,7 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
         }
     }
 
-    public static class Reduce extends Reducer<Text,Text,Text,Text> {
+    public static class MyReduce extends Reducer<Text,Text,Text,Text> {
 
         public void reduce(Text key, Iterator<Text> values, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
             
@@ -113,12 +107,7 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
         }
         
     }
-    
-    public static void runMe(String inputFiles[], String outputDir, String jobName) throws IOException {
-        SimpleJobConf conf = new SimpleJobConf(Map.class, Reduce.class, inputFiles, outputDir, jobName);
-        conf.run();
-    }
-    
+        
     public int run(String args[]) throws Exception {
 
         if (args.length < 2) {
@@ -145,8 +134,8 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
         
-        job.setMapperClass(Map.class);
-        job.setReducerClass(Reduce.class);
+        job.setMapperClass(MyMap.class);
+        job.setReducerClass(MyReduce.class);
         FileSystem hdfs = FileSystem.get(outputPath.toUri(), conf);
         if (hdfs.exists(outputPath)) {
             hdfs.delete(outputPath, true);

@@ -84,37 +84,51 @@ public class PageParser {
 	 * @return
 	 * @throws XMLStreamException
 	 */
-            public Revision getNextRevision() throws XMLStreamException {
-		if (reader == null) {
-			return null;
-		}
-		if (article == null) {
-			getArticle();
-		}
-		if (!matchElement("revision", false)) {
-			reader = null;
-			return null;
-		}
-		String id = matchTextElement("id", true);
-		String timestamp = matchTextElement("timestamp", true);
-		User contributor = readContributor();
-		String minor = matchTextElement("minor", false);
-		String comment = matchTextElement("comment", false);
-		String vandalism = matchTextElement("isVandalism", false); //FIXME: not right
-		String text = matchTextElement("text", true);
-		text = stripComments(text, timestamp);
-		boolean isMinor = (minor != null) && minor.equals("1");
-		boolean isVandalism = (vandalism != null) && vandalism.equals("1");
-		// System.err.println("rev is " + text);
+        public Revision getNextRevision() throws XMLStreamException {
+            if (reader == null) {
+                    return null;
+            }
+            if (article == null) {
+                    getArticle();
+            }
+            if (!matchElement("revision", false)) {
+                    reader = null;
+                    return null;
+            }
+            String id = matchTextElement("id", true);
+            String timestamp = matchTextElement("timestamp", true);
+            User contributor = readContributor();
+            String minor = matchTextElement("minor", false);
+            String comment = matchTextElement("comment", false);
+            String vandalism = matchTextElement("isVandalism", false); //FIXME: not right
+            String text = matchTextElement("text", true);
+            text = stripComments(text, timestamp);
+            boolean isMinor = (minor != null) && minor.equals("1");
+            boolean isVandalism = (vandalism != null) && vandalism.equals("1");
+            // System.err.println("rev is " + text);
 
-		Revision rev = new Revision(id, timestamp, contributor, text, comment, isMinor, isVandalism);
-		if (storeFullTextInArticle) {
-			article.addToRevisions(rev);
-		} else if (storeRevisionMetadata) {
-			article.addToRevisions(new Revision(id, timestamp, contributor, null, comment, isMinor, isVandalism));
-		}
-		return rev;
-	}
+            Revision rev = new Revision(id, timestamp, contributor, text, comment, isMinor, isVandalism);
+            if (storeFullTextInArticle) {
+                    article.addToRevisions(rev);
+            } else if (storeRevisionMetadata) {
+                    article.addToRevisions(new Revision(id, timestamp, contributor, null, comment, isMinor, isVandalism));
+            }
+            return rev;
+        }
+        
+        public boolean hasNextRevision() throws XMLStreamException {
+            if (reader == null) {
+                return false;
+            }
+            if (article == null) {
+                getArticle();
+            }
+            if (!matchElement("revision",false)) {
+                reader = null;
+                return false;
+            }
+            return true;
+        }
 
 	/**
 	 * Returns the contributor for the revision.
