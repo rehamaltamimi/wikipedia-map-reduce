@@ -9,8 +9,6 @@ import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapred.OutputCollector;
-import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
@@ -39,8 +37,7 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
      */
     public static class MyMap extends Mapper<Text,Text,Text,Text> {
 
-        public void map(Text key, Text value, OutputCollector<Text, Text> output,
-                Reporter reporter) throws IOException {
+        public void map(Text key, Text value, Mapper.Context context) throws IOException {
             
             /*
              * Input: ArticleID-7zipHash key-value pairs.
@@ -53,7 +50,7 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
              */
             LzmaPipe pipe = null;
             try {
-                reporter.progress();
+                context.progress();
                 int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
                 pipe = new LzmaPipe(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
@@ -67,9 +64,9 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
                 if (rev != null) {
                     for (Edge link : edgeGenerator.generateWeighted(article, rev)) {
                         if (article.isUserTalk() || article.isUser()) {
-                            output.collect(new Text("u" + article.getUser().getId()), new Text(link.toOutputString()));
+                            context.write(new Text("u" + article.getUser().getId()), new Text(link.toOutputString()));
                         } else {
-                            output.collect(new Text("a" + article.getId()), new Text(link.toOutputString()));
+                            context.write(new Text("a" + article.getId()), new Text(link.toOutputString()));
                         }
                     }
                 }
@@ -86,7 +83,7 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
 
     public static class MyReduce extends Reducer<Text,Text,Text,Text> {
 
-        public void reduce(Text key, Iterator<Text> values, OutputCollector<Text, Text> output, Reporter reporter) throws IOException {
+        public void reduce(Text key, Iterator<Text> values, Reducer.Context context) throws IOException, InterruptedException {
             
             HashMap<String,String> edges = new HashMap<String, String>();
             while (values.hasNext()) {
@@ -103,7 +100,7 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
             for (String v  : edges.values()) {
                 result.append(v).append(" ");
             }
-            output.collect(key, new Text(result.toString()));
+            context.write(key, new Text(result.toString()));
         }
         
     }
