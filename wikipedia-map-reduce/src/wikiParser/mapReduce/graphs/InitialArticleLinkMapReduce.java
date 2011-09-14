@@ -69,6 +69,8 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
                             context.write(new Text("a" + article.getId()), new Text(link.toOutputString()));
                         }
                     }
+                } else {
+                    System.err.println("got null revision!!");
                 }
             } catch (Exception e) {
                 System.err.println("error when processing " + key + ":");
@@ -83,11 +85,11 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
 
     public static class MyReduce extends Reducer<Text,Text,Text,Text> {
 
-        public void reduce(Text key, Iterator<Text> values, Reducer.Context context) throws IOException, InterruptedException {
-            
+        public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+            Iterator<Text> iterator = values.iterator();
             HashMap<String,String> edges = new HashMap<String, String>();
-            while (values.hasNext()) {
-                String v = values.next().toString();
+            while (iterator.hasNext()) {
+                String v = iterator.next().toString();
                 String k = v.split("\\|")[2];
                 if (!edges.containsKey(k)) {
                     edges.put(k,v);
@@ -100,6 +102,7 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
             for (String v  : edges.values()) {
                 result.append(v).append(" ");
             }
+            System.out.println("Edges has " + edges.values().size() + " values.");
             context.write(key, new Text(result.toString()));
         }
         
