@@ -58,8 +58,12 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
                 System.err.println("processing article " + key + "(" + parser.getArticle().getName() + ")");
                 ArticleArticleGenerator edgeGenerator = new ArticleArticleGenerator();
                 Revision rev = null;
-                while (parser.hasNextRevision()) {
-                    rev = parser.getNextRevision();
+                while (true) {
+                    Revision next = parser.getNextRevision();
+                    if (next == null) {
+                        break;
+                    }
+                    rev = next;
                 }
                 if (rev != null) {
                     for (Edge link : edgeGenerator.generateWeighted(article, rev)) {

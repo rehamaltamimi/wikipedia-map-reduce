@@ -116,6 +116,11 @@ public class PageParser {
             return rev;
         }
         
+        /**
+         * FIXME: this doesn't return false early enough
+         * @return
+         * @throws XMLStreamException 
+         */
         public boolean hasNextRevision() throws XMLStreamException {
             if (reader == null) {
                 return false;
