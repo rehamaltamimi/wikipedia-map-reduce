@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import java.util.List;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -66,16 +67,17 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
                     rev = next;
                 }
                 if (rev != null) {
-                    for (Edge link : edgeGenerator.generateWeighted(article, rev)) {
-                        if (article.isUserTalk() || article.isUser()) {
-                            context.write(new Text("u" + article.getUser().getId()), new Text(link.toOutputString()));
-                        } else {
-                            context.write(new Text("a" + article.getId()), new Text(link.toOutputString()));
+                    List<Edge> edges = edgeGenerator.generateWeighted(article,rev);
+                    if (edges != null) {
+                        for (Edge link : edgeGenerator.generateWeighted(article, rev)) {
+                            if (article.isUserTalk() || article.isUser()) {
+                                context.write(new Text("u" + article.getUser().getId()), new Text(link.toOutputString()));
+                            } else {
+                                context.write(new Text("a" + article.getId()), new Text(link.toOutputString()));
+                            }
                         }
                     }
-                } else {
-                    System.err.println("got null revision!!");
-                }
+                } 
             } catch (Exception e) {
                 System.err.println("error when processing " + key + ":");
                 e.printStackTrace();
