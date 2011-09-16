@@ -61,6 +61,7 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
                 Revision rev = null;
                 while (true) {
                     Revision next = parser.getNextRevision();
+                    context.progress();
                     if (next == null) {
                         break;
                     }
