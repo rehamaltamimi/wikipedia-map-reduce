@@ -38,6 +38,7 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
      */
     public static class MyMap extends Mapper<Text,Text,Text,Text> {
 
+        @Override
         public void map(Text key, Text value, Mapper.Context context) throws IOException {
             
             /*
@@ -56,7 +57,6 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
                 pipe = new LzmaPipe(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();
-                System.err.println("processing article " + key + "(" + parser.getArticle().getName() + ")");
                 ArticleArticleGenerator edgeGenerator = new ArticleArticleGenerator();
                 Revision rev = null;
                 while (true) {
@@ -92,29 +92,35 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
 
     public static class MyReduce extends Reducer<Text,Text,Text,Text> {
 
+        @Override
         public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
             Iterator<Text> iterator = values.iterator();
             HashMap<String,String> edges = new HashMap<String, String>();
             while (iterator.hasNext()) {
                 String v = iterator.next().toString();
-                String k = v.split("\\|")[2];
-                if (!edges.containsKey(k)) {
-                    edges.put(k,v);
+                String[] a = v.split("\\|");
+                if (a.length > 2) {
+                    String k = a[2];
+                    if (!edges.containsKey(k)) {
+                        edges.put(k,v);
+                    } else {
+                        String[] split = edges.get(k).split("\\|");
+                        edges.put(k, split[0] + "|" + Math.max(Integer.parseInt(split[1]), Integer.parseInt(v.split("\\|")[1])) + "|" + k);
+                    }
                 } else {
-                    String[] split = edges.get(k).split("\\|");
-                    edges.put(k, split[0] + "|" + Math.max(Integer.parseInt(split[1]), Integer.parseInt(v.split("\\|")[1])) + "|" + k);
+                    System.err.println("BAD VALUE - key: " + key.toString() + ", value: '" + v + "'");
                 }
             }
             StringBuilder result = new StringBuilder();
             for (String v  : edges.values()) {
                 result.append(v).append(" ");
             }
-            System.out.println("Edges has " + edges.values().size() + " values.");
             context.write(key, new Text(result.toString()));
         }
         
     }
         
+    @Override
     public int run(String args[]) throws Exception {
 
         if (args.length < 2) {
