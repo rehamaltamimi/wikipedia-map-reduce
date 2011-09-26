@@ -12,8 +12,8 @@ Each wikipedia dump is split into 100 files named wikipedia.txt.xx with xx betwe
   * *https://s3.amazonaws.com/macalesterpublic/wikipedia/ja-2010-03-31/ * - Japanese full revision history Wikipedia dump
 
 = Output =
-  * *https://s3.amazonaws.com/macalesterpublic/citationStageOne/ * - output from CitationCounter (English Wikipedia dump from 4/5/2011). Filenames are part-r-00000 to part-r-00039.
-  * *https://s3.amazonaws.com/macalesterpublic/citeDomainOutput/output.txt * - output from CiteDomainCounter using the output from CitationCounter found above. 
+  * *https://s3.amazonaws.com/macalesterpublic/wikipedia/citationStageOne/ * - output from CitationCounter (English Wikipedia dump from 4/5/2011). Filenames are part-r-00000 to part-r-00039.
+  * *https://s3.amazonaws.com/macalesterpublic/wikipedia/citeDomainOutput/output.txt * - output from CiteDomainCounter using the output from CitationCounter found above. 
 
 = Exploring S3 Files =
 Since you don't own these files, you won't be able to view them through the AWS management console.  However, we have had good luck viewing them in [http://cyberduck.ch/ CyberDuck].  Create a new entry in cyberduck with anonymous login and specify macalesterpublic.s3.amazonaws.com as the server.
