@@ -24,7 +24,6 @@ import wikiParser.Page;
 import wikiParser.PageParser;
 import wikiParser.Revision;
 import wikiParser.User;
-import wikiParser.edges.ArticleArticleGenerator;
 import wikiParser.mapReduce.util.KeyValueTextInputFormat;
 import wikiParser.mapReduce.util.MapReduceUtils;
 import wikiParser.util.LzmaPipe;
@@ -43,6 +42,7 @@ public class ArticlesForEditors extends Configured implements Tool {
      * Takes key-value 7zip hashes and outputs ID-links pairs.
      */
     public static class MyMap extends Mapper<Text,Text,Text,Text> {
+        static Set<String> users = null;
 
         @Override
         public void map(Text key, Text value, Mapper.Context context) throws IOException {
@@ -54,16 +54,24 @@ public class ArticlesForEditors extends Configured implements Tool {
             LzmaPipe pipe = null;
             try {
                 reportProgress(context, "init");
+
+                // setup decoder
                 int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
-                reportProgress(context, "unescape");
-                Set<String> users = readUsernames(context);
-                reportProgress(context, "users");
                 pipe = new LzmaPipe(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 parser.setHasText(false);
                 Page article = parser.getArticle();
-                ArticleArticleGenerator edgeGenerator = new ArticleArticleGenerator();
                 reportProgress(context, "lzma");
+
+
+                // read usernames
+                if (users == null) {
+                    users = readUsernames(context);
+                }
+                Set<String> users = readUsernames(context);
+                reportProgress(context, "users");
+
+                // read revisions
                 while (true) {
                     Revision rev = parser.getNextRevision();
                     if (rev == null) {
