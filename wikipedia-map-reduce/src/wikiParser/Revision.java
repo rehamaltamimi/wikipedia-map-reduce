@@ -136,13 +136,14 @@ public class Revision {
 		}
 		return anchorLinks;
 	}
-        
+
+
         private static final Pattern REF_START = Pattern.compile("^<[\\s]*ref[^/]*?>");
         private static final Pattern REF_END = Pattern.compile("(<[\\s]*/[\\s]*ref[\\s]*>)");
         /**
          * Some information may be omitted or overwritten in the following cases:
          * 1. More than one template is included in a single citation and the template field names overlap
-         * 2. If the reference is only in <ref> tags and not a template it is likely that only the top level domain 
+         * 2. If the reference is only in <ref> tags and not a template it is likely that only the top level domain
          * will be returned in params
          * @return list of citations in the revision as templates
          */
@@ -184,6 +185,14 @@ public class Revision {
                 }
             }
             return cites;
+        }
+
+        
+        /**
+         * Find all templates in a page.
+         */
+        public List<Template> getTemplates() {
+            return Template.getOneOrMoreTemplates(text);
         }
         
         /**
