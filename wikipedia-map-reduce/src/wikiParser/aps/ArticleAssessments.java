@@ -41,6 +41,7 @@ public class ArticleAssessments extends Configured implements Tool {
                 pipe = new LzmaPipe(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();
+                context.progress();
                 if (article.isTalk()) {
                     System.err.println("processing article " + key + "(" + parser.getArticle().getName() + ")");
                     Map <Assessment, Integer> counts = new HashMap<Assessment, Integer>();
