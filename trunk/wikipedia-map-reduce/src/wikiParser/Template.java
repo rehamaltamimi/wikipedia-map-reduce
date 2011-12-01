@@ -5,6 +5,9 @@
 package wikiParser;
 
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -20,6 +23,38 @@ public class Template {
         this.end = end;
         this.params = params;
     }
+
+    /**
+     * Find all templates in a page.
+     */
+    public static List<Template> getOneOrMoreTemplates(String text) {
+        return getOneOrMoreTemplates(text, 0);
+    }
+    public static List<Template> getOneOrMoreTemplates(String text, int offset) {
+        List<Template> templates = new LinkedList<Template>();
+        int i = 0;
+        while (true) {
+            long index = text.substring(i).indexOf("{{");
+            if (index < 0) {
+                break;
+            }
+            i += index;
+            int bracketNesting = 2;
+            int j = i + 2;
+            while (bracketNesting > 0 & j < text.length()) {
+                if (text.charAt(j) == '{') {
+                    bracketNesting++;
+                } else if (text.charAt(j) == '}') {
+                    bracketNesting--;
+                }
+                j++;
+            }
+            String template = text.substring(i + 2, j - 2);
+            templates.add(Template.processTemplate(template, offset+i+2, offset+j-2));
+            i = j;
+        }
+        return templates;
+    }
     
     /**
      * 
@@ -29,20 +64,52 @@ public class Template {
      * @return 
      */
     public static Template processTemplate (String templateSubstring, int start, int end) {
-        String[] mapText = templateSubstring.split("\\|");
         LinkedHashMap<String,String> map = new LinkedHashMap<String,String>();
+        String[] mapText = templateSubstring.split("\\|", 2);
         map.put("templateName", mapText[0].trim());
-        for (int i = 1; i < mapText.length; i++) { //skip first because that is template name
-            String[] keyVal = mapText[i].split("=", 2);
-            if (keyVal.length == 2) {
-                String key = keyVal[0].trim();
-                String val = keyVal[1].trim();
-                if (!val.isEmpty()) {
-                    map.put(key, val);
+
+        if (mapText.length > 1) {
+            String text = mapText[1];
+            while (!text.isEmpty()) {
+                String[] keyVal = text.split("=", 2);
+                String key = keyVal[0];
+                String val = null;
+                text = keyVal.length == 1 ? "" : keyVal[1];
+                int curlyNesting = 0;
+                int i = 0;
+                for (;; i++) {
+                    if (i == text.length()) {
+                        val = text;
+                        break;
+                    }
+                    char c = text.charAt(i);
+                    if (curlyNesting == 0 && c == '|') {
+                        val = text.substring(0, i);
+                        i++;
+                        break;
+                    }
+                    if (c == '{') {
+                        curlyNesting++;
+                    }
+                    if (c == '}') {
+                        curlyNesting--;
+                    }
                 }
+                text = text.substring(i);
+                if (val != null) {
+                    val = val.trim();
+                }
+                if (val.isEmpty()) {
+                    val = null;
+                }
+                map.put(key.trim(), val);
             }
         }
         return new Template(start, end, map);
+    }
+
+    public String getName() {
+        return params.get("templateName");
     }
     
     public int getStart() {
@@ -52,11 +119,28 @@ public class Template {
     public int getEnd() {
         return end;
     }
-    
+
+    public boolean hasParam(String param) {
+        return params.containsKey(param);
+    }
+
     public String getParam(String param) {
         return params.get(param);
     }
-    
+
+    public List<Template> getParamAsTemplate(String param) {
+        if (paramContainsTemplate(param)) {
+            return getOneOrMoreTemplates(params.get(param), start);
+        } else {
+            return null;
+        }
+    }
+
+    public boolean paramContainsTemplate(String param) {
+        String val = params.get(param);
+        return val != null && val.startsWith("{{") && val.endsWith("}}");
+    }
+
     public LinkedHashMap<String,String> getAllParams() {
             return params;
     }
@@ -64,11 +148,29 @@ public class Template {
     public void putParam(String param, String value) {
         params.put(param,value);
     }
+
+    public void convertMapToLowercase() {
+        LinkedHashMap<String, String> newParams = new LinkedHashMap<String, String>();
+        for (Map.Entry<String, String> entry : params.entrySet()) {
+            String k = entry.getKey();
+            String v = entry.getValue();
+            if (!k.equals("templateName")) {
+                k = k.toLowerCase();
+            }
+            v = (v == null) ? null : v.toLowerCase();
+            newParams.put(k, v);
+        }
+        this.params = newParams;
+    }
     
     public String toString() {
         StringBuffer sb = new StringBuffer("<template from " + start + " to " + end + ":");
         for (String key : params.keySet()) {
-            sb.append(" ('" + key + "', '" + params.get(key) + "')");
+            String val = params.get(key);
+            if (val != null && val.length() > 50) {
+                val = val.substring(0, 47) + "...";
+            }
+            sb.append(" ('" + key + "', '" + val + "')");
         }
         sb.append(">");
         return sb.toString();
