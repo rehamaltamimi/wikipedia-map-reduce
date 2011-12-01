@@ -4,7 +4,6 @@
  */
 package wikiParser.aps;
 
-import wikiParser.mapReduce.statistics.*;
 import java.io.IOException;
 import java.util.*;
 import org.apache.hadoop.conf.Configuration;
@@ -14,7 +13,6 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
@@ -25,11 +23,8 @@ import wikiParser.util.*;
 
 /**
  *
- * @author Nathaniel Miller
+ * @author Shilad Sen
  * 
- * First stage of citation counting process
- * Output: 
- * K: url@articleId, V: #added  #removed    #revisions
  */
 public class ArticleAssessments extends Configured implements Tool {
 
@@ -38,7 +33,6 @@ public class ArticleAssessments extends Configured implements Tool {
      */
     public static class MyMapper extends Mapper<Text, Text, Text, Text> {
 
-        Map<String, Map<String,Integer>> citeCounts = new HashMap<String, Map<String,Integer>>();
         public void map(Text key, Text value, Mapper.Context context) throws IOException {
             LzmaPipe pipe = null;
             try {
@@ -47,9 +41,9 @@ public class ArticleAssessments extends Configured implements Tool {
                 pipe = new LzmaPipe(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();
-                System.err.println("processing article " + key + "(" + parser.getArticle().getName() + ")");
-                if (article.isTalk()) {//main namespace only
-                    Set <Assessment> ratings = new HashSet<Assessment>();
+                if (article.isTalk()) {
+                    System.err.println("processing article " + key + "(" + parser.getArticle().getName() + ")");
+                    Map <Assessment, Integer> counts = new HashMap<Assessment, Integer>();
                     while (true) {
                         context.progress();
                         Revision rev = parser.getNextRevision();
@@ -57,14 +51,28 @@ public class ArticleAssessments extends Configured implements Tool {
                             break;
                         }
                         //System.err.println("doing revision " + rev.getId() + " at " + rev.getTimestamp());
-                        ratings = processRevision(parser.getArticle(), rev, ratings);
+                        Map<Assessment, Integer> newCounts = processRevision(context, parser.getArticle(), rev);
+                        Set<Assessment> all = new HashSet<Assessment>(counts.keySet());
+                        all.addAll(newCounts.keySet());
+                        for (Assessment a : all) {
+                            int c0 = counts.containsKey(a) ? counts.get(a) : 0;
+                            int c1 = newCounts.containsKey(a) ? newCounts.get(a) : 0;
+                            if (c0 != c1) {
+                            context.write(
+                                    new Text(article.getName() + "@" + article.getId()),
+                                    new Text(
+                                            rev.getTimestamp() + "\t" +
+                                            c0 + "\t" +
+                                            c1 + "\t" +
+                                            a.getTemplateName() + "\t" +
+                                            a.getAssessment() + "\t" +
+                                            a.getImportance() + "\t"
+                                        )
+                                );
+                            }
+                        }
+                        counts = newCounts;
                     }
-                    for (String url : citeCounts.keySet()) {
-                        context.write(
-                                new Text(url + "@" + article.getId()),
-                                new Text(citeCounts.get(url).get("added") + "\t"+ citeCounts.get(url).get("removed") + "\t" + citeCounts.get(url).get("revisions")));
-                    }
-                    citeCounts.clear();
                 }
             } catch (Exception e) {
                 context.progress();
@@ -77,36 +85,16 @@ public class ArticleAssessments extends Configured implements Tool {
             }
         }
 
-        private Set<Assessment> processRevision(Page article, Revision rev, Set<Assessment> prevRatings) throws IOException {
-            HashSet<String> nextUrls = new HashSet<String>();
-            for (Template t : rev.getCites()) {
-                String url = t.getParam("url");
-                if (url == null) {
-                    url = t.getParam("templateName");
-                    if (url == null) {
-                        url = "NoURL";
-                    }
+        private Map<Assessment, Integer> processRevision(Mapper.Context context, Page page, Revision rev) throws IOException {
+            Map<Assessment, Integer> counts = new HashMap<Assessment, Integer>();
+            for (Template t : rev.getTemplates()) {
+                for (Assessment a : Assessment.templateToAssessment(page, rev, t)) {
+                    a.setTimestamp("");     // ignore timestamp; may have been added a long time ago.
+                    Integer c = counts.get(a);
+                    counts.put(a, (c == null) ? 1 : (c+1));
                 }
-                url = url.replaceAll("[\\s]+", " ");
-                nextUrls.add(url);
             }
-            for (String cite : nextUrls) {
-                if (citeCounts.get(cite) == null) {
-                    Map citeInfo = new HashMap<String, Integer>();
-                    citeInfo.put("added", 0);
-                    citeInfo.put("revisions", 0);
-                    citeInfo.put("removed", 0);
-                    citeCounts.put(cite, citeInfo);
-                }
-                if (!prevRatings.contains(cite)) {
-                    citeCounts.get(cite).put("added", citeCounts.get(cite).get("added") + 1);
-                }
-                citeCounts.get(cite).put("revisions", citeCounts.get(cite).get("revisions")  + 1);
-            }
-//            if (Math.random() > 0.99) {
-//                System.err.println("for revision " + rev.getTimestamp() + " found " + numPrinted + " of " + numUnique);
-//            }
-            return null;
+            return counts;
         }
     }
 

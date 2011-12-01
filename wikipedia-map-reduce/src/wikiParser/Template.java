@@ -41,7 +41,7 @@ public class Template {
             i += index;
             int bracketNesting = 2;
             int j = i + 2;
-            while (bracketNesting > 0 & j < text.length()) {
+            while (bracketNesting > 0 && j < text.length()) {
                 if (text.charAt(j) == '{') {
                     bracketNesting++;
                 } else if (text.charAt(j) == '}') {
@@ -71,41 +71,49 @@ public class Template {
         if (mapText.length > 1) {
             String text = mapText[1];
             while (!text.isEmpty()) {
-                String[] keyVal = text.split("=", 2);
-                String key = keyVal[0];
-                String val = null;
-                text = keyVal.length == 1 ? "" : keyVal[1];
-                int curlyNesting = 0;
-                int i = 0;
-                for (;; i++) {
-                    if (i == text.length()) {
-                        val = text;
-                        break;
-                    }
-                    char c = text.charAt(i);
-                    if (curlyNesting == 0 && c == '|') {
-                        val = text.substring(0, i);
-                        i++;
-                        break;
-                    }
-                    if (c == '{') {
-                        curlyNesting++;
-                    }
-                    if (c == '}') {
-                        curlyNesting--;
-                    }
+                int i = curlyAwareIndexOf(text, '=');
+                int j = curlyAwareIndexOf(text, '|');
+                String key = null, val = null;
+
+                // positional (unnamed) parameter
+                if (i < 0 || (j > 0 && i > j)) {
+                    key = "positional" + map.size();
+                    val = text.substring(0, j > 0 ? j : text.length());
+                } else {
+                    key = text.substring(0, i).trim();
+                    val = text.substring(i+1, j >0 ? j : text.length());
                 }
-                text = text.substring(i);
+                text = (j < 0) ? "" : text.substring(j+1);
                 if (val != null) {
                     val = val.trim();
                 }
                 if (val.isEmpty()) {
                     val = null;
                 }
-                map.put(key.trim(), val);
+                map.put(key, val);
             }
         }
         return new Template(start, end, map);
+    }
+
+    private static int curlyAwareIndexOf(String text, char query) {
+        int curlyNesting = 0;
+        int i = 0;
+        for (;; i++) {
+            if (i == text.length() || curlyNesting < 0) {
+                return -1;
+            }
+            char c = text.charAt(i);
+            if (curlyNesting == 0 && c == query) {
+                return i;
+            }
+            if (c == '{') {
+                curlyNesting++;
+            }
+            if (c == '}') {
+                curlyNesting--;
+            }
+        }
     }
 
     public String getName() {

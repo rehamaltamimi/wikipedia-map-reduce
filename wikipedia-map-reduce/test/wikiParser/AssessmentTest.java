@@ -47,6 +47,19 @@ public class AssessmentTest {
         List<Assessment> a1 = get(text);
         assertEquals(4, a1.size());
     }
+    
+    @Test public void testNestedAssessment2() {
+        String text = (
+            "{{WikiProjectBannerShell|" +
+            "{{WikiProject Greece|class=B|importance=High|B-Class-1=yes|B-Class-2=yes|B-Class-3=yes|B-Class-4=yes|B-Class-5=yes}}" +
+            "{{Classical Greece and Rome|class=B|importance=Top}}" +
+            "{{maths rating|frequentlyviewed=yes|field=geometry|class=Bplus|importance=Top}}" +
+            "{{WP1.0|v0.7=pass|class=B|category=Math}}" +
+            "}}"
+        );
+        List<Assessment> a1 = get(text);
+        assertEquals(4, a1.size());
+    }
 
     List<Assessment> get(String text) {
         List<Assessment> assessments = new ArrayList<Assessment>();
