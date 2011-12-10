@@ -27,6 +27,19 @@ import wikiParser.util.*;
  * 
  */
 public class ArticleAssessments extends Configured implements Tool {
+    public static class AssessmentCount {
+        private Assessment assessment;
+        private int count;
+
+        public AssessmentCount(Assessment a) {
+            this.assessment = a;
+            this.count = 1;
+        }
+
+        public void increment() {
+            this.count++;
+        }
+    };
 
     /*
      * Takes key-value 7zip hashes and outputs url-id pairs.
@@ -44,7 +57,7 @@ public class ArticleAssessments extends Configured implements Tool {
                 context.progress();
                 if (article.isTalk()) {
                     System.err.println("processing article " + key + "(" + parser.getArticle().getName() + ")");
-                    Map <Assessment, Integer> counts = new HashMap<Assessment, Integer>();
+                    Map <String, AssessmentCount> counts = new HashMap<String, AssessmentCount>();
                     while (true) {
                         context.progress();
                         Revision rev = parser.getNextRevision();
@@ -52,17 +65,48 @@ public class ArticleAssessments extends Configured implements Tool {
                             break;
                         }
                         //System.err.println("doing revision " + rev.getId() + " at " + rev.getTimestamp());
-                        Map<Assessment, Integer> newCounts = processRevision(context, parser.getArticle(), rev);
-                        Set<Assessment> all = new HashSet<Assessment>(counts.keySet());
-                        all.addAll(newCounts.keySet());
-                        for (Assessment a : all) {
-                            int c0 = counts.containsKey(a) ? counts.get(a) : 0;
-                            int c1 = newCounts.containsKey(a) ? newCounts.get(a) : 0;
+                        Map<String, AssessmentCount> newCounts = processRevision(context, parser.getArticle(), rev);
+
+                        // added assessments
+                        for (String ak : newCounts.keySet()) {
+                            AssessmentCount acNew = newCounts.get(ak);
+                            Assessment a = acNew.assessment;
+                            AssessmentCount acPrev = counts.get(ak);
+                            int c0 = acPrev == null ? 0 : acPrev.count;
+                            int c1 = acNew.count;
                             if (c0 != c1) {
-                            context.write(
+                                context.write(
                                     new Text(article.getName() + "@" + article.getId()),
                                     new Text(
                                             rev.getTimestamp() + "\t" +
+                                            rev.getId() + "\t" +
+                                            a.getUser().getName() + "@" + a.getUser().getId() + "\t" +
+                                            a.isFromBot() + "\t" +
+                                            c0 + "\t" +
+                                            c1 + "\t" +
+                                            a.getTemplateName() + "\t" +
+                                            a.getAssessment() + "\t" +
+                                            a.getImportance() + "\t"
+                                        )
+                                );
+                            }
+                        }
+
+                        // deleted assessments
+                        for (String ak : counts.keySet()) {
+                            AssessmentCount acNew = newCounts.get(ak);
+                            AssessmentCount acPrev = counts.get(ak);
+                            Assessment a = acPrev.assessment;
+                            int c0 = acPrev.count;
+                            int c1 = acNew == null ? 0 : acNew.count;
+                            if (c0 != c1) {
+                                context.write(
+                                    new Text(article.getName() + "@" + article.getId()),
+                                    new Text(
+                                            rev.getTimestamp() + "\t" +
+                                            rev.getId() + "\t" +
+                                            a.getUser().getName() + "@" + a.getUser().getId() + "\t" +
+                                            a.isFromBot() + "\t" +
                                             c0 + "\t" +
                                             c1 + "\t" +
                                             a.getTemplateName() + "\t" +
@@ -86,13 +130,17 @@ public class ArticleAssessments extends Configured implements Tool {
             }
         }
 
-        private Map<Assessment, Integer> processRevision(Mapper.Context context, Page page, Revision rev) throws IOException {
-            Map<Assessment, Integer> counts = new HashMap<Assessment, Integer>();
+        private Map<String, AssessmentCount> processRevision(Mapper.Context context, Page page, Revision rev) throws IOException {
+            Map<String, AssessmentCount> counts = new HashMap<String, AssessmentCount>();
             for (Template t : rev.getTemplates()) {
                 for (Assessment a : Assessment.templateToAssessment(page, rev, t)) {
-                    a.setTimestamp("");     // ignore timestamp; may have been added a long time ago.
-                    Integer c = counts.get(a);
-                    counts.put(a, (c == null) ? 1 : (c+1));
+                    String k = a.getSemanticKey();
+                    AssessmentCount c = counts.get(k);
+                    if (c == null) {
+                        counts.put(k, new AssessmentCount(a));
+                    } else {
+                        c.increment();
+                    }
                 }
             }
             return counts;
