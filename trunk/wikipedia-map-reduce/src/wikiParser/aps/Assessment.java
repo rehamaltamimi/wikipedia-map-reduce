@@ -12,20 +12,23 @@ import java.util.Map;
 import wikiParser.Page;
 import wikiParser.Revision;
 import wikiParser.Template;
+import wikiParser.User;
 
 /**
  *
  * @author shilad
  */
 public class Assessment {
-    private String articleName;
+    private Page page;
+    private Revision revision;
     private String templateName;
     private String assessment;
     private String importance;
-    private String timestamp;
+    private boolean fromBot = false;
 
-    public Assessment(String articleName, String templateName, String assessment) {
-        this.articleName = articleName;
+    public Assessment(Page page, Revision revision, String templateName, String assessment) {
+        this.page = page;
+        this.revision = revision;
         this.templateName = templateName;
         this.assessment = assessment;
     }
@@ -35,7 +38,7 @@ public class Assessment {
     }
 
     public String getArticleName() {
-        return articleName;
+        return page.getName();
     }
 
     public String getAssessment() {
@@ -43,24 +46,44 @@ public class Assessment {
     }
 
     public String getTimestamp() {
-        return timestamp;
+        return revision.getTimestamp();
     }
 
+    public User getUser() {
+        return revision.getContributor();
+    }
+    
     public String getImportance() {
         return importance;
+    }
+
+    public String getSemanticKey() {
+        return page.getName() + "|" + templateName + "|" + assessment + "|" + fromBot;
     }
 
     public void setImportance(String importance) {
         this.importance = importance;
     }
+    
+    public boolean isFromBot() {
+        return fromBot;
+    }
 
-    public void setTimestamp(String timestamp) {
-        this.timestamp = timestamp;
+    public void setFromBot(boolean fromBot) {
+        this.fromBot = fromBot;
     }
 
     @Override
     public String toString() {
-        return "Assessment{" + "articleName=" + articleName + " assessment=" + assessment + " templateName=" + templateName + " importance=" + importance + " timestamp=" + timestamp + '}';
+        return "Assessment{" + 
+                " articleName=" + page.getName() +
+                " editor=" + revision.getContributor().getName() +
+                " assessment=" + assessment +
+                " templateName=" + templateName +
+                " importance=" + importance +
+                " timestamp=" + revision.getTimestamp() +
+                " fromBot=" + fromBot +
+            '}';
     }
 
 
@@ -73,7 +96,10 @@ public class Assessment {
             return false;
         }
         final Assessment other = (Assessment) obj;
-        if ((this.articleName == null) ? (other.articleName != null) : !this.articleName.equals(other.articleName)) {
+        if (!this.page.equals(other.page)) {
+            return false;
+        }
+        if (!this.revision.equals(other.revision)) {
             return false;
         }
         if ((this.assessment == null) ? (other.assessment != null) : !this.assessment.equals(other.assessment)) {
@@ -85,7 +111,7 @@ public class Assessment {
         if ((this.importance == null) ? (other.importance != null) : !this.importance.equals(other.importance)) {
             return false;
         }
-        if (this.timestamp != other.timestamp && (this.timestamp == null || !this.timestamp.equals(other.timestamp))) {
+        if (this.fromBot != other.fromBot) {
             return false;
         }
         return true;
@@ -94,11 +120,12 @@ public class Assessment {
     @Override
     public int hashCode() {
         int hash = 5;
-        hash = 67 * hash + (this.articleName != null ? this.articleName.hashCode() : 0);
+        hash = 67 * hash + (this.page != null ? this.page.hashCode() : 0);
         hash = 67 * hash + (this.assessment != null ? this.assessment.hashCode() : 0);
         hash = 67 * hash + (this.templateName != null ? this.templateName.hashCode() : 0);
         hash = 67 * hash + (this.importance != null ? this.importance.hashCode() : 0);
-        hash = 67 * hash + (this.timestamp != null ? this.timestamp.hashCode() : 0);
+        hash = 67 * hash + (this.revision != null ? this.revision.hashCode() : 0);
+        hash = 67 * hash + (this.fromBot ? 1 : 0);
         return hash;
     }
 
@@ -185,12 +212,12 @@ public class Assessment {
                 }
             }
         } else {
-            Assessment ass = new Assessment(page.getName(), template.getName(), rating);
-            if (revision.getTimestamp() != null) {
-                ass.setTimestamp(revision.getTimestamp());
-            }
+            Assessment ass = new Assessment(page, revision, template.getName(), rating);
             if (template.hasParam("importance")) {
                 ass.setImportance(template.getParam("importance"));
+            }
+            if (template.hasParam("auto") && !template.getParam("auto").isEmpty()) {
+                ass.setFromBot(true);
             }
             result.add(ass);
         }

@@ -29,6 +29,17 @@ public class Revision {
         this.comment = comment;
         this.minor = minor;
     }
+    public int hashCode() {
+            return id.hashCode();
+    }
+
+    public boolean equals(Object o) {
+            if (o instanceof Revision) {
+                    return ((Revision) o).id.equals(id);
+            } else {
+                    return false;
+            }
+    }
 
     public String getId() {
         return id;
