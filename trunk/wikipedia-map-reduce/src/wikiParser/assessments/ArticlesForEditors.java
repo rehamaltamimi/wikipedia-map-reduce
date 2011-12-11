@@ -1,4 +1,4 @@
-package wikiParser.aps;
+package wikiParser.assessments;
 
 import java.io.BufferedReader;
 import java.io.IOException;
