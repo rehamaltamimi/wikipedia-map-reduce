@@ -4,7 +4,7 @@
  */
 package wikiParser.mapReduce.graphs;
 
-import wikiParser.aps.*;
+
 import java.io.IOException;
 import java.util.*;
 import org.apache.hadoop.conf.Configuration;
