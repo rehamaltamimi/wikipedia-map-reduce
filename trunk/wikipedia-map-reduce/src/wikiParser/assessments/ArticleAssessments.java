@@ -67,7 +67,35 @@ public class ArticleAssessments extends Configured implements Tool {
                         //System.err.println("doing revision " + rev.getId() + " at " + rev.getTimestamp());
                         Map<String, AssessmentCount> newCounts = processRevision(context, parser.getArticle(), rev);
 
-                        // added assessments
+                        // deleted assessments
+                        for (String ak : counts.keySet()) {
+                            if (newCounts.containsKey(ak)) {
+                                continue;   // will be listed later.
+                            }
+                            AssessmentCount acPrev = counts.get(ak);
+                            Assessment a = acPrev.assessment;
+                            int c0 = acPrev.count;
+                            int c1 = 0;
+                            if (c0 == 0) {
+                                continue;   // shouldn't really happen
+                            }
+                            context.write(
+                                new Text(article.getName() + "@" + article.getId()),
+                                new Text(
+                                        rev.getTimestamp() + "\t" +
+                                        rev.getId() + "\t" +
+                                        a.getUser().getName() + "@" + a.getUser().getId() + "\t" +
+                                        a.isFromBot() + "\t" +
+                                        c0 + "\t" +
+                                        c1 + "\t" +
+                                        a.getTemplateName() + "\t" +
+                                        a.getAssessment() + "\t" +
+                                        a.getImportance() + "\t"
+                                    )
+                                );
+                        }
+
+                        // added and updated assessments
                         for (String ak : newCounts.keySet()) {
                             AssessmentCount acNew = newCounts.get(ak);
                             Assessment a = acNew.assessment;
@@ -92,31 +120,8 @@ public class ArticleAssessments extends Configured implements Tool {
                             }
                         }
 
-                        // deleted assessments
-                        for (String ak : counts.keySet()) {
-                            AssessmentCount acNew = newCounts.get(ak);
-                            AssessmentCount acPrev = counts.get(ak);
-                            Assessment a = acPrev.assessment;
-                            int c0 = acPrev.count;
-                            int c1 = acNew == null ? 0 : acNew.count;
-                            if (c0 != c1) {
-                                context.write(
-                                    new Text(article.getName() + "@" + article.getId()),
-                                    new Text(
-                                            rev.getTimestamp() + "\t" +
-                                            rev.getId() + "\t" +
-                                            a.getUser().getName() + "@" + a.getUser().getId() + "\t" +
-                                            a.isFromBot() + "\t" +
-                                            c0 + "\t" +
-                                            c1 + "\t" +
-                                            a.getTemplateName() + "\t" +
-                                            a.getAssessment() + "\t" +
-                                            a.getImportance() + "\t"
-                                        )
-                                );
-                            }
-                        }
                         counts = newCounts;
+
                     }
                 }
             } catch (Exception e) {
