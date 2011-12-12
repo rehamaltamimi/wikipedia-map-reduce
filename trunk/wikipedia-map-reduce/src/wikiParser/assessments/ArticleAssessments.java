@@ -74,6 +74,7 @@ public class ArticleAssessments extends Configured implements Tool {
                             }
                             AssessmentCount acPrev = counts.get(ak);
                             Assessment a = acPrev.assessment;
+                            User u = rev.getContributor();
                             int c0 = acPrev.count;
                             int c1 = 0;
                             if (c0 == 0) {
@@ -84,8 +85,8 @@ public class ArticleAssessments extends Configured implements Tool {
                                 new Text(
                                         rev.getTimestamp() + "\t" +
                                         rev.getId() + "\t" +
-                                        a.getUser().getName() + "@" + a.getUser().getId() + "\t" +
-                                        a.isFromBot() + "\t" +
+                                        u.getName() + "@" + u.getId() + "\t" +
+                                        u.isBot() + "\t" +
                                         c0 + "\t" +
                                         c1 + "\t" +
                                         a.getTemplateName() + "\t" +
@@ -100,6 +101,7 @@ public class ArticleAssessments extends Configured implements Tool {
                             AssessmentCount acNew = newCounts.get(ak);
                             Assessment a = acNew.assessment;
                             AssessmentCount acPrev = counts.get(ak);
+                            User u = rev.getContributor();
                             int c0 = acPrev == null ? 0 : acPrev.count;
                             int c1 = acNew.count;
                             if (c0 != c1) {
@@ -108,8 +110,8 @@ public class ArticleAssessments extends Configured implements Tool {
                                     new Text(
                                             rev.getTimestamp() + "\t" +
                                             rev.getId() + "\t" +
-                                            a.getUser().getName() + "@" + a.getUser().getId() + "\t" +
-                                            a.isFromBot() + "\t" +
+                                            u.getName() + "@" + u.getId() + "\t" +
+                                            (u.isBot() || a.isFromBot()) + "\t" +
                                             c0 + "\t" +
                                             c1 + "\t" +
                                             a.getTemplateName() + "\t" +
