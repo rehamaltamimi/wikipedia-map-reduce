@@ -5,7 +5,7 @@
 package wikiParser;
 
 import java.util.ArrayList;
-import wikiParser.aps.Assessment;
+import wikiParser.assessments.Assessment;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
