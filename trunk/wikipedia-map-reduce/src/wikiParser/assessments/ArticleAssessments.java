@@ -65,7 +65,7 @@ public class ArticleAssessments extends Configured implements Tool {
                             break;
                         }
                         //System.err.println("doing revision " + rev.getId() + " at " + rev.getTimestamp());
-                        Map<String, AssessmentCount> newCounts = processRevision(context, parser.getArticle(), rev);
+                        Map<String, AssessmentCount> newCounts = processRevision(context, parser.getArticle(), rev, counts);
 
                         // deleted assessments
                         for (String ak : counts.keySet()) {
@@ -91,16 +91,16 @@ public class ArticleAssessments extends Configured implements Tool {
                                         c1 + "\t" +
                                         a.getTemplateName() + "\t" +
                                         a.getAssessment() + "\t" +
-                                        a.getImportance() + "\t"
+                                        a.getImportance()
                                     )
                                 );
                         }
 
                         // added and updated assessments
                         for (String ak : newCounts.keySet()) {
+                            AssessmentCount acPrev = counts.get(ak);
                             AssessmentCount acNew = newCounts.get(ak);
                             Assessment a = acNew.assessment;
-                            AssessmentCount acPrev = counts.get(ak);
                             User u = rev.getContributor();
                             int c0 = acPrev == null ? 0 : acPrev.count;
                             int c1 = acNew.count;
@@ -116,14 +116,13 @@ public class ArticleAssessments extends Configured implements Tool {
                                             c1 + "\t" +
                                             a.getTemplateName() + "\t" +
                                             a.getAssessment() + "\t" +
-                                            a.getImportance() + "\t"
+                                            a.getImportance()
                                         )
                                 );
                             }
                         }
 
                         counts = newCounts;
-
                     }
                 }
             } catch (Exception e) {
@@ -137,13 +136,19 @@ public class ArticleAssessments extends Configured implements Tool {
             }
         }
 
-        private Map<String, AssessmentCount> processRevision(Mapper.Context context, Page page, Revision rev) throws IOException {
+        private Map<String, AssessmentCount> processRevision(
+                Mapper.Context context, Page page,
+                Revision rev, Map<String, AssessmentCount> oldCounts) throws IOException {
             Map<String, AssessmentCount> counts = new HashMap<String, AssessmentCount>();
             for (Template t : rev.getTemplates()) {
                 for (Assessment a : Assessment.templateToAssessment(page, rev, t)) {
                     String k = a.getSemanticKey();
                     AssessmentCount c = counts.get(k);
                     if (c == null) {
+                        AssessmentCount old = oldCounts.get(k);
+                        if (old != null) {
+                            a = old.assessment; // grab the original assessment
+                        }
                         counts.put(k, new AssessmentCount(a));
                     } else {
                         c.increment();
