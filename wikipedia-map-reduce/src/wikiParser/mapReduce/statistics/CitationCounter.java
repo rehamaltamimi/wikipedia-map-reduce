@@ -13,7 +13,6 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
@@ -47,6 +46,7 @@ public class CitationCounter extends Configured implements Tool {
                 pipe = new LzmaPipe(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();
+                Map<String, Integer> citeCounts = new HashMap<String, Integer>();
                 System.err.println("processing article " + key + "(" + parser.getArticle().getName() + ")");
                 if (article.isNormalPage()) {//main namespace only
                     Set <String> urls = new HashSet<String>();
@@ -57,14 +57,12 @@ public class CitationCounter extends Configured implements Tool {
                             break;
                         }
                         //System.err.println("doing revision " + rev.getId() + " at " + rev.getTimestamp());
-                        urls = processRevision(parser.getArticle(), rev, urls);
+                        Map<String, Integer> newCiteCounts = processRevision(parser.getArticle(), rev);
+
+                        writeDiff(context, article, rev, citeCounts, newCiteCounts);
+
+                        citeCounts = newCiteCounts;
                     }
-                    for (String url : citeCounts.keySet()) {
-                        context.write(
-                                new Text(url + "@" + article.getId()),
-                                new Text(citeCounts.get(url).get("added") + "\t"+ citeCounts.get(url).get("removed") + "\t" + citeCounts.get(url).get("revisions")));
-                    }
-                    citeCounts.clear();
                 }
             } catch (Exception e) {
                 context.progress();
@@ -77,34 +75,68 @@ public class CitationCounter extends Configured implements Tool {
             }
         }
 
-        private Set<String> processRevision(Page article, Revision rev, Set<String> prevUrls) throws IOException {
-            HashSet<String> nextUrls = new HashSet<String>();
+        private void writeDiff(Mapper.Context context, Page article, Revision rev,
+                Map<String, Integer> citeCounts, Map<String, Integer> newCiteCounts) throws IOException, InterruptedException {
+
+            // deleted assessments
+            for (String url : citeCounts.keySet()) {
+                if (newCiteCounts.containsKey(url)) {
+                    continue;   // will be listed later.
+                }
+                User u = rev.getContributor();
+                int c0 = citeCounts.get(url);
+                int c1 = 0;
+                if (c0 == 0) {
+                    continue;   // shouldn't really happen
+                }
+                context.write(
+                    new Text(article.getName() + "@" + article.getId()),
+                    new Text(
+                            rev.getTimestamp() + "\t" +
+                            rev.getId() + "\t" +
+                            u.getName() + "@" + u.getId() + "\t" +
+                            u.isBot() + "\t" +
+                            url +
+                            c0 + "\t" +
+                            c1 + "\t"
+                        )
+                    );
+            }
+
+            // added and updated assessments
+            for (String url : newCiteCounts.keySet()) {
+                User u = rev.getContributor();
+                int c0 = citeCounts.containsKey(url) ? citeCounts.get(url) : 0;
+                int c1 = newCiteCounts.get(url);
+                if (c0 != c1) {
+                    context.write(
+                        new Text(article.getName() + "@" + article.getId()),
+                        new Text(
+                                rev.getTimestamp() + "\t" +
+                                rev.getId() + "\t" +
+                                u.getName() + "@" + u.getId() + "\t" +
+                                u.isBot() + "\t" +
+                                url +
+                                c0 + "\t" +
+                                c1 + "\t"
+
+                            )
+                    );
+                }
+            }
+        }
+
+        private Map<String, Integer> processRevision(Page article, Revision rev) throws IOException {
+            HashMap<String, Integer> citeCounts = new HashMap<String, Integer>();
             for (Citation c : rev.getCitations(article)) {
                 String url = c.getUrl().replaceAll("[\\s]+", " ");
-                nextUrls.add(url);
-            }
-            for (String cite : nextUrls) {
-                if (citeCounts.get(cite) == null) {
-                    Map citeInfo = new HashMap<String, Integer>();
-                    citeInfo.put("added", 0);
-                    citeInfo.put("revisions", 0);
-                    citeInfo.put("removed", 0);
-                    citeCounts.put(cite, citeInfo);
-                }
-                if (!prevUrls.contains(cite)) {
-                    citeCounts.get(cite).put("added", citeCounts.get(cite).get("added") + 1);
-                }
-                citeCounts.get(cite).put("revisions", citeCounts.get(cite).get("revisions")  + 1);
-            }
-            for (String cite : prevUrls) {
-                if (!nextUrls.contains(cite)) {
-                    citeCounts.get(cite).put("removed", citeCounts.get(cite).get("removed") + 1);
+                if (citeCounts.containsKey(url)) {
+                    citeCounts.put(url, citeCounts.get(url) + 1);
+                } else {
+                    citeCounts.put(url, 1);
                 }
             }
-//            if (Math.random() > 0.99) {
-//                System.err.println("for revision " + rev.getTimestamp() + " found " + numPrinted + " of " + numUnique);
-//            }
-            return nextUrls;
+            return citeCounts;
         }
     }
 
