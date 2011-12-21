@@ -11,6 +11,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import wikiParser.citations.Citation;
+import wikiParser.citations.CitationParser;
 
 public class Revision {
 
@@ -157,6 +159,11 @@ public class Revision {
     private static final Pattern REF_START = Pattern.compile("^<[\\s]*ref[^/]*?>");
     private static final Pattern REF_END = Pattern.compile("(<[\\s]*/[\\s]*ref[\\s]*>)");
 
+    public List<Citation> getCitations(Page page) {
+        CitationParser p = new CitationParser();
+        return p.extractCitations(page, this);
+    }
+    
     /**
      * Some information may be omitted or overwritten in the following cases:
      * 1. More than one template is included in a single citation and the template field names overlap
@@ -263,7 +270,7 @@ public class Revision {
         boolean matches = urlMatcher.matches();
         Template t = findTemplateInRef(ref, start);
         //Second condition is necessary in case of dead link templates or similar in the citation
-        if (t != null && isCite(t.getParam("templateName"))) {
+        if (t != null && isCite(t.getName())) {
             return t;
         }
         if (matches) {

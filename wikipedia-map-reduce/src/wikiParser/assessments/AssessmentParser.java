@@ -47,7 +47,7 @@ public class AssessmentParser {
             RATING_TRANSLATOR.put(r, r);
         }
         RATING_TRANSLATOR.put("ffa/ga", "ffa");
-        RATING_TRANSLATOR.put("dga", "fa");
+        RATING_TRANSLATOR.put("dga", "fga");
         RATING_TRANSLATOR.put("disambig", "dab");
         RATING_TRANSLATOR.put("formerfa2", "ffa");
         RATING_TRANSLATOR.put("formerfa", "ffa");
