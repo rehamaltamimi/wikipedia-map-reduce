@@ -19,6 +19,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import wikiParser.*;
+import wikiParser.citations.Citation;
 import wikiParser.mapReduce.util.*;
 import wikiParser.util.*;
 
@@ -78,15 +79,8 @@ public class CitationCounter extends Configured implements Tool {
 
         private Set<String> processRevision(Page article, Revision rev, Set<String> prevUrls) throws IOException {
             HashSet<String> nextUrls = new HashSet<String>();
-            for (Template t : rev.getCites()) {
-                String url = t.getParam("url");
-                if (url == null) {
-                    url = t.getParam("templateName");
-                    if (url == null) {
-                        url = "NoURL";
-                    }
-                }
-                url = url.replaceAll("[\\s]+", " ");
+            for (Citation c : rev.getCitations(article)) {
+                String url = c.getUrl().replaceAll("[\\s]+", " ");
                 nextUrls.add(url);
             }
             for (String cite : nextUrls) {
