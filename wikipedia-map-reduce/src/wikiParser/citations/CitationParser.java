@@ -49,7 +49,6 @@ public class CitationParser {
             }
             // we have a beginning and an ending!
             String body = content.substring(open.end(), close.start());
-            System.out.println("scanning for refs in " + body);
             cites.addAll(processOneRefTag(page, revision, body));
             content = content.substring(close.end());
         }
