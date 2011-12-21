@@ -96,7 +96,7 @@ public class CitationCounter extends Configured implements Tool {
                             rev.getId() + "\t" +
                             u.getName() + "@" + u.getId() + "\t" +
                             u.isBot() + "\t" +
-                            url +
+                            url + "\t" +
                             c0 + "\t" +
                             c1 + "\t"
                         )
@@ -116,7 +116,7 @@ public class CitationCounter extends Configured implements Tool {
                                 rev.getId() + "\t" +
                                 u.getName() + "@" + u.getId() + "\t" +
                                 u.isBot() + "\t" +
-                                url +
+                                url + "\t" +
                                 c0 + "\t" +
                                 c1 + "\t"
 
@@ -129,7 +129,9 @@ public class CitationCounter extends Configured implements Tool {
         private Map<String, Integer> processRevision(Page article, Revision rev) throws IOException {
             HashMap<String, Integer> citeCounts = new HashMap<String, Integer>();
             for (Citation c : rev.getCitations(article)) {
-                String url = c.getUrl().replaceAll("[\\s]+", " ");
+                String url = c.getUrl();
+                if (url == null) { url = "noURL"; }
+                c.getUrl().replaceAll("[\\s]+", " ");
                 if (citeCounts.containsKey(url)) {
                     citeCounts.put(url, citeCounts.get(url) + 1);
                 } else {
