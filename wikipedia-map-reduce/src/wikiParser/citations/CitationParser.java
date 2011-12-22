@@ -43,8 +43,12 @@ public class CitationParser {
             }
             Matcher close = REF_END.matcher(content);
             if (!close.find() || open.end() >= close.start()) {
+                String str = content.substring(open.start());
+                str = (str.length() > 50) ? str.substring(0, 47) + "..." : str;
+                str = str.replaceAll("\\s+", " ");
                 System.err.println("No end of reference found in page " + page.getName() +
-                        ", revision " + revision.getId() + " at time " + revision.getTimestamp());
+                        ", revision " + revision.getId() + " at time " + revision.getTimestamp() +
+                        " beginning at '" + str + "'");
                 break;
             }
             // we have a beginning and an ending!

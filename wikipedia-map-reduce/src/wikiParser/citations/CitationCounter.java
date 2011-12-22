@@ -130,8 +130,7 @@ public class CitationCounter extends Configured implements Tool {
             HashMap<String, Integer> citeCounts = new HashMap<String, Integer>();
             for (Citation c : rev.getCitations(article)) {
                 String url = c.getUrl();
-                if (url == null) { url = "noURL"; }
-                c.getUrl().replaceAll("[\\s]+", " ");
+                url = (url == null) ? "noURL" : url.replaceAll("[\\s]+", " ");
                 if (citeCounts.containsKey(url)) {
                     citeCounts.put(url, citeCounts.get(url) + 1);
                 } else {
