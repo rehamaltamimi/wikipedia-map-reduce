@@ -18,7 +18,6 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import wikiParser.*;
-import wikiParser.citations.Citation;
 import wikiParser.mapReduce.util.*;
 import wikiParser.util.*;
 
