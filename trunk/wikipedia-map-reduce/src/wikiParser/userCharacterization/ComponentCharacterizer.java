@@ -62,6 +62,7 @@ public class ComponentCharacterizer {
                  if (clusterChanges.containsKey(componentsCluster)) {
                      //both lines have been read, queue task
                      waitUntilQueued(new Characterizer(componentsCluster,split[1],clusterChanges.get(componentsCluster),results));
+                     clusterChanges.remove(componentsCluster);
                      submitted++;
                  } else {
                      if (split.length > 1) {
@@ -77,6 +78,7 @@ public class ComponentCharacterizer {
                  if (clusterComponents.containsKey(changesCluster)) {
                      //both lines from cluster have been read in, queue task
                      waitUntilQueued(new Characterizer(changesCluster,split[1],clusterComponents.get(changesCluster),results));
+                     clusterComponents.remove(changesCluster);
                      submitted++;
                  } else {
                      //only one line has been read, store data for later
@@ -85,6 +87,10 @@ public class ComponentCharacterizer {
              }
              components = componentReader.readLine();
              changes = bytesChanged.readLine();
+         }
+         for (int cluster : clusterChanges.keySet()) {
+             waitUntilQueued(new Characterizer(cluster,clusterChanges.get(cluster),"",results));
+             submitted++;
          }
          writer.setTotalCases(submitted);
      }
