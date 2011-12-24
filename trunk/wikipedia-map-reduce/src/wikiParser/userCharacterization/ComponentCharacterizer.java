@@ -26,6 +26,9 @@ import java.util.logging.Logger;
 /**
  *
  * @author Nathaniel
+ * 
+ * Compute average edit size in bytes for entire cluster, as well
+ * as each component
  */
 public class ComponentCharacterizer {
      private static ThreadPoolExecutor tpe;
@@ -176,6 +179,8 @@ public class ComponentCharacterizer {
             HashMap<Integer,HashSet<Integer>> componentMapping = new HashMap<Integer,HashSet<Integer>>();
             HashMap<Integer,Integer> userChanges = new HashMap<Integer,Integer>();
             int side = 0;
+            int users = 0;
+            int totalChanged = 0;
             for (String conflict : components.split("\\|")) {
                 componentMapping.put(side, new HashSet<Integer>());
                 componentMapping.put(side + 1, new HashSet<Integer>());
@@ -191,11 +196,17 @@ public class ComponentCharacterizer {
             for (String userInfo : changes.split("\\|")) {
                 String[] userDelta = userInfo.split("#");
                 int user = Integer.parseInt(userDelta[0]);
+                int delta = Integer.parseInt(userDelta[1]);
+                users++;
+                totalChanged += delta;
                 if (userChanges.containsKey(user)) {
-                    userChanges.put(user,Integer.parseInt(userDelta[1]));
+                    userChanges.put(user,delta);
                 }
             }
             StringBuilder sb = new StringBuilder();
+            int average = totalChanged/users;
+            //add cluster average edit size
+            sb.append(average).append("|");
             //for each side, compute average without decimal
             //add to output string
             for (int component = 0; component < componentMapping.keySet().size()/2; component++) {
