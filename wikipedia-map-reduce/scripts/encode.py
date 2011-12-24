@@ -187,7 +187,6 @@ def main(output_path):
     id = -1
     title = None
     buff = ''
-    nArticles = 20
 
     for line in sys.stdin:
         stripped = line.strip()
@@ -204,7 +203,6 @@ def main(output_path):
                     id = int(r.group(1))
                     logging.info('processing article %s: %s' % (id, title))
                     writer.send(NO_END, id, HEADER)
-                    nArticles -= 1
             if title == None:
                 r = FIND_TITLE(line)
                 if r:
@@ -220,8 +218,6 @@ def main(output_path):
             id = -1
             title = None
             state = STATE_HEADER
-            if nArticles <= 0:
-                break
         elif state == STATE_REV: # in some rev
             buff += line
         else:
