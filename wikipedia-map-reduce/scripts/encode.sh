@@ -2,7 +2,7 @@
 # The parallel command can be downloaded at http://www.gnu.org/software/parallel/
 #
 
-if [ $1 -eq "current" ]; then
+if [ $1 == "current" ]; then
     current="current"
     shift
 fi
@@ -14,4 +14,4 @@ mkdir -p $dest/logs
 
 echo $@ | \
 tr ' ' '\n' | \
-parallel ./scripts/reencode_one.sh $current $dest {}
+parallel ./scripts/encode_one.sh $current $dest {}
