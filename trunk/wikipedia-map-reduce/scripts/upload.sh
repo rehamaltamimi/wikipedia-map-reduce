@@ -8,7 +8,4 @@ dest=$1
 shift
 echo "dest is $dest"
 
-for file in $@; do
-    trap "" HUP && s3cmd put $file $dest >& $file.s3log &
-done
-
+echo $@ | tr ' ' '\n' | parallel -P 5 --group s3cmd put {} $dest 
