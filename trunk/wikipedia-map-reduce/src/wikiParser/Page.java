@@ -1,173 +1,215 @@
 package wikiParser;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Page extends Vertex {
+    // We also check for prefix + " talk"
+    public static final String[] NAMESPACE_PREFIXES = {
+        "book",
+        "category",
+        "help",
+        "file",
+        "mediawiki",
+        "portal",
+        "project",
+        "talk",
+        "template",
+        "user",
+        "wikipedia",
+        "wp",
+    };
 
-	public Page(String id) {
-		super(id);
-	}
+    static {
+        Arrays.sort(NAMESPACE_PREFIXES);    // just in case
+    }
 
-	public Page(String name, String id) {
-		super(name, id);
-	}
-	private static Pattern userPagePattern = Pattern.compile("User:(.+)");
-	private static Pattern userTalkPagePattern = Pattern.compile("User talk:(.+)");
 
-	/**
-	 * Generates the user who owns the article in the case of User: and
-	 * User talk: namespace articles.  Returns a User object with just a username
-	 * unless the user has also edited the article at some point, in which case
-	 * it returns a User object with both a username and an UID.
-	 * @param article the article to determine the owner of
-	 * @return the owner of the article
-	 */
-	public User getUser() {
-		//FIXME: This isn't finding user ids.
-		User user = null;
-		Matcher nameMatcher = userPagePattern.matcher(getName());
-		if (nameMatcher.find()) {
-			user = new User(nameMatcher.group(1));
-		}
-		nameMatcher = userTalkPagePattern.matcher(getName());
-		if (nameMatcher.find()) {
-			user = new User(nameMatcher.group(1));
-		}
-		// Looks for a revision by them if there are any revisions, for the ID.
-		if (!this.getRevisions().isEmpty()) {
-			for (Revision rev : this.getRevisions()) {
-				if (rev.getContributor().getName().equals(user.getId())) {
-					user = new User(nameMatcher.group(1), rev.getContributor().getId());
-				}
-			}
-		}
-		return user;
-	}
+    public Page(String id) {
+        super(id);
+    }
 
-	public ArrayList<User> getUsers() {
-		ArrayList<User> users = new ArrayList<User>();
-		for (Revision r : this.getRevisions()) {
-			users.add(r.getContributor());
-		}
-		return users;
-	}
+    public Page(String name, String id) {
+        super(name, id);
+    }
+    private static Pattern userPagePattern = Pattern.compile("User:(.+)");
+    private static Pattern userTalkPagePattern = Pattern.compile("User talk:(.+)");
 
-	/**
-	 * Retrieves a set of all unique anchor tag targets originating from this article.
-	 * @return a set of unique hyperlink targets
-	 */
-	public Set<String> getAnchorLinks() {
-		Set<String> anchorLinks = new HashSet<String>();
-		for (Revision r : this.getRevisions()) {
-			anchorLinks.addAll(r.getAnchorLinks());
-		}
-		return anchorLinks;
-	}
+    /**
+     * Generates the user who owns the article in the case of User: and
+     * User talk: namespace articles.  Returns a User object with just a username
+     * unless the user has also edited the article at some point, in which case
+     * it returns a User object with both a username and an UID.
+     * @param article the article to determine the owner of
+     * @return the owner of the article
+     */
+    public User getUser() {
+        //FIXME: This isn't finding user ids.
+        User user = null;
+        Matcher nameMatcher = userPagePattern.matcher(getName());
+        if (nameMatcher.find()) {
+            user = new User(nameMatcher.group(1));
+        }
+        nameMatcher = userTalkPagePattern.matcher(getName());
+        if (nameMatcher.find()) {
+            user = new User(nameMatcher.group(1));
+        }
+        // Looks for a revision by them if there are any revisions, for the ID.
+        if (!this.getRevisions().isEmpty()) {
+            for (Revision rev : this.getRevisions()) {
+                if (rev.getContributor().getName().equals(user.getId())) {
+                    user = new User(nameMatcher.group(1), rev.getContributor().getId());
+                }
+            }
+        }
+        return user;
+    }
 
-	/**
-	 * Retrieves a set of all unique contributors to this article.
-	 * @return a set of unique contributors
-	 */
-	// FIXME: This isn't adding all, even when they are unique.
-	public Set<User> getContributors() {
-		Set<User> contributors = new HashSet<User>();
-		for (User u : this.getUsers()) {
-			contributors.add(u);
-		}
-		return contributors;
-	}
+    public ArrayList<User> getUsers() {
+        ArrayList<User> users = new ArrayList<User>();
+        for (Revision r : this.getRevisions()) {
+            users.add(r.getContributor());
+        }
+        return users;
+    }
 
-	public boolean isTalk() {
-		return getName().startsWith("Talk:");
-	}
+    /**
+     * Retrieves a set of all unique anchor tag targets originating from this article.
+     * @return a set of unique hyperlink targets
+     */
+    public Set<String> getAnchorLinks() {
+        Set<String> anchorLinks = new HashSet<String>();
+        for (Revision r : this.getRevisions()) {
+            anchorLinks.addAll(r.getAnchorLinks());
+        }
+        return anchorLinks;
+    }
 
-	public boolean isUser() {
-		return getName().startsWith("User:");
-	}
+    /**
+     * Retrieves a set of all unique contributors to this article.
+     * @return a set of unique contributors
+     */
+    // FIXME: This isn't adding all, even when they are unique.
+    public Set<User> getContributors() {
+        Set<User> contributors = new HashSet<User>();
+        for (User u : this.getUsers()) {
+            contributors.add(u);
+        }
+        return contributors;
+    }
 
-	public boolean isUserTalk() {
-		return getName().startsWith("User talk:");
-	}
+    public boolean isTalk() {
+        return getName().startsWith("Talk:");
+    }
 
-	public boolean isProject() {
-		return getName().startsWith("Wikipedia:")
-		|| getName().startsWith("WP:")
-		|| getName().startsWith("Project:");
-	}
+    public boolean isUser() {
+        return getName().startsWith("User:");
+    }
 
-	public boolean isProjectTalk() {
-		return getName().startsWith("Wikipedia talk:")
-		|| getName().startsWith("WT:")
-		|| getName().startsWith("Project talk:");
-	}
+    public boolean isUserTalk() {
+        return getName().startsWith("User talk:");
+    }
 
-	public boolean isPortal() {
-		return getName().startsWith("Portal:");
-	}
+    public boolean isProject() {
+        return getName().startsWith("Wikipedia:")
+                || getName().startsWith("WP:")
+                || getName().startsWith("Project:");
+    }
 
-	public boolean isPortalTalk() {
-		return getName().startsWith("Portal talk:");
-	}
+    public boolean isProjectTalk() {
+        return getName().startsWith("Wikipedia talk:")
+                || getName().startsWith("WP:")
+                || getName().startsWith("Project talk:");
+    }
 
-	public boolean isFile() {
-		return getName().startsWith("File:")
-		|| getName().startsWith("Image:");
-	}
+    public boolean isPortal() {
+        return getName().startsWith("Portal:");
+    }
 
-	public boolean isFileTalk() {
-		return getName().startsWith("File talk:")
-		|| getName().startsWith("Image talk:");
-	}
+    public boolean isPortalTalk() {
+        return getName().startsWith("Portal talk:");
+    }
 
-	public boolean isMediaWiki() {
-		return getName().startsWith("MediaWiki:");
-	}
+    public boolean isFile() {
+        return getName().startsWith("File:")
+                || getName().startsWith("Image:");
+    }
 
-	public boolean isMediaWikiTalk() {
-		return getName().startsWith("MediaWiki talk:");
-	}
+    public boolean isFileTalk() {
+        return getName().startsWith("File talk:")
+                || getName().startsWith("Image talk:");
+    }
 
-	public boolean isTemplate() {
-		return getName().startsWith("Template:");
-	}
+    public boolean isMediaWiki() {
+        return getName().startsWith("MediaWiki:");
+    }
 
-	public boolean isTemplateTalk() {
-		return getName().startsWith("Template talk:");
-	}
+    public boolean isMediaWikiTalk() {
+        return getName().startsWith("MediaWiki talk:");
+    }
 
-	public boolean isCategory() {
-		return getName().startsWith("Category:");
-	}
+    public boolean isTemplate() {
+        return getName().startsWith("Template:");
+    }
 
-	public boolean isCategoryTalk() {
-		return getName().startsWith("Category talk:");
-	}
+    public boolean isTemplateTalk() {
+        return getName().startsWith("Template talk:");
+    }
 
-	public boolean isBook() {
-		return getName().startsWith("Book:");
-	}
+    public boolean isCategory() {
+        return getName().startsWith("Category:");
+    }
 
-	public boolean isBookTalk() {
-		return getName().startsWith("Book talk:");
-	}
+    public boolean isCategoryTalk() {
+        return getName().startsWith("Category talk:");
+    }
 
-	public boolean isHelp() {
-		return getName().startsWith("Help:");
-	}
+    public boolean isBook() {
+        return getName().startsWith("Book:");
+    }
 
-	public boolean isHelpTalk() {
-		return getName().startsWith("Help talk:");
-	}
+    public boolean isBookTalk() {
+        return getName().startsWith("Book talk:");
+    }
 
-	public boolean isNormalPage() {
-		return (getName().indexOf(':') < 0);
-	}
+    public boolean isHelp() {
+        return getName().startsWith("Help:");
+    }
 
-	public boolean isAnyTalk() {
-		return getName().contains(" talk:");
-	}
+    public boolean isHelpTalk() {
+        return getName().startsWith("Help talk:");
+    }
+
+    public boolean isNormalPage() {
+        String ln = getName().toLowerCase();
+        int i = ln.indexOf(":");
+        if (i < 0) {
+            return true;
+        }
+        String prefix = ln.substring(0, i).trim();
+        if (prefix.endsWith(" talk")) {
+            prefix = prefix.substring(0, prefix.length() - 5).trim();
+        }
+        if (Arrays.binarySearch(NAMESPACE_PREFIXES, prefix) >= 0) {
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isAnyTalk() {
+        String ln = getName().toLowerCase();
+        if (ln.startsWith("talk:")) {
+            return true;
+        } 
+        int i = ln.indexOf(" talk:");
+        if (i > 0) {
+            String prefix = ln.substring(0, i);
+            return (Arrays.binarySearch(NAMESPACE_PREFIXES, prefix) >= 0);
+        }
+        return false;
+    }
 }

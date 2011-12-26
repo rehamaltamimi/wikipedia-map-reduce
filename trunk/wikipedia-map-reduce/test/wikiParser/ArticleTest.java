@@ -59,5 +59,22 @@ public class ArticleTest {
 		String tmpLink = article.getAnchorLinks().iterator().next();
 		assertEquals(tmpLink, "Capo di tutti capi");
 	}
+
+        @Test public void testNamespace() {
+            assertTrue(new Page("talk: foo", "34").isAnyTalk());
+            assertTrue(new Page("file talk: baz", "34").isAnyTalk());
+            assertFalse(new Page("foo talk: foo", "34").isAnyTalk());
+            assertFalse(new Page("filez talk: baz", "34").isAnyTalk());
+            assertFalse(new Page("talk", "34").isAnyTalk());
+            assertFalse(new Page("fotalk", "34").isAnyTalk());
+
+
+            assertFalse(new Page("talk: foo", "34").isNormalPage());
+            assertFalse(new Page("file talk: baz", "34").isNormalPage());
+            assertTrue(new Page("foo talk: foo", "34").isNormalPage());
+            assertTrue(new Page("filez talk: baz", "34").isNormalPage());
+            assertTrue(new Page("talk", "34").isNormalPage());
+            assertTrue(new Page("foo bar", "34").isNormalPage());
+        }
 	
 }
