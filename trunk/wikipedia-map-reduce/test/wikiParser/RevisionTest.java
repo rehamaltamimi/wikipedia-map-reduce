@@ -13,11 +13,6 @@ import javax.xml.stream.XMLStreamException;
 import org.junit.Before;
 import org.junit.Test;
 
-import wikiParser.Page;
-import wikiParser.Edge;
-import wikiParser.Revision;
-import wikiParser.User;
-
 public class RevisionTest {
 
 	/**
@@ -89,15 +84,41 @@ public class RevisionTest {
         return text;
     }
 	
-	@Test public void testGetAnchorLinks() throws XMLStreamException {
-		assertTrue(!revision.getAnchorLinks().isEmpty());
-		String tmpLink = revision.getAnchorLinks().get(0);
-		assertEquals(tmpLink, "Capo di tutti capi");
-		
-		Revision rev = parser.getNextRevision();
-		List<String> links = rev.getAnchorLinks();
-		for (String l : links) {
-			System.out.println(l);
-		}
-	}
+    @Test public void testGetAnchorLinks() throws XMLStreamException {
+            assertTrue(!revision.getAnchorLinks().isEmpty());
+            String tmpLink = revision.getAnchorLinks().get(0);
+            assertEquals(tmpLink, "Capo di tutti capi");
+
+            Revision rev = parser.getNextRevision();
+            List<String> links = rev.getAnchorLinks();
+            for (String l : links) {
+                    System.out.println(l);
+            }
+    }
+
+    @Test public void testRedirects() throws XMLStreamException {
+        assertFalse(refRevision.isRedirect());
+        assertTrue(revision.isRedirect());
+        assertEquals(revision.getRedirectDestination(), "Capo di tutti capi");
+        Revision weird = new Revision("123456", "2011-06-11T14:35:00Z", user,
+                        "asdfasf asdfas\n #REDIRECT  [[foo\\blah! de  ]]","Undid revision by VictorianForts",false,false);
+        assertTrue(weird.isRedirect());
+        assertEquals(weird.getRedirectDestination(), "foo\\blah! de");
+    }
+
+    @Test public void testDisambiguation() {
+        assertFalse(revision.isDisambiguation());
+        Revision r1 = new Revision("123456", "2011-06-11T14:35:00Z", user,
+                        "boo {{disambig}}","Undid revision by VictorianForts",false,false);
+        assertTrue(r1.isDisambiguation());
+        Revision r2 = new Revision("123456", "2011-06-11T14:35:00Z", user,
+                        "{{disambiguation}}","Undid revision by VictorianForts",false,false);
+        assertTrue(r2.isDisambiguation());
+        Revision r3 = new Revision("123456", "2011-06-11T14:35:00Z", user,
+                        "boo {{hndis | foo bar}}  ","Undid revision by VictorianForts",false,false);
+        assertTrue(r3.isDisambiguation());
+        Revision r4 = new Revision("123456", "2011-06-11T14:35:00Z", user,
+                        "boo {{dab | 1 = 3}}","Undid revision by VictorianForts",false,false);
+        assertTrue(r4.isDisambiguation());
+    }
 }
