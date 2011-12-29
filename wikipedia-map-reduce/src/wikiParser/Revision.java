@@ -191,14 +191,18 @@ public class Revision {
         return hasTemplateWithNameContaining(DISAMBIGUATION_INDICATORS);
     }
 
-
-    private static final Pattern REDIRECT_PATTERN = Pattern.compile("#REDIRECT\\S+\\[\\[([^\\]]+)\\]\\]");
+    private static final Pattern REDIRECT_PATTERN = Pattern.compile("#REDIRECT\\s*\\[\\[([^\\]]+)\\]\\]");
     public boolean isRedirect() {
-        return REDIRECT_PATTERN.matcher(text).matches();
+        return REDIRECT_PATTERN.matcher(text).find(0);
     }
 
     public String getRedirectDestination() {
-        return REDIRECT_PATTERN.matcher(text).group(1);        
+        Matcher m = REDIRECT_PATTERN.matcher(text);
+        if (!m.find(0)) {
+            return null;
+        } else {
+            return m.group(1).trim();
+        }
     }
 
     private boolean hasTemplateWithNameContaining(String identifiers[]) {

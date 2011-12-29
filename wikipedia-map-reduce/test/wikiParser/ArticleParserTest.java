@@ -13,11 +13,6 @@ import javax.xml.stream.XMLStreamException;
 import org.junit.Before;
 import org.junit.Test;
 
-import wikiParser.Page;
-import wikiParser.PageParser;
-import wikiParser.Revision;
-
-
 public class ArticleParserTest {
 	/**
 	 * @uml.property  name="parser"
