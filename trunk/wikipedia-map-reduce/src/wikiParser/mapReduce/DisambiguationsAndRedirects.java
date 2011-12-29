@@ -17,45 +17,48 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import wikiParser.*;
-import wikiParser.mapReduce.util.*;
-import wikiParser.util.*;
 
 /**
- *
  * @author Shilad Sen
- * 
  */
-public class DisambiguationsAndRedirections extends Configured implements Tool {
+public class DisambiguationsAndRedirects extends Configured implements Tool {
 
-    /*
-     * Takes key-value 7zip hashes and outputs article name / id pairs
-     */
-    public static class MyMapper extends Mapper<Text, Text, Text, Text> {
+    public static class MyMapper extends Mapper<Long, CurrentRevision, Text, Text> {
 
         @Override
-        public void map(Text key, Text value, Mapper.Context context) throws IOException {
-            LzmaPipe pipe = null;
+        public void map(Long key, CurrentRevision value, Mapper.Context context)
+                throws IOException, InterruptedException {
             try {
                 context.progress();
-                int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
-                pipe = new LzmaPipe(value.getBytes(), length);
-                PageParser parser = new PageParser(pipe.decompress());
-                Page article = parser.getArticle();
-                if (article.isNormalPage()) {//main namespace only
-                    Revision current = null;
-                    while (parser.hasNextRevision()) {
-                        current = parser.getNextRevision();
+                Page p = value.getPage();
+                if (p.isNormalPage()) {
+                    Revision r = value.getRevision();
+                    if (r.isRedirect()) {
+                        context.write(
+                                new Text("r@" + key + "@" + p.getName()),
+                                new Text(r.getRedirectDestination()));
+                    } else if (r.isDisambiguation()) {
+                        StringBuilder links = new StringBuilder();
+                        for (String link : r.getAnchorLinksWithoutFragments()) {
+                              // ignore categories and inter-language links like "en:Foo"
+                            if (link.indexOf(":") == 2 || link.startsWith("Category:")) {
+                                continue;
+                            }
+                            if (links.length() > 0) {
+                                links.append("\t");
+                            }
+                            links.append(link);
+                        }
+                        context.write(
+                                new Text("d@" + key + "@" + p.getName()),
+                                new Text(links.toString()));
+
                     }
-                    context.write(new Text(article.toUnderscoredString()), new Text(article.getId()));
                 }
-            } catch (Exception e) {
                 context.progress();
-                System.err.println("error when processing " + key + ":");
+            } catch (Exception e) {
+                System.err.println("processing of " + key + " failed:");
                 e.printStackTrace();
-            } finally {
-                if (pipe != null) {
-                    pipe.cleanup();
-                }
             }
         }
     }
@@ -78,8 +81,8 @@ public class DisambiguationsAndRedirections extends Configured implements Tool {
         FileOutputFormat.setOutputPath(job, outputPath);
 
         
-        job.setJarByClass(DisambiguationsAndRedirections.class);
-        job.setInputFormatClass(KeyValueTextInputFormat.class);
+        job.setJarByClass(DisambiguationsAndRedirects.class);
+        job.setInputFormatClass(CurrentRevisionInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
@@ -101,7 +104,7 @@ public class DisambiguationsAndRedirections extends Configured implements Tool {
      * <code>ToolRunner</code>.
      */
     public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new DisambiguationsAndRedirections(), args);
+        int res = ToolRunner.run(new DisambiguationsAndRedirects(), args);
         System.exit(res);
     }
 }
