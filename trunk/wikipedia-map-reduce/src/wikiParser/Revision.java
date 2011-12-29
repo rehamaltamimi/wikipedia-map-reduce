@@ -4,8 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -215,94 +213,5 @@ public class Revision {
             }
         }
         return false;
-    }
-
-    
-
-    /**
-     * Finds the ending index of a template if one exists within a reference substring. Returns
-     * a completed template if one exists within the reference and null if one does not exist.
-     * Returns null if there is no template in the reference.
-     * @param substring
-     * @param beginningIndex
-     * @return
-     */
-    public static Template findTemplateInRef(String substring, int beginningIndex) {
-        for (int i = 0; i < substring.length() - 4; i++) {
-            if (substring.substring(i, i + 2).equals("{{")) {
-                int cnt = 2;
-                int j = i + 2;
-                while (cnt > 0 && j < substring.length()) {
-                    if (substring.charAt(j) == '{') {
-                        cnt++;
-                    } else if (substring.charAt(j) == '}') {
-                        cnt--;
-                    }
-                    j++;
-                }
-                String template = substring.substring(i + 2, j - 2);
-                try {
-                    return Template.processTemplate(template, beginningIndex + i, beginningIndex + j);
-                } catch (Exception e) {
-                    System.err.println("Incorrectly formatted template caused exception:");
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-        }
-        return null;
-    }
-
-    public static boolean isCite(String cite) {
-        String name = cite.split("\\|")[0].trim().split(" ")[0].toLowerCase();
-        if (name.equals("cite") || name.equals("citation")) {
-            return true;
-        } else if ((name.length() > 3 && name.substring(0, 4).equals("cite")) || (name.length() > 7 && name.substring(0, 8).equals("citatation"))) {
-            return true;
-        }
-        return false;
-    }
-    private static final Pattern URL_CONTAINER = Pattern.compile(".*?\\[(.*?)\\].*?");
-
-    public Template processRef(String ref, int start, int end) {
-        LinkedHashMap<String, String> params = new LinkedHashMap<String, String>();
-        String url;
-        Matcher urlMatcher = URL_CONTAINER.matcher(ref);
-        boolean matches = urlMatcher.matches();
-        Template t = findTemplateInRef(ref, start);
-        //Second condition is necessary in case of dead link templates or similar in the citation
-        if (t != null && isCite(t.getName())) {
-            return t;
-        }
-        if (matches) {
-            String inBrackets = urlMatcher.group(1);
-            String[] splitInBrack = inBrackets.split(" ");
-            url = splitInBrack[0].trim();
-            if (url.length() > 0 && url.charAt(0) == '[') {
-                String[] tmp = inBrackets.substring(1).split("\\|");
-                url = "wiki:" + tmp[0];
-            }
-            for (int i = 1; i < splitInBrack.length; i++) {
-                params.put("inBrackets" + i, "" + splitInBrack[i].trim());
-            }
-            if (urlMatcher.start(0) > 0) {
-                params.put("otherInfo0", ref.substring(0, urlMatcher.start(0)).trim());
-            }
-            if (urlMatcher.end(0) < ref.length()) {
-                params.put("otherInfo1", ref.substring(urlMatcher.end(0), ref.length()).trim());
-            }
-        } else {
-            if (t != null) {
-                return t;
-            }
-            if (ref.contains("http")) {
-                url = ref.trim();
-            } else {
-                url = "NoURL";
-                params.put("otherInfo0", ref);
-            }
-        }
-        params.put("url", url);
-        return new Template(start, end, params);
     }
 }
