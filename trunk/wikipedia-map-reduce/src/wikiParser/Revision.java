@@ -156,60 +156,11 @@ public class Revision {
         }
         return anchorLinks;
     }
-    private static final Pattern REF_START = Pattern.compile("^<[\\s]*ref[^/]*?>");
-    private static final Pattern REF_END = Pattern.compile("(<[\\s]*/[\\s]*ref[\\s]*>)");
 
     public List<Citation> getCitations(Page page) {
         CitationParser p = new CitationParser();
         return p.extractCitations(page, this);
-    }
-    
-    /**
-     * Some information may be omitted or overwritten in the following cases:
-     * 1. More than one template is included in a single citation and the template field names overlap
-     * 2. If the reference is only in <ref> tags and not a template it is likely that only the top level domain
-     * will be returned in params
-     * @return list of citations in the revision as templates
-     */
-    public List<Template> getCites() {
-        List<Template> cites = new LinkedList<Template>();
-        for (int i = 0; i < text.length() - 4; i++) {
-            if (text.substring(i, i + 2).equals("{{")) {
-                int cnt = 2;
-                int j = i + 2;
-                while (cnt > 0 & j < text.length()) {
-                    if (text.charAt(j) == '{') {
-                        cnt++;
-                    } else if (text.charAt(j) == '}') {
-                        cnt--;
-                    }
-                    j++;
-                }
-                String template = text.substring(i + 2, j - 2);
-                if (isCite(template)) {
-                    cites.add(Template.processTemplate(template, i + 2, j - 2));
-                }
-                i = j;
-            } else {
-                Matcher startMatcher = REF_START.matcher(text.substring(i));
-                if (startMatcher.find(0)) {
-                    Matcher endMatcher = REF_END.matcher(text.substring(i));
-                    if (endMatcher.find()) {
-                        //Must call this or matcher will return null for start and end
-                        int start = endMatcher.start(1);
-                        int end = endMatcher.end(1);
-                        String ref = text.substring(i + startMatcher.end(), i + start);//need to do something a little smarter with starting index...
-                        cites.add(processRef(ref, i + 5, i + start + 1));
-                        i = i + end;
-                    } else {
-                        System.err.println("No end of reference found in revision " + this.getId() + " at time " + this.getTimestamp());
-                        break;
-                    }
-                }
-            }
-        }
-        return cites;
-    }
+    }    
 
     /**
      * Find all templates in a page.
@@ -217,6 +168,52 @@ public class Revision {
     public List<Template> getTemplates() {
         return Template.getOneOrMoreTemplates(text);
     }
+
+    private static final String DISAMBIGUATION_INDICATORS [] = {
+        "disambiguation",
+        "disambig",
+        "dab",
+        "disamb",
+        "dmbox",
+        "geodis",
+        "numberdis",
+        "dmbox",
+        "mathdab",
+        "hndis",
+        "hospitaldis",
+        "mathdab",
+        "mountainindex",
+        "roaddis",
+        "schooldis",
+        "shipindex"
+    };
+    public boolean isDisambiguation() {
+        return hasTemplateWithNameContaining(DISAMBIGUATION_INDICATORS);
+    }
+
+
+    private static final Pattern REDIRECT_PATTERN = Pattern.compile("#REDIRECT\\S+\\[\\[([^\\]]+)\\]\\]");
+    public boolean isRedirect() {
+        return REDIRECT_PATTERN.matcher(text).matches();
+    }
+
+    public String getRedirectDestination() {
+        return REDIRECT_PATTERN.matcher(text).group(1);        
+    }
+
+    private boolean hasTemplateWithNameContaining(String identifiers[]) {
+        for (Template t : getTemplates()) {
+            String n = t.getName().toLowerCase();
+            for (String s : identifiers) {
+                if (n.contains(s)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    
 
     /**
      * Finds the ending index of a template if one exists within a reference substring. Returns
