@@ -85,4 +85,16 @@ public class ArticleParserTest {
             assertFalse(first.getText().contains("THIS SHOULD"));
             assertFalse(first.getText().contains("DISAPPEAR"));
         }
+
+
+	@Test public void testCurrentRevision() throws XMLStreamException, FileNotFoundException {
+		parser = new PageParser(new BufferedInputStream(new FileInputStream("accessible_computing.xml")));
+		Page article = parser.getArticle();
+		assertEquals(article.getId(), "10");
+		assertEquals(article.getName(), "AccessibleComputing");
+                assertTrue(parser.hasNextRevision());
+                assertTrue(parser.getNextRevision() != null);
+                assertFalse(parser.hasNextRevision());
+
+	}
 }
