@@ -95,7 +95,7 @@ public class PageParser {
         if (article == null) {
             getArticle();
         }
-        if (!matchElement("revision", false)) {
+        if (!searchElement("revision", false, true)) {
             reader = null;
             return null;
         }
@@ -137,7 +137,7 @@ public class PageParser {
         if (article == null) {
             getArticle();
         }
-        if (!matchElement("revision", false)) {
+        if (!searchElement("revision", false, false)) {
             reader = null;
             return false;
         }
@@ -188,6 +188,10 @@ public class PageParser {
      * @throws XMLStreamException
      */
     private boolean matchElement(String name, boolean failIfNotFound) throws XMLStreamException {
+        return matchElement(name, failIfNotFound, true);
+
+    }
+    private boolean matchElement(String name, boolean failIfNotFound, boolean advance) throws XMLStreamException {
         while (!reader.isStartElement() && reader.hasNext()) {
             reader.next();
         }
@@ -199,7 +203,7 @@ public class PageParser {
             }
         }
         if (reader.getName().getLocalPart().equals(name)) {
-            advance();
+            if (advance) advance();
             return true;
         } else if (failIfNotFound) {
             throw new IllegalStateException("found " + reader.getName() + " while looking for " + name);
@@ -216,7 +220,10 @@ public class PageParser {
      * @throws XMLStreamException
      */
     private boolean searchElement(String name, boolean failIfNotFound) throws XMLStreamException {
-        while (reader.hasNext() && !matchElement(name, false)) {
+        return searchElement(name, failIfNotFound, true);
+    }
+    private boolean searchElement(String name, boolean failIfNotFound, boolean advance) throws XMLStreamException {
+        while (reader.hasNext() && !matchElement(name, false, advance)) {
             // match against the next element
             advance();
         }
