@@ -35,8 +35,8 @@ public class DisambiguationsAndRedirects extends Configured implements Tool {
                     Revision r = value.getRevision();
                     if (r.isRedirect()) {
                         context.write(
-                                new Text("r@" + key + "@" + p.getName()),
-                                new Text(r.getRedirectDestination()));
+                                new Text(""+key),
+                                new Text("r\t" + p.getName() + "\t" + r.getRedirectDestination()));
                     } else if (r.isDisambiguation()) {
                         StringBuilder links = new StringBuilder();
                         for (String link : r.getAnchorLinksWithoutFragments()) {
@@ -50,9 +50,8 @@ public class DisambiguationsAndRedirects extends Configured implements Tool {
                             links.append(link);
                         }
                         context.write(
-                                new Text("d@" + key + "@" + p.getName()),
-                                new Text(links.toString()));
-
+                                new Text(""+key),
+                                new Text("d\t" + p.getName() + "\t" + links.toString()));
                     }
                 }
                 context.progress();
