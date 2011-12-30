@@ -152,8 +152,10 @@ public class CurrentRevisionInputFormat extends FileInputFormat<Long, CurrentRev
                 }
                 value = new CurrentRevision(page, rev);
 
-            } catch (XMLStreamException ex) {
-                throw new IOException(ex);
+            } catch (Exception ex) {
+                System.err.println("error parsing record:");
+                ex.printStackTrace();
+                return nextKeyValue();
             }
             return !atEof;
         }
