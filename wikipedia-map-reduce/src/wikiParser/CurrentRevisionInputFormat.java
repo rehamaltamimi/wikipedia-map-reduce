@@ -8,21 +8,15 @@ package wikiParser;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.xml.stream.XMLStreamException;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.fs.FSDataInputStream;
-import org.apache.hadoop.fs.FileSystem;
+
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.io.compress.CompressionCodec;
-import org.apache.hadoop.io.compress.CompressionCodecFactory;
 import org.apache.hadoop.mapreduce.InputSplit;
 import org.apache.hadoop.mapreduce.JobContext;
 import org.apache.hadoop.mapreduce.RecordReader;
 import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
-import org.apache.hadoop.util.LineReader;
+import wikiParser.util.EasyLineReader;
 
 /**
  *
@@ -50,13 +44,8 @@ public class CurrentRevisionInputFormat extends FileInputFormat<Long, CurrentRev
         private TaskAttemptContext context;
         private Long key;
         private CurrentRevision value;
-        private long start;
-        private long end;
-        private long pos;
-        private LineReader reader;
-        private int maxLineLength = Integer.MAX_VALUE;
-        private boolean atEof = false;
-        private String lineBuffer = null;
+
+        private EasyLineReader reader = null;
 
         private static String HEADER = null;
         private static String FOOTER = "</mediawiki>";
@@ -67,49 +56,25 @@ public class CurrentRevisionInputFormat extends FileInputFormat<Long, CurrentRev
         @Override
         public void initialize(InputSplit split, TaskAttemptContext context) throws IOException, InterruptedException {
             this.split = (FileSplit) split;
-            Configuration job = context.getConfiguration();
-            final Path file = this.split.getPath();
-
             assert(this.split.getStart() == 0);
+            reader = new EasyLineReader(this.split.getPath(), context.getConfiguration(), this.split.getLength());
+
             this.context = context;
-            start = 0;
-            end = this.split.getLength();
-            pos = 0;
-
-            assert(start == 0);
-
-            FileSystem fs = file.getFileSystem(job);
-            FSDataInputStream fileIn = fs.open(this.split.getPath());
-            InputStream in = fileIn;
-
-
-            CompressionCodecFactory compressionCodecs = new CompressionCodecFactory(job);
-            CompressionCodec codec = compressionCodecs.getCodec(file);
-            if (codec != null) {
-              in = codec.createInputStream(in);
-              end = Integer.MAX_VALUE;
-            }
-
-            reader = new LineReader(in, job);
         }
 
         @Override
         public boolean nextKeyValue() throws IOException, InterruptedException {
-            if (atEof) {
-                return false;
-            }
-
 //            System.err.println("HERE 3");
             // find the start page marker
-            Text text = new Text();
             while (true) {
-                if (!readLine(text)) {
+                String line = reader.readLine();
+                if (line == null) {
                     return false;
                 }
-                String line = text.toString();
                 if (HEADER == null) {
                     HEADER = line;
                 }
+//                System.err.println("read ========" + line + "=======");
                 if (line.trim().equals(START_PAGE)) {
                     break;
                 }
@@ -123,10 +88,10 @@ public class CurrentRevisionInputFormat extends FileInputFormat<Long, CurrentRev
 
             // Append lines until end of page marker
             while (true) {
-                if (!readLine(text)) {
+                String line = reader.readLine();
+                if (line == null) {
                     return false;
                 }
-                String line = text.toString();
 //                System.err.println("line is ====" + buff + "=====");
                 buff.append(line);
                 buff.append("\n");
@@ -134,7 +99,6 @@ public class CurrentRevisionInputFormat extends FileInputFormat<Long, CurrentRev
                     break;
                 }
             }
-//            System.err.println("HERE 5");
 
 //            System.err.println("header is " + HEADER + "\n=================");
 //            System.err.println("buff is " + buff);
@@ -157,7 +121,7 @@ public class CurrentRevisionInputFormat extends FileInputFormat<Long, CurrentRev
                 ex.printStackTrace();
                 return nextKeyValue();
             }
-            return !atEof;
+            return true;
         }
 
         @Override
@@ -172,44 +136,14 @@ public class CurrentRevisionInputFormat extends FileInputFormat<Long, CurrentRev
 
         @Override
         public float getProgress() throws IOException, InterruptedException {
-            if (start == end) {
-                return 0.0f;
-            } else {
-                return Math.min(1.0f, (pos - start) / (float)(end - start));
-            }
+            long l = reader.getUnderlyingTotalBytes();
+            long n = reader.getUnderlyingBytesRead();
+            return (l == 0) ? 0.0f : (1.0f * n / l);
         }
 
         @Override
         public synchronized void close() throws IOException {
-            if (reader != null) {
-                reader.close();
-                reader = null;
-            }
-        }
-
-        private void unreadLine(String line) {
-            lineBuffer = line;
-        }
-        private boolean readLine(Text text) throws IOException {
-            if (lineBuffer != null) {
-                text.set(lineBuffer);
-                lineBuffer = null;
-//                System.err.println("read from buff ===========" + text + "=====");
-                return true;
-            }
-            if (atEof) {
-                return false;
-            }
-            int r = reader.readLine(
-                        text, maxLineLength,
-                        Math.max((int)Math.min(Integer.MAX_VALUE, end-pos),
-                        maxLineLength));
-//            System.err.println("read ===========" + text + "=====");
-            pos += r;
-            if (r == 0) {
-                atEof = true;
-            }
-            return !atEof;
+            this.reader.close();
         }
     }
 

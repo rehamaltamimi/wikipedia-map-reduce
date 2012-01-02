@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package wikiParser.mapReduce;
+package wikiParser.categories;
 
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
