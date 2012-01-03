@@ -36,7 +36,11 @@ public class LocalCategoryComparer extends CategoryComparer {
     }
 
     public static void main(String args[]) throws IOException {
-        LocalCategoryComparer lcc = new LocalCategoryComparer(new File(args[0]));
+        String path = (args.length > 0)
+                ? args[0]
+                : "/Users/shilad/Documents/NetBeans/wikipedia-map-reduce/dat/all_cats.txt";
+        LocalCategoryComparer lcc = new LocalCategoryComparer(new File(path));
         lcc.prepareDataStructures();
+        lcc.searchPages();
     }
 }
