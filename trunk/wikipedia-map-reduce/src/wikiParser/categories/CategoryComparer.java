@@ -6,26 +6,64 @@
 package wikiParser.categories;
 
 import gnu.trove.TIntArrayList;
+import gnu.trove.TIntHashSet;
+import gnu.trove.TLongHashSet;
 import gnu.trove.TLongIntHashMap;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author shilad
  */
 public abstract class CategoryComparer {
+  private static final Logger LOG  = Logger.getLogger(CategoryComparer.class.getPackage().getName());
+
     private TLongIntHashMap categoryIndexes = new TLongIntHashMap();
+    private TLongHashSet topLevelCategories = new TLongHashSet();
 
     private int catPages[][];
     private int catParents[][];
     private int catChildren[][];
 
     public void prepareDataStructures() throws IOException {
+        LOG.info("preparing data structures...");
         setCategoryIndexes();
         allocateArrays();
         fillArrays();
+        calculateTopLevelCategories();
+    }
+
+    public void searchPages() throws IOException {
+        openFile();
+        while (true) {
+            String line = readLine();
+            if (line == null) {
+                break;
+            }
+            CategoryRecord record = parseLine(line, true);
+            if (record != null) {
+                findSimilar(record);
+            }
+        }
+        closeFile();
+    }
+
+    private void findSimilar(CategoryRecord record) {
+        TIntHashSet pagesTraversed = new TIntHashSet();
+        pagesTraversed.add(record.getPageId());
+        for (int depth = 0; depth < 4; depth++) {
+            LOG.log(Level.INFO, "exploring to depth {0}", depth);
+            for (int ci : record.getCategoryIndexes()) {
+                TIntHashSet catsTraversed = new TIntHashSet();
+                exploreToDepth(ci, depth, 20000, pagesTraversed, catsTraversed, +1);
+            }
+            LOG.log(Level.INFO, "found {0} pages up to depth {1}", new Object[] {pagesTraversed.size(), depth});
+        }
     }
 
     public void setCategoryIndexes() throws IOException {
+        LOG.info("setting category indexes...");
         openFile();
         while (true) {
             String line = readLine();
@@ -42,9 +80,12 @@ public abstract class CategoryComparer {
             }
         }
         closeFile();
+        LOG.log(Level.INFO, "indexed {0} categories.", categoryIndexes.size());
     }
 
     public void allocateArrays() throws IOException {
+        LOG.info("allocating arrays...");
+        
         // hack: each subarray contains a single entry for counting
         catPages = new int[categoryIndexes.size()][];
         catParents = new int[categoryIndexes.size()][];
@@ -83,7 +124,9 @@ public abstract class CategoryComparer {
 
 
     public void fillArrays() throws IOException {
-        int catPageIndexes[] = new int[categoryIndexes.size()];
+        LOG.info("filling arrays...");
+
+        int catPageIndexes[] = new int[categoryIndexes.size()];;
         int catChildrenIndexes[] = new int[categoryIndexes.size()];
         
         openFile();
@@ -109,6 +152,23 @@ public abstract class CategoryComparer {
         }
         closeFile();
 
+    }
+
+    private void calculateTopLevelCategories() {
+        LOG.info("marking top level categories off-limits.");
+        int numSecondLevel = 0;
+        for (String name : TOP_LEVEL_CATS) {
+            int index = getCategoryIndex("Category:" + name);
+            if (index >= 0) {
+                topLevelCategories.add(index);
+                for (int ci : catChildren[index]) {
+                    topLevelCategories.add(ci);
+                    numSecondLevel++;
+                }
+            }
+        }
+        LOG.log(Level.INFO, "marked {0} top-level and {1} second-level categories.",
+                new Object[] {TOP_LEVEL_CATS.length, numSecondLevel} );
     }
     
     public abstract void openFile() throws IOException;
@@ -160,5 +220,48 @@ public abstract class CategoryComparer {
         }
         return record;
     }
+
+    private void exploreToDepth(
+            int ci, int stepsRemaining, int maxPages,
+            TIntHashSet pagesTraversed, TIntHashSet catsTraversed,
+            int direction) {
+        assert(direction == +1 || direction == -1);
+        if (pagesTraversed.size() >= maxPages 
+        ||  catsTraversed.contains(direction*ci)
+        ||  topLevelCategories.contains(ci)) {
+            return;
+        }
+        catsTraversed.add(direction*ci);
+
+        // base case
+        if (stepsRemaining == 0) {
+            for (int pageId : catPages[ci]) {
+                pagesTraversed.add(pageId);
+                if (pagesTraversed.size() >= maxPages) {
+                    return;
+                }
+            }
+            return;
+        }
+
+        if (direction == +1) {
+            for (int ci2 : catParents[ci]) {
+                exploreToDepth(ci2, stepsRemaining - 1, maxPages, pagesTraversed, catsTraversed, +1);
+            }
+        }
+        for (int ci2 : catChildren[ci]) {
+            exploreToDepth(ci2, stepsRemaining - 1, maxPages, pagesTraversed, catsTraversed, -1);
+        }
+    }
+
+    public static String [] TOP_LEVEL_CATS = {
+            "Agriculture", "Applied Sciences", "Arts", "Belief", "Business", "Chronology", "Computers",
+            "Culture", "Education", "Environment", "Geography", "Health", "History", "Humanities",
+            "Language", "Law", "Life", "Mathematics", "Nature", "People", "Politics", "Science", "Society",
+
+            "Concepts", "Life", "Matter", "Society",
+
+           };
+
 
 }
