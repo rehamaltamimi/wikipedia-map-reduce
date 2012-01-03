@@ -2,110 +2,163 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package wikiParser.categories;
 
+import gnu.trove.TIntArrayList;
+import gnu.trove.TLongIntHashMap;
 import java.io.IOException;
-import java.util.Arrays;
-import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.FileSystem;
-import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.*;
-import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
-import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
-import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
-import org.apache.hadoop.util.Tool;
-import org.apache.hadoop.util.ToolRunner;
-import wikiParser.mapReduce.util.KeyValueTextInputFormat;
 
 /**
- *@author Shilad Sen
+ * @author shilad
  */
-public class CategoryComparer extends Configured implements Tool {
-    static final String TIMESTAMP_KEY = "TIMESTAMP";
+public abstract class CategoryComparer {
+    private TLongIntHashMap categoryIndexes = new TLongIntHashMap();
 
-    /*
-     * Reads output of CitationCounter
-     */
-    public static class MyMapper extends Mapper<Text, Text, Text, Text> {
-        String FINAL_TSTAMP = null;
+    private int catPages[][];
+    private int catParents[][];
+    private int catChildren[][];
 
-        @Override
-        public void setup(Mapper.Context context) {
-            FINAL_TSTAMP = context.getConfiguration().get(TIMESTAMP_KEY);
+    public void prepareDataStructures() throws IOException {
+        setCategoryIndexes();
+        allocateArrays();
+        fillArrays();
+    }
+
+    public void setCategoryIndexes() throws IOException {
+        openFile();
+        while (true) {
+            String line = readLine();
+            if (line == null) {
+                break;
+            }
+            CategoryRecord record = parseLine(line, false);
+            if (record == null || !record.isCategory()) {
+                continue;
+            }
+            long hash = getCategoryHash(record.getPageName());
+            if (!categoryIndexes.containsKey(hash)) {
+                categoryIndexes.put(hash, categoryIndexes.size());
+            }
         }
+        closeFile();
+    }
 
-        @Override
-        public void map(Text key, Text value, Mapper.Context context) throws IOException, InterruptedException {
-            String [] pair = key.toString().split("@");
-            String [] tokens = value.toString().split("\t");
-            context.progress();
-
-            // Remove ending tab
-            if (tokens.length == 8 && tokens[7].equals("")) {
-                tokens = Arrays.copyOfRange(tokens, 0, 7);
+    public void allocateArrays() throws IOException {
+        // hack: each subarray contains a single entry for counting
+        catPages = new int[categoryIndexes.size()][];
+        catParents = new int[categoryIndexes.size()][];
+        catChildren = new int[categoryIndexes.size()][];
+        for (int i = 0; i < catPages.length; i++) {
+            catPages[i] = new int[1];
+            catChildren[i] = new int[1];
+        }
+        
+        openFile();
+        while (true) {
+            String line = readLine();
+            if (line == null) {
+                break;
             }
-            
-            if (pair.length != 2 || tokens.length != 7) {
-                System.err.println("invalid key / value pair: " + key + ", " + value);
-                return;
+            CategoryRecord record = parseLine(line, true);
+            if (record == null) {
+                // do nothing
+            } else if (record.isCategory()) {   // category page
+                for (int ci : record.getCategoryIndexes()) {
+                    catChildren[ci][0]++;
+                }
+            } else {    // regular page
+                for (int ci : record.getCategoryIndexes()) {
+                    catPages[ci][0]++;
+                }
             }
+        }
+        closeFile();
 
-            String tstamp = tokens[0];
-            if (tstamp.compareTo(FINAL_TSTAMP) > 0) {
-                return;     // too late
-            }
-            String pageId = pair[1];
-            String url = tokens[4];
-            int n = Integer.parseInt(tokens[6]);
-
-            context.write(new Text(pageId), new Text(tstamp + "\t" + n + "\t" + url));
+        for (int i = 0; i < catPages.length; i++) {
+            catPages[i] = new int[catPages[i][0]];
+            catChildren[i] = new int[catChildren[i][0]];
         }
     }
 
-    public int run(String args[]) throws Exception {
 
-        if (args.length < 3) {
-            System.out.println("usage: [input output tstamp]");
-            ToolRunner.printGenericCommandUsage(System.out);
+    public void fillArrays() throws IOException {
+        int catPageIndexes[] = new int[categoryIndexes.size()];
+        int catChildrenIndexes[] = new int[categoryIndexes.size()];
+        
+        openFile();
+        while (true) {
+            String line = readLine();
+            if (line == null) {
+                break;
+            }
+            CategoryRecord record = parseLine(line, true);
+            if (record == null) {
+                // do nothing
+            } else if (record.isCategory()) {
+                int index = getCategoryIndex(record.getPageName());
+                catParents[index] = record.getCategoryIndexes();
+                for (int ci : record.getCategoryIndexes()) {
+                    catChildren[ci][catChildrenIndexes[ci]++] = index;
+                }
+            } else {    // regular page
+                for (int ci : record.getCategoryIndexes()) {
+                    catPages[ci][catPageIndexes[ci]++] = record.getPageId();
+                }
+            }
+        }
+        closeFile();
+
+    }
+    
+    public abstract void openFile() throws IOException;
+    public abstract String readLine() throws IOException;
+    public abstract void closeFile() throws IOException;
+
+    public long getCategoryHash(String cat) {
+        cat = cat.trim();
+        long h = 1;
+        for (int i = 0; i < cat.length(); i++) {
+            h = h * 37 + (long)cat.charAt(i);
+        }
+        return h;
+    }
+
+    public int getCategoryIndex(String cat) {
+        long h = getCategoryHash(cat);
+        if (categoryIndexes.contains(h)) {
+            return categoryIndexes.get(h);
+        } else {
             return -1;
         }
+    }
 
-        Path inputPath = new Path(args[0]);
-        Path outputPath = new Path(args[1]);
-
-        Configuration conf = getConf();
-        conf.set(TIMESTAMP_KEY, args[2]);
-        Job job = new Job(conf, this.getClass().toString());
-
-        FileInputFormat.setInputPaths(job, inputPath);
-        FileOutputFormat.setOutputPath(job, outputPath);
-
-        
-        job.setJarByClass(CategoryComparer.class);
-        job.setInputFormatClass(KeyValueTextInputFormat.class);
-        job.setOutputFormatClass(TextOutputFormat.class);
-        job.setMapOutputKeyClass(Text.class);
-        job.setMapOutputValueClass(Text.class);
-        job.setOutputKeyClass(Text.class);
-        job.setOutputValueClass(Text.class);
-        
-        job.setMapperClass(MyMapper.class);
-        FileSystem hdfs = FileSystem.get(outputPath.toUri(), conf);
-        if (hdfs.exists(outputPath)) {
-            hdfs.delete(outputPath, true);
+    public CategoryRecord parseLine(String line, boolean fillCats) {
+        String tokens [] = line.trim().split("\t");
+        if (tokens.length < 3) {
+            return null;
         }
-
-        return job.waitForCompletion(true) ? 0 : 1;
+        int pageId = -1;
+        try {
+            pageId = Integer.valueOf(tokens[0]);
+        } catch (Exception e) {
+            return null;
+        }
+        char type = tokens[1].charAt(0);    // 'p' (page) or 'c' (cat)
+        String name = tokens[2].trim();
+        CategoryRecord record = new CategoryRecord(type, pageId, name);
+        if (fillCats) {
+            TIntArrayList indexes = new TIntArrayList(tokens.length - 3);
+            for (int i = 3; i < tokens.length; i++) {
+                String cat = tokens[i].trim();
+                long hash = getCategoryHash(cat);
+                if (categoryIndexes.contains(hash)) {
+                    indexes.add(categoryIndexes.get(hash));
+                }
+            }
+            record.setCategoryIndexes(indexes.toNativeArray());
+        }
+        return record;
     }
 
-    /**
-     * Dispatches command-line arguments to the tool via the
-     * <code>ToolRunner</code>.
-     */
-    public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new CategoryComparer(), args);
-        System.exit(res);
-    }
 }

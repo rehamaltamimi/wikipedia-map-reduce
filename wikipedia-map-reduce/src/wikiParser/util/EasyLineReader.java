@@ -36,11 +36,14 @@ public class EasyLineReader {
     private boolean eof = false;
 
     public EasyLineReader(Path path, Configuration job) throws IOException {
-        this(path, job, Long.MAX_VALUE);
+        this(path, job, -1);
     }
     
     public EasyLineReader(Path path, Configuration job, long fileLength) throws IOException {
         FileSystem fs = path.getFileSystem(job);
+        if (fileLength < 0) {
+            fileLength = fs.getFileStatus(path).getLen();
+        }
         fileIn = fs.open(path);
         InputStream in = fileIn;
 
