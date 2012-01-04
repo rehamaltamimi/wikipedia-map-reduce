@@ -7,6 +7,7 @@ package wikiParser.categories;
 
 import gnu.trove.TIntArrayList;
 import gnu.trove.TIntHashSet;
+import gnu.trove.TIntProcedure;
 import gnu.trove.TLongHashSet;
 import gnu.trove.TLongIntHashMap;
 import java.io.IOException;
@@ -36,6 +37,7 @@ public abstract class CategoryComparer {
 
     public void searchPages() throws IOException {
         openFile();
+        int i = 0;
         while (true) {
             String line = readLine();
             if (line == null) {
@@ -44,21 +46,41 @@ public abstract class CategoryComparer {
             CategoryRecord record = parseLine(line, true);
             if (record != null) {
                 findSimilar(record);
+                if (i++ % 100 == 0) {
+                    LOG.info("exploring page " + i);
+                }
             }
         }
         closeFile();
     }
 
-    private void findSimilar(CategoryRecord record) {
+    protected void findSimilar(final CategoryRecord record) {
         TIntHashSet pagesTraversed = new TIntHashSet();
         pagesTraversed.add(record.getPageId());
         for (int depth = 0; depth < 4; depth++) {
-            LOG.log(Level.INFO, "exploring to depth {0}", depth);
+//            LOG.log(Level.INFO, "exploring to depth {0}", depth);
+            TIntHashSet newPagesTraversed = new TIntHashSet(pagesTraversed);
             for (int ci : record.getCategoryIndexes()) {
                 TIntHashSet catsTraversed = new TIntHashSet();
-                exploreToDepth(ci, depth, 20000, pagesTraversed, catsTraversed, +1);
+                exploreToDepth(ci, depth, 20000, newPagesTraversed, catsTraversed, +1);
             }
-            LOG.log(Level.INFO, "found {0} pages up to depth {1}", new Object[] {pagesTraversed.size(), depth});
+            final TIntHashSet pt = pagesTraversed;
+            final int d = depth;
+            newPagesTraversed.forEach(new TIntProcedure() {
+                public boolean execute(int pageId) {
+                    if (!pt.contains(pageId)) {
+                        try {
+                            writeResult(record.getPageId(), pageId, d);
+                        } catch (IOException ex) {
+                            LOG.log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    return true;
+                }
+
+            });
+            pagesTraversed = newPagesTraversed;
+//            LOG.log(Level.INFO, "found {0} pages up to depth {1}", new Object[] {pagesTraversed.size(), depth});
         }
     }
 
@@ -173,6 +195,7 @@ public abstract class CategoryComparer {
     
     public abstract void openFile() throws IOException;
     public abstract String readLine() throws IOException;
+    public abstract void writeResult(int pageId, int similarPageId, int distance) throws IOException;
     public abstract void closeFile() throws IOException;
 
     public long getCategoryHash(String cat) {
@@ -221,7 +244,7 @@ public abstract class CategoryComparer {
         return record;
     }
 
-    private void exploreToDepth(
+    private final void exploreToDepth(
             int ci, int stepsRemaining, int maxPages,
             TIntHashSet pagesTraversed, TIntHashSet catsTraversed,
             int direction) {
