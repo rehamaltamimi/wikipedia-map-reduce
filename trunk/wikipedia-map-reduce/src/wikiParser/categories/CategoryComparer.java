@@ -46,7 +46,7 @@ public abstract class CategoryComparer {
             CategoryRecord record = parseLine(line, true);
             if (record != null) {
                 findSimilar(record);
-                if (i++ % 100 == 0) {
+                if (i++ % 10000 == 0) {
                     LOG.info("exploring page " + i);
                 }
             }
