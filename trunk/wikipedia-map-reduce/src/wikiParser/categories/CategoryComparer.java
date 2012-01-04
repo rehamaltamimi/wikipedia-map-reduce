@@ -57,7 +57,7 @@ public abstract class CategoryComparer {
     protected void findSimilar(final CategoryRecord record) {
         TIntHashSet pagesTraversed = new TIntHashSet();
         pagesTraversed.add(record.getPageId());
-        for (int depth = 0; depth < 4; depth++) {
+        for (int depth = 0; depth <= 4; depth++) {
 //            LOG.log(Level.INFO, "exploring to depth {0}", depth);
             TIntHashSet newPagesTraversed = new TIntHashSet(pagesTraversed);
             for (int ci : record.getCategoryIndexes()) {
