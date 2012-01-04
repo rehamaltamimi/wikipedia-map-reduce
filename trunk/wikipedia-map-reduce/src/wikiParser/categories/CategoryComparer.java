@@ -5,11 +5,11 @@
 
 package wikiParser.categories;
 
-import gnu.trove.TIntArrayList;
-import gnu.trove.TIntHashSet;
-import gnu.trove.TIntProcedure;
-import gnu.trove.TLongHashSet;
-import gnu.trove.TLongIntHashMap;
+import gnu.trove.set.hash.TIntHashSet;
+import gnu.trove.set.hash.TLongHashSet;
+import gnu.trove.map.hash.TLongIntHashMap;
+import gnu.trove.list.array.TIntArrayList;
+import gnu.trove.procedure.TIntProcedure;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -239,7 +239,7 @@ public abstract class CategoryComparer {
                     indexes.add(categoryIndexes.get(hash));
                 }
             }
-            record.setCategoryIndexes(indexes.toNativeArray());
+            record.setCategoryIndexes(indexes.toArray());
         }
         return record;
     }
