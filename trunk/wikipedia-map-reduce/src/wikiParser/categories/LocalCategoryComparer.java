@@ -108,11 +108,12 @@ public class LocalCategoryComparer extends CategoryComparer {
         String output = (args.length > 1)
                 ? args[1]
                 : "/Users/shilad/Documents/NetBeans/wikipedia-map-reduce/dat/test/page_sims.txt";
+        int numThreads = (args.length > 2) ? Integer.valueOf(args[2]) : 3;
         BufferedWriter writer = new BufferedWriter(
                 output.equals("stdout") 
                         ? new OutputStreamWriter(System.out)
                         : (new FileWriter(output)));
-        LocalCategoryComparer lcc = new LocalCategoryComparer(new File(input), writer, 5);
+        LocalCategoryComparer lcc = new LocalCategoryComparer(new File(input), writer, numThreads);
         lcc.prepareDataStructures();
         lcc.searchPages();
     }
