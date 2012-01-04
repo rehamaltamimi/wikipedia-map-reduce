@@ -62,7 +62,7 @@ public abstract class CategoryComparer {
             TIntHashSet newPagesTraversed = new TIntHashSet(pagesTraversed);
             for (int ci : record.getCategoryIndexes()) {
                 TIntHashSet catsTraversed = new TIntHashSet();
-                exploreToDepth(ci, depth, 20000, newPagesTraversed, catsTraversed, +1);
+                exploreToDepth(ci, depth, 10000, newPagesTraversed, catsTraversed, +1);
             }
             final TIntHashSet pt = pagesTraversed;
             final int d = depth;

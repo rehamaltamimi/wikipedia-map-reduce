@@ -74,18 +74,20 @@ public class LocalCategoryComparer extends CategoryComparer {
             builder = new StringBuilder();
             threadLocal.set(builder);
         }
-        String newPrefix = "" + targetPageId + "\t";
+        String newPrefix = "\"" + targetPageId + "\"\t\"";
         String lastPrefix = builder.substring(0, Math.min(newPrefix.length(), builder.length()));
         if (!lastPrefix.equals(newPrefix) && builder.length() > 0) {
             this.flushBuilderBuffer();
             builder.append(newPrefix);
+        } else {
+            builder.append("|");
         }
-        builder.append(similarPageId).append("=").append(distance).append("|");
+        builder.append(similarPageId).append(",").append(distance);
     }
 
     private void flushBuilderBuffer() throws IOException {
         StringBuilder builder = threadLocal.get();
-        builder.append("\n");
+        builder.append("\"\n");
         writeLine(builder.toString());
         builder.setLength(0);
     }
