@@ -74,10 +74,11 @@ public class LocalCategoryComparer extends CategoryComparer {
             builder = new StringBuilder();
             threadLocal.set(builder);
         }
-        String prefix = "" + targetPageId + "\t";
-        if (builder.length() > prefix.length() && builder.substring(0, prefix.length()).equals(prefix)) {
+        String newPrefix = "" + targetPageId + "\t";
+        String lastPrefix = builder.substring(0, Math.min(newPrefix.length(), builder.length()));
+        if (!lastPrefix.equals(newPrefix) && builder.length() > 0) {
             this.flushBuilderBuffer();
-            builder.append(prefix);
+            builder.append(newPrefix);
         }
         builder.append(similarPageId).append("=").append(distance).append("|");
     }
@@ -85,7 +86,7 @@ public class LocalCategoryComparer extends CategoryComparer {
     private void flushBuilderBuffer() throws IOException {
         StringBuilder builder = threadLocal.get();
         builder.append("\n");
-        this.writeLine(builder.toString());
+        writeLine(builder.toString());
         builder.setLength(0);
     }
 
@@ -107,7 +108,6 @@ public class LocalCategoryComparer extends CategoryComparer {
         String output = (args.length > 1)
                 ? args[1]
                 : "/Users/shilad/Documents/NetBeans/wikipedia-map-reduce/dat/test/page_sims.txt";
-        output = "/dev/null";
         BufferedWriter writer = new BufferedWriter(
                 output.equals("stdout") 
                         ? new OutputStreamWriter(System.out)
