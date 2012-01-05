@@ -5,9 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import wikiParser.Page;
-import wikiParser.Edge;
-import wikiParser.Revision;
+import wmr.core.Page;
+import wmr.core.Edge;
+import wmr.core.Revision;
 
 public class ArticleArticleGenerator implements EdgeGenerator {
 

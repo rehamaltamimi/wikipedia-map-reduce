@@ -1,9 +1,9 @@
 package wikiParser.edges;
 
 import java.util.List;
-import wikiParser.Page;
-import wikiParser.Edge;
-import wikiParser.Revision;
+import wmr.core.Page;
+import wmr.core.Edge;
+import wmr.core.Revision;
 
 public interface EdgeGenerator {	
 

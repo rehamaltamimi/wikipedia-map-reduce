@@ -8,9 +8,9 @@ import org.apache.hadoop.mapred.Mapper;
 import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reporter;
 
-import wikiParser.Page;
-import wikiParser.PageParser;
-import wikiParser.Revision;
+import wmr.core.Page;
+import wmr.core.PageParser;
+import wmr.core.Revision;
 import wikiParser.mapReduce.util.IdentityReduce;
 import wikiParser.mapReduce.util.MapReduceUtils;
 import wikiParser.mapReduce.util.SimpleJobConf;

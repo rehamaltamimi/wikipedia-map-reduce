@@ -3,9 +3,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import wikiParser.PageParser;
-import wikiParser.Edge;
-import wikiParser.EdgeParser;
+import wmr.core.PageParser;
+import wmr.core.Edge;
+import wmr.core.EdgeParser;
 
 /**
  * Suggestions for refactoring:

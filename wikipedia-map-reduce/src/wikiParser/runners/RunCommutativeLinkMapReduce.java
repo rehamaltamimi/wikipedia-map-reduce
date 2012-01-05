@@ -13,7 +13,7 @@ import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
 
-import wikiParser.PageParser;
+import wmr.core.PageParser;
 
 public class RunCommutativeLinkMapReduce extends WikiLineReader {
 

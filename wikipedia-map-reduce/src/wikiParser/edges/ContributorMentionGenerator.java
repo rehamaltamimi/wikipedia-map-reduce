@@ -3,10 +3,10 @@ package wikiParser.edges;
 import java.util.ArrayList;
 import java.util.List;
 
-import wikiParser.Page;
-import wikiParser.RevisionFingerprinter;
-import wikiParser.Edge;
-import wikiParser.Revision;
+import wmr.core.Page;
+import wmr.core.RevisionFingerprinter;
+import wmr.core.Edge;
+import wmr.core.Revision;
 
 public class ContributorMentionGenerator implements FingerprintingEdgeGenerator {
     /**

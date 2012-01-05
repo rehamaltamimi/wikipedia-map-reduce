@@ -10,10 +10,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import javax.xml.stream.XMLStreamException;
-import wikiParser.PageParser;
-import wikiParser.RevisionFingerprinter;
-import wikiParser.Revision;
-import wikiParser.User;
+import wmr.core.PageParser;
+import wmr.core.RevisionFingerprinter;
+import wmr.core.Revision;
+import wmr.core.User;
 
 /**
  *

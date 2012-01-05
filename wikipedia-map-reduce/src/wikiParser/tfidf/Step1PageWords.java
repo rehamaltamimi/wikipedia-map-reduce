@@ -26,7 +26,7 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.wikipedia.miner.util.MarkupStripper;
 
-import wikiParser.*;
+import wmr.core.*;
 import wikiParser.util.EasyLineReader;
 import wikiParser.util.Utils;
 

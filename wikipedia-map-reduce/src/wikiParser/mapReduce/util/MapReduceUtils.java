@@ -6,7 +6,7 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.hadoop.io.Text;
 
-import wikiParser.PageParser;
+import wmr.core.PageParser;
 import wikiParser.util.LzmaPipe;
 
 public class MapReduceUtils {

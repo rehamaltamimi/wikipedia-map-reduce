@@ -7,12 +7,12 @@ package wikiParser.runners;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.stream.XMLStreamException;
-import wikiParser.Page;
-import wikiParser.PageParser;
-import wikiParser.RevisionFingerprinter;
-import wikiParser.Edge;
-import wikiParser.EdgeParser;
-import wikiParser.Revision;
+import wmr.core.Page;
+import wmr.core.PageParser;
+import wmr.core.RevisionFingerprinter;
+import wmr.core.Edge;
+import wmr.core.EdgeParser;
+import wmr.core.Revision;
 
 /**
  *
