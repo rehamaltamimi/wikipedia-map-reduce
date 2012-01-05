@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -24,21 +23,19 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import org.wikipedia.miner.util.MarkupStripper;
 
 import wikiParser.*;
 import wikiParser.util.EasyLineReader;
-import wikiParser.util.Utils;
 
 /**
  * @author Shilad Sen
  */
-public class Step1PageWords extends Configured implements Tool {
+public class Step1PageLinks extends Configured implements Tool {
 
-    private static final Logger LOG  = Logger.getLogger(Step1PageWords.class.getPackage().getName());
+    private static final Logger LOG  = Logger.getLogger(Step1PageLinks.class.getPackage().getName());
     private static final String KEY_ID_FILTER = "ID_FILTER";
 
-    public static final int MIN_DOCUMENT_LENGTH = 100;
+    public static final int MIN_DOCUMENT_LENGTH = 10;
 
     public static class MyMapper extends Mapper<Long, CurrentRevision, Text, Text> {
 
@@ -72,22 +69,16 @@ public class Step1PageWords extends Configured implements Tool {
                 if (!shouldProcessPage(p, r)) {
                     return;
                 }
-                String text = MarkupStripper.stripEverything(r.getText());
                 Pattern pattern = Pattern.compile("\\w+");
-                Matcher m = pattern.matcher(text);
                 int total = 0;
                 Map<String, Integer> counts = new HashMap<String, Integer>();
-                while (m.find()) {
-                    String word = m.group().toLowerCase();
-                    if (Utils.STOP_WORDS.contains(word)) {
-                        continue;
-                    }
-                    word = Utils.stem(word);
+                for (String link : r.getAnchorLinksWithoutFragments()) {
+                    link = link.toLowerCase();
                     total++;
-                    if (!counts.containsKey(word)) {
-                        counts.put(word, 1);
+                    if (!counts.containsKey(link)) {
+                        counts.put(link, 1);
                     } else {
-                        counts.put(word, counts.get(word) + 1);
+                        counts.put(link, counts.get(link) + 1);
                     }
                 }
                 if (total <= MIN_DOCUMENT_LENGTH) {
@@ -106,7 +97,6 @@ public class Step1PageWords extends Configured implements Tool {
                             new Text(word),
                             new Text(builder.toString()));
                     builder.setLength(0);
-
                  }
             } catch (Exception e) {
                 System.err.println("processing of " + key + " failed:");
@@ -172,7 +162,7 @@ public class Step1PageWords extends Configured implements Tool {
         FileOutputFormat.setOutputPath(job, outputPath);
 
         
-        job.setJarByClass(Step1PageWords.class);
+        job.setJarByClass(Step1PageLinks.class);
         job.setInputFormatClass(CurrentRevisionInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setMapOutputKeyClass(Text.class);
@@ -195,7 +185,7 @@ public class Step1PageWords extends Configured implements Tool {
      * <code>ToolRunner</code>.
      */
     public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new Step1PageWords(), args);
+        int res = ToolRunner.run(new Step1PageLinks(), args);
         System.exit(res);
     }
 }
