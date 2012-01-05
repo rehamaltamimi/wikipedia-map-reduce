@@ -20,11 +20,11 @@ import org.apache.hadoop.mapred.Reducer;
 import org.apache.hadoop.mapred.Reporter;
 import org.apache.hadoop.mapred.TextOutputFormat;
 
-import wikiParser.Page;
-import wikiParser.PageParser;
-import wikiParser.RevisionFingerprinter;
-import wikiParser.Revision;
-import wikiParser.User;
+import wmr.core.Page;
+import wmr.core.PageParser;
+import wmr.core.RevisionFingerprinter;
+import wmr.core.Revision;
+import wmr.core.User;
 import wikiParser.mapReduce.statistics.RevisionCountData;
 import wikiParser.mapReduce.util.MapReduceUtils;
 

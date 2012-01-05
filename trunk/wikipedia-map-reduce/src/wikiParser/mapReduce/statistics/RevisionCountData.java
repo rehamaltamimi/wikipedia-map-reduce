@@ -8,8 +8,8 @@ import org.apache.hadoop.mapred.Mapper;
 import org.apache.hadoop.mapred.OutputCollector;
 import org.apache.hadoop.mapred.Reporter;
 
-import wikiParser.PageParser;
-import wikiParser.Revision;
+import wmr.core.PageParser;
+import wmr.core.Revision;
 import wikiParser.util.LzmaPipe;
 import wikiParser.mapReduce.util.*;
 

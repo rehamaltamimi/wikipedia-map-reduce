@@ -18,11 +18,11 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import wikiParser.Page;
+import wmr.core.Page;
 
-import wikiParser.PageParser;
-import wikiParser.Edge;
-import wikiParser.Revision;
+import wmr.core.PageParser;
+import wmr.core.Edge;
+import wmr.core.Revision;
 import wikiParser.edges.ArticleArticleGenerator;
 import wikiParser.mapReduce.util.KeyValueTextInputFormat;
 import wikiParser.mapReduce.util.MapReduceUtils;

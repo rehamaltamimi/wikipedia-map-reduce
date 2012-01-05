@@ -13,11 +13,11 @@ import javax.xml.stream.XMLStreamException;
 
 import org.apache.hadoop.io.Text;
 
-import wikiParser.Page;
-import wikiParser.PageParser;
-import wikiParser.RevisionFingerprinter;
-import wikiParser.Edge;
-import wikiParser.Revision;
+import wmr.core.Page;
+import wmr.core.PageParser;
+import wmr.core.RevisionFingerprinter;
+import wmr.core.Edge;
+import wmr.core.Revision;
 
 public class RunUserNameIdMapReduce extends WikiLineReader {
 

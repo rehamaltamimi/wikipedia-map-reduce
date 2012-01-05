@@ -10,7 +10,7 @@ import java.io.IOException;
 
 import javax.xml.stream.XMLStreamException;
 
-import wikiParser.PageParser;
+import wmr.core.PageParser;
 import wikiParser.mapReduce.graphs.NameIdSubstitution;
 
 public class RunNameIdSubstitution extends WikiLineReader {
