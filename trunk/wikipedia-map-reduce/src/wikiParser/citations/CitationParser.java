@@ -10,7 +10,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import wikiParser.Page;
 import wikiParser.Revision;
-import wikiParser.Template;
+import wikiParser.templates.Template;
+import wikiParser.templates.TemplateParser;
 
 /**
  *
@@ -30,7 +31,7 @@ public class CitationParser {
         List<Citation> cites = new ArrayList<Citation>();
         
         // First, look for citations in templates
-        for (Template t : Template.getOneOrMoreTemplates(revision.getText())) {
+        for (Template t : TemplateParser.getOneOrMoreTemplates(revision.getText())) {
             cites.addAll(templateToCitations(page, revision, t));
         }
 
@@ -62,7 +63,7 @@ public class CitationParser {
     private static final Pattern URL_CONTAINER = Pattern.compile(".*?\\[(.*?)\\].*?");
 
     private List<Citation> processOneRefTag(Page page, Revision rev, String contents) {
-        List<Template> templates = Template.getOneOrMoreTemplates(contents);
+        List<Template> templates = TemplateParser.getOneOrMoreTemplates(contents);
         List<Citation> cites = new ArrayList<Citation>();
         for (Template t : templates) {
             if (!templateToCitations(page, rev, t).isEmpty()) {

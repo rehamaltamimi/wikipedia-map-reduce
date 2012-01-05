@@ -4,6 +4,7 @@
  */
 package wikiParser.assessments;
 
+import wikiParser.templates.Template;
 import java.io.IOException;
 import java.util.*;
 import org.apache.hadoop.conf.Configuration;
