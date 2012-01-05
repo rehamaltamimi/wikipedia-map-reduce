@@ -33,6 +33,16 @@ public class Vertex {
 		return id;
 	}
 
+        public int getIdAsInt() {
+            try {
+                return Integer.valueOf(id);
+            } catch (NumberFormatException e) {
+                return -1;
+            } catch (NullPointerException e) {
+                return -1;
+            }
+        }
+
 	public List<Edge> getEdges() {
 		return edges;
 	}
