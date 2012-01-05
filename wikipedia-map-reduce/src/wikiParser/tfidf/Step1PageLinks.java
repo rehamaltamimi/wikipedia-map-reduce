@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -59,6 +60,12 @@ public class Step1PageLinks extends Configured implements Tool {
             }
         }
 
+        Pattern PAT_CLEAN = Pattern.compile("\\s+");
+        private String cleanLink(String link){
+            Matcher m = PAT_CLEAN.matcher(link.toLowerCase());
+            return m.replaceAll(" ");
+        }
+
         @Override
         public void map(Long key, CurrentRevision value, Mapper.Context context)
                 throws IOException, InterruptedException {
@@ -69,11 +76,10 @@ public class Step1PageLinks extends Configured implements Tool {
                 if (!shouldProcessPage(p, r)) {
                     return;
                 }
-                Pattern pattern = Pattern.compile("\\w+");
                 int total = 0;
                 Map<String, Integer> counts = new HashMap<String, Integer>();
                 for (String link : r.getAnchorLinksWithoutFragments()) {
-                    link = link.toLowerCase();
+                    link = cleanLink(link);
                     total++;
                     if (!counts.containsKey(link)) {
                         counts.put(link, 1);
@@ -150,7 +156,6 @@ public class Step1PageLinks extends Configured implements Tool {
         Path outputPath = new Path(args[1]);
 
         Configuration conf = getConf();
-        System.err.println("length of args is " + args.length);
         if (args.length >= 3) {
             System.err.println("SETTING FILTER!");
             conf.set(KEY_ID_FILTER, args[2]);

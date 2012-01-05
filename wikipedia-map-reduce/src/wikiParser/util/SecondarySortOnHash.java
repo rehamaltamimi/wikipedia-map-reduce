@@ -2,13 +2,13 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package wikiParser.mapReduce.util;
+package wikiParser.util;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.io.WritableUtils;
-import org.apache.hadoop.mapred.JobConf;
-import org.apache.hadoop.mapred.Partitioner;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.lib.partition.HashPartitioner;
 
 /**
  * Utilities that setup secondary sorting on hashes in keys.
@@ -23,25 +23,21 @@ public class SecondarySortOnHash {
      * Partitions pairs to mappers, but ignores things follow hash marks.
      * @author Shilad
      */
-    public static final class HashIgnoringPartitioner implements Partitioner {
+    public static final class HashIgnoringPartitioner extends HashPartitioner {
 
-        private JobConf jobConf;
-
+        @Override
         public int getPartition(Object key, Object value, int numPartitions) {
             if (!(key instanceof Text)) {
                 throw new UnsupportedOperationException("key " + key + " is not text");
             }
             Text textKey = (Text) key;
-            String stringKey = textKey.toString();
-            int hashIndex = stringKey.indexOf("#");
-            if (hashIndex >= 0) {
-                stringKey = stringKey.substring(0, hashIndex);
+            if (textKey.find("#") >= 0) {
+                String stringKey = textKey.toString();
+                int hashIndex = stringKey.indexOf("#");
+                assert(hashIndex >= 0);
+                textKey = new Text(stringKey.substring(0, hashIndex));
             }
-            return Math.abs(stringKey.hashCode()) % numPartitions;
-        }
-
-        public void configure(JobConf jc) {
-            this.jobConf = jc;
+            return super.getPartition(textKey, value, numPartitions);
         }
     }
 
@@ -138,9 +134,9 @@ public class SecondarySortOnHash {
         }
     }
 
-    public static void setupSecondarySortOnHash(JobConf conf) {
-        conf.setPartitionerClass(HashIgnoringPartitioner.class);
-        conf.setOutputValueGroupingComparator(HashEndingRawComparator.class);
-        conf.setOutputKeyComparatorClass(HashFavoringRawComparator.class);
+    public static void setupSecondarySortOnHash(Job job) {
+        job.setPartitionerClass(HashIgnoringPartitioner.class);
+        job.setSortComparatorClass(HashFavoringRawComparator.class);
+        job.setGroupingComparatorClass(HashEndingRawComparator.class);
     }
 }
