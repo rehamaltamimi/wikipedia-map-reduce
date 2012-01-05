@@ -7,7 +7,7 @@ package wikiParser.citations;
 
 import wikiParser.Page;
 import wikiParser.Revision;
-import wikiParser.Template;
+import wikiParser.templates.Template;
 
 /**
  *

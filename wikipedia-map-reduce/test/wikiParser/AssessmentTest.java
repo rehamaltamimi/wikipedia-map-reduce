@@ -4,6 +4,8 @@
  */
 package wikiParser;
 
+import wikiParser.templates.TemplateParser;
+import wikiParser.templates.Template;
 import java.util.ArrayList;
 import wikiParser.assessments.Assessment;
 import java.util.List;
@@ -63,7 +65,7 @@ public class AssessmentTest {
 
     List<Assessment> get(String text) {
         List<Assessment> assessments = new ArrayList<Assessment>();
-        for (Template t : Template.getOneOrMoreTemplates(text)) {
+        for (Template t : TemplateParser.getOneOrMoreTemplates(text)) {
             assessments.addAll(Assessment.templateToAssessment(page, revision, t));
         }
         return assessments;

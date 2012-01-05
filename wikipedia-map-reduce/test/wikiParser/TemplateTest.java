@@ -4,6 +4,8 @@
  */
 package wikiParser;
 
+import wikiParser.templates.TemplateParser;
+import wikiParser.templates.Template;
 import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,8 +44,8 @@ public class TemplateTest {
     }
     
     @Test public void testProcessTemplate() {
-        Template citeBook = Template.processTemplate(citeBookString.substring(2, citeBookString.length()-2),0,citeBookString.length());
-        Template citeWeb = Template.processTemplate(citeWebString.substring(2, citeWebString.length()-2),0,citeWebString.length());
+        Template citeBook = TemplateParser.processTemplate(citeBookString.substring(2, citeBookString.length()-2),0,citeBookString.length());
+        Template citeWeb = TemplateParser.processTemplate(citeWebString.substring(2, citeWebString.length()-2),0,citeWebString.length());
         System.out.println("citeBook: " + citeBook);
         System.out.println("citeWeb: " + citeWeb);
         assertTrue(citeBook.getName().equals("cite book"));
@@ -54,7 +56,7 @@ public class TemplateTest {
     }
 
     @Test public void testNestedTemplate() {
-        Template t1 = Template.processTemplate(nestedString.substring(2, nestedString.length()-2),0,nestedString.length());
+        Template t1 = TemplateParser.processTemplate(nestedString.substring(2, nestedString.length()-2),0,nestedString.length());
         assertEquals(3, t1.getAllParams().keySet().size());
         assertTrue(t1.paramContainsTemplate("1"));
         List<Template> children = t1.getParamAsTemplate("1");

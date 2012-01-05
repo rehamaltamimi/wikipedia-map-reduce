@@ -1,5 +1,6 @@
 package wikiParser;
 
+import wikiParser.templates.Template;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import wikiParser.citations.Citation;
 import wikiParser.citations.CitationParser;
+import wikiParser.templates.TemplateParser;
 
 public class Revision {
 
@@ -164,7 +166,7 @@ public class Revision {
      * Find all templates in a page.
      */
     public List<Template> getTemplates() {
-        return Template.getOneOrMoreTemplates(text);
+        return TemplateParser.getOneOrMoreTemplates(text);
     }
 
     private static final String DISAMBIGUATION_INDICATORS [] = {

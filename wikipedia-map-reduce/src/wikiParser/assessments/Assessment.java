@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 import wikiParser.Page;
 import wikiParser.Revision;
-import wikiParser.Template;
+import wikiParser.templates.Template;
 import wikiParser.User;
 
 /**

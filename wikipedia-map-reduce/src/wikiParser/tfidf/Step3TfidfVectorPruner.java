@@ -44,7 +44,8 @@ import wikiParser.mapReduce.util.KeyValueTextInputFormat;
  *                  -D mapred.reduce.tasks=50 \
  *                  /user/shilad/macademia/res/2/ \
  *                  /user/shilad/macademia/res/3 \
- *                  1800000
+ *                  2000000 \
+ *                  100
  * </pre>
  *
  *
@@ -56,7 +57,7 @@ public class Step3TfidfVectorPruner extends Configured implements Tool {
     private static final String KEY_SMOOTHING = "SMOOTHING";
     
     private static int NUM_DOCUMENTS = 668;
-    private static int MAX_DOCUMENTS_FOR_TERM = NUM_DOCUMENTS / 6;
+    private static int MAX_DOCUMENTS_FOR_TERM = NUM_DOCUMENTS / 20;
     private static int SMOOTHING_CONSTANT = 100;
 
     private static final int MAX_VECTOR_SIZE = 600;
@@ -81,7 +82,7 @@ public class Step3TfidfVectorPruner extends Configured implements Tool {
         @Override
         public void setup(Context context) {
             NUM_DOCUMENTS = context.getConfiguration().getInt(KEY_NUM_DOCUMENTS, 689);
-            MAX_DOCUMENTS_FOR_TERM = NUM_DOCUMENTS / 6;
+            MAX_DOCUMENTS_FOR_TERM = NUM_DOCUMENTS / 20;
             SMOOTHING_CONSTANT = context.getConfiguration().getInt(KEY_NUM_DOCUMENTS, 689);
             System.out.println("MAX_DOCs for term = " + MAX_DOCUMENTS_FOR_TERM);
             System.out.println("SMOOTHING_CONSTANT for term = " + SMOOTHING_CONSTANT);
@@ -110,9 +111,10 @@ public class Step3TfidfVectorPruner extends Configured implements Tool {
 
                     WordScore score = new WordScore(word, Math.sqrt(tf*idf));
                     scores.add(score);
-                } catch (Exception e) {
-                    System.err.println("processing of " + value + " failed:");
-                    e.printStackTrace();;
+                } catch (NumberFormatException e) {
+                    System.err.println("invalid value: " + value);
+                } catch (IndexOutOfBoundsException e) {
+                    System.err.println("invalid value: " + value);
                 }
             }
             Collections.sort(scores);
