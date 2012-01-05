@@ -7,6 +7,9 @@ package wikiParser.util;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
@@ -20,11 +23,15 @@ import org.apache.hadoop.util.LineReader;
  *
  * @author shilad
  */
-public class EasyLineReader {
+public class EasyLineReader implements Iterable<String>, Iterator<String> {
+
+    private static final Logger LOG  = Logger.getLogger(EasyLineReader.class.getPackage().getName());
+
     public static int MAX_LINE_LENGTH = 750 * (1<<20);    // 750MB
     
     private LineReader reader;
     private FSDataInputStream fileIn;
+    private Path path;
     
     private String lastLine = null;
     private Text buffer = new Text();
@@ -40,6 +47,7 @@ public class EasyLineReader {
     }
     
     public EasyLineReader(Path path, Configuration job, long fileLength) throws IOException {
+        this.path = path;
         FileSystem fs = path.getFileSystem(job);
         if (fileLength < 0) {
             fileLength = fs.getFileStatus(path).getLen();
@@ -108,5 +116,31 @@ public class EasyLineReader {
 
     public long getLinesExtracted() {
         return lineNum;
+    }
+
+    public Iterator<String> iterator() {
+        return this;
+    }
+
+    private String nextLine = null;
+    public boolean hasNext() {
+        try {
+            nextLine = readLine();
+        } catch (Exception e) {
+            LOG.log(Level.SEVERE, "easylinereader iterator failed for {0}, aborting iterator.", path);
+            LOG.log(Level.SEVERE, "exception was", e);
+            nextLine = null;
+        }
+        return (nextLine != null);
+    }
+
+    public String next() {
+        String r = nextLine;
+        nextLine = null;
+        return r;
+    }
+
+    public void remove() {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }
