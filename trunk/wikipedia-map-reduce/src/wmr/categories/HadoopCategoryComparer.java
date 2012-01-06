@@ -99,7 +99,7 @@ public class HadoopCategoryComparer extends Configured implements Tool {
                 int pageId1 = rec.getPageId();
                 for (Integer pageId2 : results.keySet()) {
                     int distance = results.get(pageId2);
-                    double score = Math.log(distance / 10);
+                    double score = -Math.log((1.0 + distance) / 10);
                     context.write(new Text("" +pageId1 + "@" + pageId2), new Text("" + score));
                 }
                 worker.resetOutputBuffer();

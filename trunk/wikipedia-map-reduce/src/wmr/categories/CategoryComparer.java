@@ -81,7 +81,7 @@ public abstract class CategoryComparer {
 
             });
             pagesTraversed = newPagesTraversed;
-            LOG.log(Level.INFO, "found {0} pages up to depth {1}", new Object[] {pagesTraversed.size(), depth});
+//            LOG.log(Level.INFO, "found {0} pages up to depth {1}", new Object[] {pagesTraversed.size(), depth});
         }
     }
 
