@@ -87,7 +87,13 @@ public class HadoopCategoryComparer extends Configured implements Tool {
         @Override
         public void map(Text key, Text value, Mapper.Context context) throws IOException, InterruptedException {
             try {
-                CategoryRecord rec = worker.parseLine(key.toString() + value.toString(), true);
+                String line = key.toString() + "\t" + value.toString();
+                CategoryRecord rec = worker.parseLine(line, true);
+                context.progress();
+                if (rec == null) {
+                    System.err.println("invalid line: '" + line + "'");
+                    return;
+                }
                 worker.findSimilar(rec);
                 Map<Integer, Integer> results = worker.getOutputBuffer();
                 int pageId1 = rec.getPageId();
@@ -96,6 +102,7 @@ public class HadoopCategoryComparer extends Configured implements Tool {
                     double score = Math.log(distance / 10);
                     context.write(new Text("" +pageId1 + "@" + pageId2), new Text("" + score));
                 }
+                worker.resetOutputBuffer();
             } catch (Exception e) {
                 System.err.println("error processing page with id " + key);
                 e.printStackTrace();
@@ -120,7 +127,6 @@ public class HadoopCategoryComparer extends Configured implements Tool {
 
         FileInputFormat.setInputPaths(job, inputPath);
         FileOutputFormat.setOutputPath(job, outputPath);
-
         
         job.setJarByClass(HadoopCategoryComparer.class);
         job.setInputFormatClass(KeyValueTextInputFormat.class);
