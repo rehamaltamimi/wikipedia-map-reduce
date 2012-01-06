@@ -1,7 +1,7 @@
 
 package wikiParser.mapReduce.util;
 
-import gnu.trove.TIntHashSet;
+import gnu.trove.set.hash.TIntHashSet;
 import java.io.IOException;
 import java.util.Iterator;
 

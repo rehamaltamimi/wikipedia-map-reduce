@@ -15,6 +15,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
+ * Implements the WikiRelate! semantic similarity algorithm.
  * @author shilad
  */
 public abstract class CategoryComparer {
@@ -80,7 +81,7 @@ public abstract class CategoryComparer {
 
             });
             pagesTraversed = newPagesTraversed;
-//            LOG.log(Level.INFO, "found {0} pages up to depth {1}", new Object[] {pagesTraversed.size(), depth});
+            LOG.log(Level.INFO, "found {0} pages up to depth {1}", new Object[] {pagesTraversed.size(), depth});
         }
     }
 
