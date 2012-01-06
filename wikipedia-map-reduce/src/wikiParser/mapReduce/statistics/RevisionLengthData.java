@@ -12,7 +12,7 @@ import wmr.core.Page;
 import wmr.core.PageParser;
 import wmr.core.Revision;
 import wikiParser.mapReduce.util.*;
-import wikiParser.util.LzmaPipe;
+import wmr.util.LzmaPipe;
 
 public class RevisionLengthData {
 

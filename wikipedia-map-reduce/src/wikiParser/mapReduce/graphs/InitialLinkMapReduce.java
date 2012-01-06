@@ -17,7 +17,7 @@ import wmr.core.Revision;
 import wikiParser.mapReduce.util.UniqueConcatenateReduce;
 import wikiParser.mapReduce.util.MapReduceUtils;
 import wikiParser.mapReduce.util.SimpleJobConf;
-import wikiParser.util.LzmaPipe;
+import wmr.util.LzmaPipe;
 
 public class InitialLinkMapReduce {
 

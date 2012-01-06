@@ -10,7 +10,7 @@ import org.apache.hadoop.mapred.Reporter;
 
 import wmr.core.PageParser;
 import wmr.core.Revision;
-import wikiParser.util.LzmaPipe;
+import wmr.util.LzmaPipe;
 import wikiParser.mapReduce.util.*;
 
 public class RevisionCountData {

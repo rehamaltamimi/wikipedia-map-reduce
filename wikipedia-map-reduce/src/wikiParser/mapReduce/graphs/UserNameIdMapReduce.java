@@ -14,7 +14,7 @@ import wmr.core.Revision;
 import wikiParser.mapReduce.util.IdentityReduce;
 import wikiParser.mapReduce.util.MapReduceUtils;
 import wikiParser.mapReduce.util.SimpleJobConf;
-import wikiParser.util.LzmaPipe;
+import wmr.util.LzmaPipe;
 
 public class UserNameIdMapReduce {
 

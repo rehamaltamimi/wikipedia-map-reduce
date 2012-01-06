@@ -7,7 +7,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.hadoop.io.Text;
 
 import wmr.core.PageParser;
-import wikiParser.util.LzmaPipe;
+import wmr.util.LzmaPipe;
 
 public class MapReduceUtils {
         public static String [] S3_INPUTS = new String[] {

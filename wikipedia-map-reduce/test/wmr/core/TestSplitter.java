@@ -4,7 +4,7 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import wikiParser.util.Splitter;
+import wmr.util.Splitter;
 
 public class TestSplitter {
 
