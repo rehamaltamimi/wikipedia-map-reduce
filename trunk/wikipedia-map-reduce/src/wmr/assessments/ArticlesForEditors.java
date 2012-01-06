@@ -26,7 +26,7 @@ import wmr.core.Revision;
 import wmr.core.User;
 import wikiParser.mapReduce.util.KeyValueTextInputFormat;
 import wikiParser.mapReduce.util.MapReduceUtils;
-import wikiParser.util.LzmaPipe;
+import wmr.util.LzmaPipe;
 /**
  * Creates Article to Article graph with directed edges using links only
  * @author Nathaniel Miller

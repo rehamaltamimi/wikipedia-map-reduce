@@ -2,64 +2,65 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package wikiParser.mapReduce;
 
+package wmr.tfidf;
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import wmr.core.*;
-import wikiParser.mapReduce.util.*;
-import wmr.util.*;
+
+import wikiParser.mapReduce.util.KeyValueTextInputFormat;
 
 /**
+ * Fifth step in similarity calculation.
  *
- * @author Shilad Sen
+ * Example invocation:
+ * hadoop jar ./wikiMiner-deps.jar edu.macademia.wikiminer.FinalDocSim
+ *              /user/shilad/macademia/res/4 /user/shilad/macademia/res/5
  * 
+ * @author shilad
  */
-public class ArticleNameIdGenerator extends Configured implements Tool {
+public class Step5FinalDocSim extends Configured implements Tool {
 
-    /*
-     * Takes key-value 7zip hashes and outputs article name / id pairs
-     */
-    public static class MyMapper extends Mapper<Text, Text, Text, Text> {
+    private static class MyReducer extends Reducer<Text, Text, Text, Text> {
 
         @Override
-        public void map(Text key, Text value, Mapper.Context context) throws IOException {
-            LzmaPipe pipe = null;
-            try {
-                context.progress();
-                int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
-                pipe = new LzmaPipe(value.getBytes(), length);
-                PageParser parser = new PageParser(pipe.decompress());
-                Page article = parser.getArticle();
-                if (article.isNormalPage()) {//main namespace only
-                    context.write(new Text(article.toUnderscoredString()), new Text(article.getId()));
+        public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+            double score = 0;
+            long i = 0;
+
+            for (Text t : values) {
+                String value = t.toString();
+                try {               
+                    score += Double.valueOf(value);
+                } catch (NumberFormatException e) {
+                    System.err.println("invalid key/value pair: " + key + ", " + value);
                 }
-            } catch (Exception e) {
-                context.progress();
-                System.err.println("error when processing " + key + ":");
-                e.printStackTrace();
-            } finally {
-                if (pipe != null) {
-                    pipe.cleanup();
+                if (i++ % 100000 == 0) {
+                    context.progress();
                 }
+                
             }
+            context.write(key, new Text(""+score));
         }
+
     }
 
-    public int run(String args[]) throws Exception {
-
+    /**
+     * Runs this tool.
+     */
+    public int run(String[] args) throws Exception {
         if (args.length < 2) {
-            System.out.println("usage: [input output]");
+            System.out.println("usage: input output");
             ToolRunner.printGenericCommandUsage(System.out);
             return -1;
         }
@@ -68,22 +69,22 @@ public class ArticleNameIdGenerator extends Configured implements Tool {
         Path outputPath = new Path(args[1]);
 
         Configuration conf = getConf();
-        Job job = new Job(conf, this.getClass().toString());
 
+        Job job = new Job(conf, this.getClass().toString());
         FileInputFormat.setInputPaths(job, inputPath);
         FileOutputFormat.setOutputPath(job, outputPath);
 
-        
-        job.setJarByClass(ArticleNameIdGenerator.class);
+        FileOutputFormat.setCompressOutput(job, true);
+
+        job.setJarByClass(Step5FinalDocSim.class);
         job.setInputFormatClass(KeyValueTextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
-        
-        job.setMapperClass(MyMapper.class);
-        job.setReducerClass(Reducer.class); // identity reducer
+
+        job.setReducerClass(MyReducer.class);
         FileSystem hdfs = FileSystem.get(outputPath.toUri(), conf);
         if (hdfs.exists(outputPath)) {
             hdfs.delete(outputPath, true);
@@ -97,7 +98,9 @@ public class ArticleNameIdGenerator extends Configured implements Tool {
      * <code>ToolRunner</code>.
      */
     public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new ArticleNameIdGenerator(), args);
+        int res = ToolRunner.run(new Configuration(), new Step5FinalDocSim(), args);
         System.exit(res);
+        return;
     }
 }
+

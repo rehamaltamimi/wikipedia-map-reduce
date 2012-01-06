@@ -20,7 +20,7 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import wmr.core.*;
 import wikiParser.mapReduce.util.*;
-import wikiParser.util.*;
+import wmr.util.*;
 
 /**
  *

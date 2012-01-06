@@ -12,8 +12,8 @@ import javax.xml.stream.XMLStreamException;
 import wmr.core.PageParser;
 import wmr.core.Revision;
 import wikiParser.mapReduce.util.MapReduceUtils;
-import wikiParser.util.LzmaPipe;
-import wikiParser.util.SevenUnzip;
+import wmr.util.LzmaPipe;
+import wmr.util.SevenUnzip;
 
 /**
  * Reads in a wikipedia file in the standard hadoop format.

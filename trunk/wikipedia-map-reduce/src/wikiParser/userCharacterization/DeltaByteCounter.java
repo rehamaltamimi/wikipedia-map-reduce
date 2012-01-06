@@ -26,12 +26,12 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import wikiParser.Page;
-import wikiParser.PageParser;
-import wikiParser.Revision;
 import wikiParser.mapReduce.util.KeyValueTextInputFormat;
 import wikiParser.mapReduce.util.MapReduceUtils;
-import wikiParser.util.LzmaPipe;
+import wmr.core.Page;
+import wmr.core.PageParser;
+import wmr.core.Revision;
+import wmr.util.LzmaPipe;
 
 /**
  *

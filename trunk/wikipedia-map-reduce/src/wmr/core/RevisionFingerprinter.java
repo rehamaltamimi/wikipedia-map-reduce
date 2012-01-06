@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import wikiParser.util.Splitter;
+import wmr.util.Splitter;
 
 public class RevisionFingerprinter {
 

@@ -13,7 +13,7 @@ import wmr.core.PageParser;
 import wikiParser.mapReduce.util.IdentityReduce;
 import wikiParser.mapReduce.util.MapReduceUtils;
 import wikiParser.mapReduce.util.SimpleJobConf;
-import wikiParser.util.LzmaPipe;
+import wmr.util.LzmaPipe;
 
 public class ArticleNameIdMapReduce {
 
