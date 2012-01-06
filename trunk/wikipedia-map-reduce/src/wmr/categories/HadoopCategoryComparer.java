@@ -5,6 +5,8 @@
 package wmr.categories;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -17,27 +19,83 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import wikiParser.mapReduce.util.KeyValueTextInputFormat;
+import wmr.util.EasyLineReader;
 
 /**
  *@author Shilad Sen
  */
 public class HadoopCategoryComparer extends Configured implements Tool {
     static final String CATEGORY_PATH_KEY = "CAT_PATH";
+    public static class HadoopCategoryComparerWorker extends CategoryComparer {
+        EasyLineReader reader;
+        Path path;
+        Configuration conf;
+        Map<Integer, Integer> outputBuffer = new LinkedHashMap<Integer, Integer>();
+        
+        public HadoopCategoryComparerWorker(Path path, Configuration conf) throws IOException {
+            this.path = path;
+            this.conf = conf;
+        }
+
+        @Override
+        public void openFile() throws IOException {
+            closeFile();    // just to be safe
+            reader = new EasyLineReader(path, conf);
+        }
+
+        @Override
+        public String readLine() throws IOException {
+            return reader.readLine();
+        }
+
+        @Override
+        public void writeResult(int pageId, int similarPageId, int distance) throws IOException {
+            outputBuffer.put(similarPageId, distance);
+        }
+
+        public void resetOutputBuffer() {
+            outputBuffer.clear();
+        }
+
+        public Map<Integer, Integer> getOutputBuffer() {
+            return outputBuffer;
+        }
+
+        @Override
+        public synchronized void closeFile() throws IOException {
+            if (reader != null) {
+                reader.close();
+                reader = null;
+            }
+        }
+    }
 
     /*
      * Reads output of CitationCounter
      */
     public static class MyMapper extends Mapper<Text, Text, Text, Text> {
+        HadoopCategoryComparerWorker worker;
 
         @Override
         public void setup(Mapper.Context context) throws IOException {
             String path = context.getConfiguration().get(CATEGORY_PATH_KEY);
+            worker = new HadoopCategoryComparerWorker(new Path(path), context.getConfiguration());
+            worker.prepareDataStructures();
         }
 
 
         @Override
         public void map(Text key, Text value, Mapper.Context context) throws IOException, InterruptedException {
             try {
+                CategoryRecord rec = worker.parseLine(key.toString() + value.toString(), true);
+                worker.findSimilar(rec);
+                Map<Integer, Integer> results = worker.getOutputBuffer();
+                int pageId1 = rec.getPageId();
+                for (Integer pageId2 : results.keySet()) {
+                    int distance = results.get(pageId2);
+                    double score = Math.log(distance / 10);
+                    context.write(new Text("" +pageId1 + "@" + pageId2), new Text("" + score));
+                }
             } catch (Exception e) {
                 System.err.println("error processing page with id " + key);
                 e.printStackTrace();
