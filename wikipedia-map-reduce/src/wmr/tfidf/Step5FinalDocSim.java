@@ -40,13 +40,13 @@ public class Step5FinalDocSim extends Configured implements Tool {
 
             for (Text t : values) {
                 String value = t.toString();
+                if (i++ % 100000 == 0) {
+                    context.progress();
+                }
                 try {               
                     score += Double.valueOf(value);
                 } catch (NumberFormatException e) {
                     System.err.println("invalid key/value pair: " + key + ", " + value);
-                }
-                if (i++ % 100000 == 0) {
-                    context.progress();
                 }
                 
             }
