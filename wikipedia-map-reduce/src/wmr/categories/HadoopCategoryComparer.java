@@ -86,6 +86,7 @@ public class HadoopCategoryComparer extends Configured implements Tool {
 
         @Override
         public void map(Text key, Text value, Mapper.Context context) throws IOException, InterruptedException {
+            worker.resetOutputBuffer();
             try {
                 String line = key.toString() + "\t" + value.toString();
                 CategoryRecord rec = worker.parseLine(line, true);
