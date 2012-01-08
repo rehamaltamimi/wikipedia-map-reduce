@@ -76,14 +76,21 @@ public class Step6DocSimFormatter extends Configured implements Tool{
      */
     private static class MyReducer extends Reducer<Text, Text, Text, Text> {
 
-        public void reduce(Text key, Iterator<Text> values, Context context) throws IOException, InterruptedException {
+        @Override
+        public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
 
             TopScoreQueue pqueue = new TopScoreQueue(MAX_DOCS);
-            while (values.hasNext()) {
-                String [] tokens = values.next().toString().split("@");
-                String article = tokens[0];
-                double score = Double.parseDouble(tokens[1]);
-                pqueue.add(article, score);
+            for (Text t : values) {
+                try {
+                    String [] tokens = t.toString().split("@");
+                    String article = tokens[0];
+                    double score = Double.parseDouble(tokens[1]);
+                    pqueue.add(article, score);
+                } catch (NumberFormatException e) {
+                    System.err.println("invalid value: " + t);
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    System.err.println("invalid value: " + t);
+                }
             }
             
             StringBuilder builder = new StringBuilder();

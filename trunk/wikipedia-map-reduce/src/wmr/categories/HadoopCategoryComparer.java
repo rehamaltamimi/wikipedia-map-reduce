@@ -96,18 +96,37 @@ public class HadoopCategoryComparer extends Configured implements Tool {
                 }
                 worker.findSimilar(rec);
                 Map<Integer, Integer> results = worker.getOutputBuffer();
+                StringBuilder builder = new StringBuilder("\"");
                 int pageId1 = rec.getPageId();
                 for (Integer pageId2 : results.keySet()) {
                     int distance = results.get(pageId2);
                     double score = -Math.log((1.0 + distance) / 10);
-                    context.write(new Text("" +pageId1 + "@" + pageId2), new Text("" + score));
+                    if (builder.length() > 1) {
+                        builder.append("|");
+                    }
+                    builder.append(pageId2).append(",").append(truncateDouble("" + score, 5));
                 }
-                worker.resetOutputBuffer();
+                builder.append("\"");
+                context.write(new Text("\"" +pageId1 + "\""), new Text(builder.toString()));
             } catch (Exception e) {
                 System.err.println("error processing page with id " + key);
                 e.printStackTrace();
             }
+            worker.resetOutputBuffer();
         }
+
+        private static String truncateDouble(String s, int n) {
+            if (s.length() <= n) {
+                return s;
+            }
+            int i = s.indexOf("E");
+            if (i >= 0) {
+                return s.substring(0, n-2) + s.substring(i);
+            } else {
+                return s.substring(0, n);
+            }
+        }
+
     }
 
     public int run(String args[]) throws Exception {
