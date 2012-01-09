@@ -20,6 +20,7 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
+import wikiParser.mapReduce.DedupeReducer;
 import wikiParser.mapReduce.util.KeyValueTextInputFormat;
 
 import wmr.util.EasyLineReader;
@@ -60,7 +61,7 @@ public class Step7FinalResultFilter extends Configured implements Tool {
                 throws IOException, InterruptedException {
             try {
                 context.progress();
-                int pageId = Integer.valueOf(key.toString());
+                int pageId = keyToId(key);
                 if (filter.contains(pageId)) {
                     context.write(key, value);
                 }
@@ -69,11 +70,26 @@ public class Step7FinalResultFilter extends Configured implements Tool {
                 e.printStackTrace();
             }
         }
+
+        private Integer keyToId(Text key) {
+            String s = key.toString().trim();
+            if (s.startsWith("\"")) {
+                s = s.substring(1);
+            }
+            if (s.endsWith("\"")) {
+                s = s.substring(0, s.length() - 1);
+            }
+            try {
+                return Integer.valueOf(s.trim());
+            } catch (NumberFormatException e) {
+                System.err.println("invalid page id: '" + key + "'");
+                return -1;
+            }
+        }
     }
 
 
     public int run(String args[]) throws Exception {
-
         if (args.length < 3) {
             System.out.println("usage: input output id_filter");
             ToolRunner.printGenericCommandUsage(System.out);
@@ -101,6 +117,7 @@ public class Step7FinalResultFilter extends Configured implements Tool {
         job.setOutputValueClass(Text.class);
         
         job.setMapperClass(MyMapper.class);
+        job.setReducerClass(DedupeReducer.class);
         FileSystem hdfs = FileSystem.get(outputPath.toUri(), conf);
         if (hdfs.exists(outputPath)) {
             hdfs.delete(outputPath, true);
