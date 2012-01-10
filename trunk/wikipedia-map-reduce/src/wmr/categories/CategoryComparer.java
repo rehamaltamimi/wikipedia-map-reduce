@@ -1,16 +1,17 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package wmr.categories;
 
 import gnu.trove.set.hash.TIntHashSet;
 import gnu.trove.set.hash.TLongHashSet;
 import gnu.trove.map.hash.TLongIntHashMap;
 import gnu.trove.list.array.TIntArrayList;
-import gnu.trove.procedure.TIntProcedure;
+import gnu.trove.map.hash.TIntDoubleHashMap;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.LinkedHashMap;
+import java.util.PriorityQueue;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,12 +22,16 @@ import java.util.logging.Logger;
 public abstract class CategoryComparer {
   private static final Logger LOG  = Logger.getLogger(CategoryComparer.class.getPackage().getName());
 
+    protected boolean debuggingMode = false;
+
     private TLongIntHashMap categoryIndexes = new TLongIntHashMap();
     private TLongHashSet topLevelCategories = new TLongHashSet();
 
     private int catPages[][];
     private int catParents[][];
     private int catChildren[][];
+    private double catPageRanks[];  // -log(page rank) for categories
+    private String catNames[];
 
     public void prepareDataStructures() throws IOException {
         LOG.info("preparing data structures...");
@@ -34,6 +39,10 @@ public abstract class CategoryComparer {
         allocateArrays();
         fillArrays();
         calculateTopLevelCategories();
+        computePageRanks();
+        if (debuggingMode) {
+            dumpPageRanks();
+        }
     }
 
     public void searchPages() throws IOException {
@@ -46,43 +55,79 @@ public abstract class CategoryComparer {
             }
             CategoryRecord record = parseLine(line, true);
             if (record != null) {
-                findSimilar(record);
+                LinkedHashMap<Integer, Double> distances = findSimilar(record);
+                LOG.info("exploring page " + i);
                 if (i++ % 10000 == 0) {
                     LOG.info("exploring page " + i);
+                }
+                writeResults(record, distances);
+                if (i > 1000) {
+                    break;
                 }
             }
         }
         closeFile();
     }
+    
+    protected LinkedHashMap<Integer, Double> findSimilar(final CategoryRecord record) {
+        TIntDoubleHashMap catDistances = new TIntDoubleHashMap();
+        LinkedHashMap<Integer, Double> pageDistances = new LinkedHashMap<Integer, Double>();
+        pageDistances.put(record.getPageId(), 0.000000);
 
-    protected void findSimilar(final CategoryRecord record) {
-        TIntHashSet pagesTraversed = new TIntHashSet();
-        pagesTraversed.add(record.getPageId());
-        for (int depth = 0; depth <= 4; depth++) {
-//            LOG.log(Level.INFO, "exploring to depth {0}", depth);
-            TIntHashSet newPagesTraversed = new TIntHashSet(pagesTraversed);
-            for (int ci : record.getCategoryIndexes()) {
-                TIntHashSet catsTraversed = new TIntHashSet();
-                exploreToDepth(ci, depth, 20000, newPagesTraversed, catsTraversed, +1);
-            }
-            final TIntHashSet pt = pagesTraversed;
-            final int d = depth;
-            newPagesTraversed.forEach(new TIntProcedure() {
-                public boolean execute(int pageId) {
-                    if (!pt.contains(pageId)) {
-                        try {
-                            writeResult(record.getPageId(), pageId, d);
-                        } catch (IOException ex) {
-                            LOG.log(Level.SEVERE, null, ex);
-                        }
-                    }
-                    return true;
-                }
-
-            });
-            pagesTraversed = newPagesTraversed;
-//            LOG.log(Level.INFO, "found {0} pages up to depth {1}", new Object[] {pagesTraversed.size(), depth});
+        TIntHashSet closedCats = new TIntHashSet();
+        PriorityQueue<CategoryDistance> openCats = new PriorityQueue<CategoryDistance>();
+        for (int ci : record.getCategoryIndexes()) {
+            openCats.add(new CategoryDistance(ci, catPageRanks[ci], (byte)+1));
         }
+
+        while (openCats.size() > 0 && pageDistances.size() < 20000) {
+            CategoryDistance cs = openCats.poll();
+
+            // already processed better match
+            if (closedCats.contains(cs.getCatIndex())) {
+                continue;
+            }
+            closedCats.add(cs.getCatIndex());
+
+//            System.out.println("processing " + cs.getCatIndex() +
+//                    ", score: " + cs.getDistance() +
+//                    ", length: " + catPages[cs.getCatIndex()].length);
+
+            // add directly linked pages
+            for (int i : catPages[cs.getCatIndex()]) {
+                if (!pageDistances.containsKey(i) || pageDistances.get(i) > cs.getDistance()) {
+                    pageDistances.put(i, cs.getDistance());
+                }
+                if (pageDistances.size() >= 20000) {
+                    break;  // may be an issue for huge categories
+                }
+            }
+
+            // next steps downwards
+            for (int i : catChildren[cs.getCatIndex()]) {
+                double d = cs.getDistance() + catPageRanks[cs.getCatIndex()];
+                if (!closedCats.contains(i) && !catDistances.containsKey(i)) {
+                    catDistances.put(i, d);
+                    openCats.add(new CategoryDistance(i, d, (byte)-1));
+                } else {
+                     assert(catDistances.get(i) <= d);
+                }
+            }
+
+            // next steps upwards (if still possible)
+            if (cs.getDirection() == +1) {
+                for (int i : catParents[cs.getCatIndex()]) {
+                    double d = cs.getDistance() + catPageRanks[cs.getCatIndex()];
+                    if (!closedCats.contains(i) && (!catDistances.containsKey(i) || catDistances.get(i) > d)) {
+                        catDistances.put(i, d);
+                        openCats.add(new CategoryDistance(i, d, (byte)-1));
+                    }
+                }
+            }
+
+        }
+
+        return pageDistances;
     }
 
     public void setCategoryIndexes() throws IOException {
@@ -113,6 +158,11 @@ public abstract class CategoryComparer {
         catPages = new int[categoryIndexes.size()][];
         catParents = new int[categoryIndexes.size()][];
         catChildren = new int[categoryIndexes.size()][];
+        catPageRanks = new double[categoryIndexes.size()];
+        if (debuggingMode) {
+            catNames = new String[categoryIndexes.size()];
+        }
+        
         for (int i = 0; i < catPages.length; i++) {
             catPages[i] = new int[1];
             catChildren[i] = new int[1];
@@ -167,6 +217,9 @@ public abstract class CategoryComparer {
                 for (int ci : record.getCategoryIndexes()) {
                     catChildren[ci][catChildrenIndexes[ci]++] = index;
                 }
+                if (debuggingMode) {
+                    catNames[index] = record.getPageName();
+                }
             } else {    // regular page
                 for (int ci : record.getCategoryIndexes()) {
                     catPages[ci][catPageIndexes[ci]++] = record.getPageId();
@@ -174,7 +227,53 @@ public abstract class CategoryComparer {
             }
         }
         closeFile();
+    }
 
+    private static final double DAMPING_FACTOR = 0.85;
+
+    public void computePageRanks() {
+        LOG.info("computing category page ranks...");
+        Arrays.fill(catPageRanks, 1.0 / catPageRanks.length);
+        for (int i = 0; i < 20; i++) {
+            LOG.log(Level.INFO, "performing page ranks iteration {0}.", i);
+            double error = onePageRankIteration();
+            LOG.log(Level.INFO, "Error for iteration is {0}.", error);
+        }
+        for (int i = 0; i < catParents.length; i++) {
+            catPageRanks[i] = 1.0/-Math.log(catPageRanks[i]);
+        }
+        LOG.info("finished computing page ranks...");
+    }
+
+    protected double onePageRankIteration() {
+        double nextRanks [] = new double[catPageRanks.length];
+        Arrays.fill(nextRanks, (1.0 - DAMPING_FACTOR) / catPageRanks.length);
+        for (int i = 0; i < catParents.length; i++) {
+            int d = catParents[i].length;   // degree
+            double pr = catPageRanks[i];    // current page-rank
+            for (int j : catParents[i]) {
+                nextRanks[j] += DAMPING_FACTOR * pr / d;
+            }
+        }
+        double diff = 0.0;
+        for (int i = 0; i < catParents.length; i++) {
+            diff += Math.abs(catPageRanks[i] - nextRanks[i]);
+        }
+        catPageRanks = nextRanks;
+        return diff;
+    }
+
+    protected void dumpPageRanks() {
+        DecimalFormat df = new DecimalFormat("0.#########");
+        try {
+            BufferedWriter writer = new BufferedWriter(new FileWriter("/tmp/page_ranks.txt"));
+            for (int i = 0; i < catPageRanks.length; i++) {
+                writer.write("" + df.format(catPageRanks[i]) + "\t" + catNames[i] + "\n");
+            }
+            writer.close();
+        } catch (IOException ex) {
+            Logger.getLogger(CategoryComparer.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     private void calculateTopLevelCategories() {
@@ -196,7 +295,7 @@ public abstract class CategoryComparer {
     
     public abstract void openFile() throws IOException;
     public abstract String readLine() throws IOException;
-    public abstract void writeResult(int pageId, int similarPageId, int distance) throws IOException;
+    public abstract void writeResults(CategoryRecord record, LinkedHashMap<Integer, Double> distances) throws IOException;
     public abstract void closeFile() throws IOException;
 
     public long getCategoryHash(String cat) {

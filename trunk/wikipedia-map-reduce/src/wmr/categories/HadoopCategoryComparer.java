@@ -30,7 +30,6 @@ public class HadoopCategoryComparer extends Configured implements Tool {
         EasyLineReader reader;
         Path path;
         Configuration conf;
-        Map<Integer, Integer> outputBuffer = new LinkedHashMap<Integer, Integer>();
         
         public HadoopCategoryComparerWorker(Path path, Configuration conf) throws IOException {
             this.path = path;
@@ -49,16 +48,8 @@ public class HadoopCategoryComparer extends Configured implements Tool {
         }
 
         @Override
-        public void writeResult(int pageId, int similarPageId, int distance) throws IOException {
-            outputBuffer.put(similarPageId, distance);
-        }
-
-        public void resetOutputBuffer() {
-            outputBuffer.clear();
-        }
-
-        public Map<Integer, Integer> getOutputBuffer() {
-            return outputBuffer;
+        public void writeResults(CategoryRecord record, LinkedHashMap<Integer, Double> distances) throws IOException {
+            throw new UnsupportedOperationException("Not supported yet.");
         }
 
         @Override
@@ -68,6 +59,7 @@ public class HadoopCategoryComparer extends Configured implements Tool {
                 reader = null;
             }
         }
+
     }
 
     /*
@@ -86,7 +78,6 @@ public class HadoopCategoryComparer extends Configured implements Tool {
 
         @Override
         public void map(Text key, Text value, Mapper.Context context) throws IOException, InterruptedException {
-            worker.resetOutputBuffer();
             try {
                 String line = key.toString() + "\t" + value.toString();
                 CategoryRecord rec = worker.parseLine(line, true);
@@ -95,13 +86,12 @@ public class HadoopCategoryComparer extends Configured implements Tool {
                     System.err.println("invalid line: '" + line + "'");
                     return;
                 }
-                worker.findSimilar(rec);
-                Map<Integer, Integer> results = worker.getOutputBuffer();
+                LinkedHashMap<Integer, Double> results = worker.findSimilar(rec);
                 StringBuilder builder = new StringBuilder("\"");
                 int pageId1 = rec.getPageId();
                 for (Integer pageId2 : results.keySet()) {
-                    int distance = results.get(pageId2);
-                    double score = -Math.log((1.0 + distance) / 10);
+                    double distance = results.get(pageId2);
+                    double score = -Math.log(0.00000001 + distance) / 3.0;
                     if (builder.length() > 1) {
                         builder.append("|");
                     }
@@ -113,7 +103,6 @@ public class HadoopCategoryComparer extends Configured implements Tool {
                 System.err.println("error processing page with id " + key);
                 e.printStackTrace();
             }
-            worker.resetOutputBuffer();
         }
 
         private static String truncateDouble(String s, int n) {

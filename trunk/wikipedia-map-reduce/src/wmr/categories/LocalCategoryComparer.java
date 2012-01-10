@@ -7,9 +7,8 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  *
@@ -19,42 +18,12 @@ public class LocalCategoryComparer extends CategoryComparer {
     private final File inputPath;
     private BufferedReader reader;
     private final BufferedWriter writer;
-    private final int numThreads;
-    private final ThreadPoolExecutor pool;
-    private final Semaphore semaphore;
-    private final ThreadLocal<StringBuilder> threadLocal = new ThreadLocal<StringBuilder>();
+    StringBuilder buffer = new StringBuilder();
 
-    public LocalCategoryComparer(File path, BufferedWriter writer, int numThreads) {
+    public LocalCategoryComparer(File path, BufferedWriter writer) {
         this.inputPath = path;
         this.writer = writer;
-        this.numThreads = numThreads;
-        this.pool = (ThreadPoolExecutor) Executors.newFixedThreadPool(numThreads - 1);   // save one for output
-        this.semaphore = new Semaphore(numThreads);
-    }
-
-    @Override
-    public void searchPages() throws IOException {
-        super.searchPages();
-        this.flushBuilderBuffer();
-    }
-
-    @Override
-    public void findSimilar(final CategoryRecord record) {
-        try {
-            semaphore.acquire();
-        } catch (InterruptedException ex) {
-            System.err.println("findSimilar in LocalCategoryComparer interrupted");
-            return;
-        }
-        this.pool.submit(new Runnable() {
-            public void run() {
-                try {
-                    LocalCategoryComparer.super.findSimilar(record);
-                } finally {
-                    semaphore.release();
-                }
-            }
-        });
+//        this.debuggingMode = true;
     }
     
     public void openFile() throws IOException {
@@ -66,34 +35,6 @@ public class LocalCategoryComparer extends CategoryComparer {
 
     public String readLine() throws IOException {
         return reader.readLine();
-    }
-
-    public void writeResult(int targetPageId, int similarPageId, int distance) throws IOException {
-        StringBuilder builder = threadLocal.get();
-        if (builder == null) {
-            builder = new StringBuilder();
-            threadLocal.set(builder);
-        }
-        String newPrefix = "\"" + targetPageId + "\"\t\"";
-        String lastPrefix = builder.substring(0, Math.min(newPrefix.length(), builder.length()));
-        if (!lastPrefix.equals(newPrefix) && builder.length() > 0) {
-            this.flushBuilderBuffer();
-            builder.append(newPrefix);
-        } else {
-            builder.append("|");
-        }
-        builder.append(similarPageId).append(",").append(distance);
-    }
-
-    private void flushBuilderBuffer() throws IOException {
-        StringBuilder builder = threadLocal.get();
-        builder.append("\"\n");
-        writeLine(builder.toString());
-        builder.setLength(0);
-    }
-
-    public synchronized void writeLine(String line) throws IOException {
-        this.writer.write(line);
     }
 
     public void closeFile() throws IOException {
@@ -110,13 +51,29 @@ public class LocalCategoryComparer extends CategoryComparer {
         String output = (args.length > 1)
                 ? args[1]
                 : "/Users/shilad/Documents/NetBeans/wikipedia-map-reduce/dat/test/page_sims.txt";
-        int numThreads = (args.length > 2) ? Integer.valueOf(args[2]) : 3;
         BufferedWriter writer = new BufferedWriter(
                 output.equals("stdout") 
                         ? new OutputStreamWriter(System.out)
                         : (new FileWriter(output)));
-        LocalCategoryComparer lcc = new LocalCategoryComparer(new File(input), writer, numThreads);
+        LocalCategoryComparer lcc = new LocalCategoryComparer(new File(input), writer);
         lcc.prepareDataStructures();
         lcc.searchPages();
+        writer.close();
+    }
+
+    @Override
+    public void writeResults(CategoryRecord record, LinkedHashMap<Integer, Double> distances) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        builder.append("\"").append(record.getPageId()).append("\"\t\"");
+        boolean isFirst = true;
+        for (Map.Entry<Integer, Double> entry : distances.entrySet()) {
+            if (!isFirst) {
+                builder.append("|");
+            }
+            builder.append(entry.getKey()).append(",").append(entry.getValue());
+            isFirst = false;
+        }
+        builder.append("\n");
+        writer.write(builder.toString());
     }
 }
