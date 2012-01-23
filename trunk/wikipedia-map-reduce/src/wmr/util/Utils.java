@@ -42,6 +42,18 @@ public class Utils {
         return s.toString();
     }
 
+    public static String truncateDouble(String s, int n) {
+        if (s.length() <= n) {
+            return s;
+        }
+        int i = s.indexOf("E");
+        if (i >= 0) {
+            return s.substring(0, n-2) + s.substring(i);
+        } else {
+            return s.substring(0, n);
+        }
+    }
+
     public static String escape(String s) {
         StringBuffer sb = new StringBuffer();
         for (int i = 0; i < s.length(); i++) {
