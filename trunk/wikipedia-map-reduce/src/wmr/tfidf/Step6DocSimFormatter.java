@@ -39,6 +39,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import wikiParser.mapReduce.util.KeyValueTextInputFormat;
+import wmr.util.Utils;
 
 /**
  *
@@ -94,7 +95,6 @@ public class Step6DocSimFormatter extends Configured implements Tool{
             }
             
             StringBuilder builder = new StringBuilder();
-            builder.append("\"");
             int flag = 0;
             for (WordScore ws : pqueue) {
                 if(flag > 0){
@@ -102,29 +102,15 @@ public class Step6DocSimFormatter extends Configured implements Tool{
                 }
                 builder.append(ws.word);
                 builder.append(",");
-                builder.append(truncateDouble("" + ws.score, 8));
+                builder.append(Utils.truncateDouble("" + ws.score, 8));
                 flag ++;
             }
             pqueue.clear();
             
-            builder.append("\"");
-            context.write(new Text("\"" + key + "\""), new Text(builder.toString()));
+            context.write(new Text(key), new Text(builder.toString()));
             builder.setLength(0);
         }
     }
-
-    private static String truncateDouble(String s, int n) {
-        if (s.length() <= n) {
-            return s;
-        }
-        int i = s.indexOf("E");
-        if (i >= 0) {
-            return s.substring(0, n-2) + s.substring(i);
-        } else {
-            return s.substring(0, n);
-        }
-    }
-
 
     /**
      * Runs this tool.
