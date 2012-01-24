@@ -45,7 +45,7 @@ public class DeltaByteCounter extends Configured implements Tool {
     //Use JobConf/DistributedCache to get needed information to Mapper/Reducer
     //What I/O do we want
     public static class PageMapper extends Mapper<Text,Text,IntWritable,Text> {
-        HashMap<String,Integer> aToCMap; //article to cluster mapping
+       // HashMap<String,Integer> aToCMap; //article to cluster mapping
         
         /**
          * This method gets information about the article to cluster mapping
@@ -55,7 +55,7 @@ public class DeltaByteCounter extends Configured implements Tool {
          * @param context
          * @throws IOException 
          */
-        @Override
+        /*@Override
         protected void setup(Context context) throws IOException {
             Path[] localCache = DistributedCache.getLocalCacheFiles(context.getConfiguration());
             BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(localCache[0].toUri()))));
@@ -69,7 +69,7 @@ public class DeltaByteCounter extends Configured implements Tool {
                 line = reader.readLine();
                 cluster++;
             }
-        }
+        }*/
         
         @Override
         public void map(Text key, Text value, Mapper.Context context) throws IOException, InterruptedException {
@@ -82,7 +82,7 @@ public class DeltaByteCounter extends Configured implements Tool {
                 Page article = parser.getArticle();
                 if (article.isNormalPage()) {
                     HashMap<String,Integer> delta = new HashMap<String,Integer>();
-                    int clusterId = aToCMap.get(article.getName());
+                    //int clusterId = aToCMap.get(article.getName());
                     int prevLength = 0;
                     int length;
                     while(true) {
@@ -104,7 +104,7 @@ public class DeltaByteCounter extends Configured implements Tool {
                     for (String userId : delta.keySet()) {
                         sb.append(userId).append(":").append(delta.get(userId)).append("|");
                     }
-                    context.write(clusterId, sb.toString());
+                    context.write(new Text(article.getId()), new Text(sb.toString()));
                 }
             } catch (XMLStreamException e) {
                 System.err.println("error when processing " + key + ":");
@@ -144,7 +144,7 @@ public class DeltaByteCounter extends Configured implements Tool {
     public int run(String[] args) throws Exception {
         
         if (args.length < 2) {
-            System.out.println("usage: [input output articleClusters]");
+            System.out.println("usage: [input output]");
             ToolRunner.printGenericCommandUsage(System.out);
             return -1;
         }
@@ -161,12 +161,12 @@ public class DeltaByteCounter extends Configured implements Tool {
         job.setJarByClass(DeltaByteCounter.class);
         job.setInputFormatClass(KeyValueTextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
-        job.setMapOutputKeyClass(IntWritable.class);
+        job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
-        DistributedCache.addCacheFile(new Path(args[2]).toUri(), job.getConfiguration());
+        //DistributedCache.addCacheFile(new Path(args[2]).toUri(), job.getConfiguration());
         
         job.setMapperClass(PageMapper.class);
         job.setReducerClass(Reducer.class); // identity reducer
