@@ -106,7 +106,7 @@ public class DeltaByteCounter extends Configured implements Tool {
                     }
                     context.write(new Text(article.getId()), new Text(sb.toString()));
                 }
-            } catch (XMLStreamException e) {
+            } catch (Exception e) {
                 System.err.println("error when processing " + key + ":");
                 e.printStackTrace();
             } finally {
