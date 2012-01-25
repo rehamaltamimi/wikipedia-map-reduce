@@ -94,9 +94,9 @@ public class DeltaByteCounter extends Configured implements Tool {
                         length = rev.getText().length();
                         String userId = rev.getContributor().getId();
                         if (delta.containsKey(userId)) {
-                            delta.put(userId, delta.get(userId) + prevLength - length);
+                            delta.put(userId, delta.get(userId) + length - prevLength);
                         } else {
-                            delta.put(userId, prevLength - length);
+                            delta.put(userId, length - prevLength);
                         }
                         prevLength = length;
                     }
