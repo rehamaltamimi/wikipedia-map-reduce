@@ -83,7 +83,7 @@ public class ComponentCharacterizer {
                  long changesCluster = Long.parseLong(split[0]);
                  if (clusterComponents.containsKey(changesCluster)) {
                      //both lines from cluster have been read in, queue task
-                     waitUntilQueued(new Characterizer(changesCluster,split[1],clusterComponents.get(changesCluster),results));
+                     waitUntilQueued(new Characterizer(changesCluster,clusterComponents.get(changesCluster),split[1],results));
                      clusterComponents.remove(changesCluster);
                      submitted++;
                  } else {
