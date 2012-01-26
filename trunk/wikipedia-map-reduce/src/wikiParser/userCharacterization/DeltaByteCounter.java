@@ -102,7 +102,7 @@ public class DeltaByteCounter extends Configured implements Tool {
                     }
                     StringBuilder sb = new StringBuilder();
                     for (String userId : delta.keySet()) {
-                        sb.append(userId).append(":").append(delta.get(userId)).append("|");
+                        sb.append(userId).append("#").append(delta.get(userId)).append("|");
                     }
                     context.write(new Text(article.getId()), new Text(sb.toString()));
                 }
@@ -123,7 +123,7 @@ public class DeltaByteCounter extends Configured implements Tool {
             HashMap<Integer,Integer> deltas = new HashMap<Integer,Integer>();
             for(Text value : values) {
                 for (String userDeltaPair : value.toString().split("\\|")) {
-                    String[] ud = userDeltaPair.split(":");
+                    String[] ud = userDeltaPair.split("#");
                     int u = Integer.parseInt(ud[0]);
                     if (!deltas.containsKey(u)) {
                         deltas.put(u, Integer.parseInt(ud[1]));
