@@ -33,8 +33,8 @@ import java.util.logging.Logger;
 public class ComponentCharacterizer {
      private static ThreadPoolExecutor tpe;
      private static LinkedBlockingQueue<String> results;
-     private static HashMap<Integer,String> clusterComponents;
-     private static HashMap<Integer,String> clusterChanges;
+     private static HashMap<Long,String> clusterComponents;
+     private static HashMap<Long,String> clusterChanges;
      private static final int PRINT_INTERVAL = 10000;
      private static final int QUEUE_LENGTH = 100000;
      
@@ -51,6 +51,8 @@ public class ComponentCharacterizer {
          String changes = bytesChanged.readLine();
          Writer writer = null;
          int submitted = 0;
+         clusterChanges = new HashMap<Long,String>();
+         clusterComponents = new HashMap<Long,String>();
          while (components != null || changes != null) {
              if (submitted == QUEUE_LENGTH/2) {
                  writer = new Writer(results, args[0]);
@@ -58,23 +60,27 @@ public class ComponentCharacterizer {
              }
              if (components != null) {
                  String[] split = components.split("\t");
-                 int componentsCluster = Integer.parseInt(split[0]);
+                 long componentsCluster = Long.parseLong(split[0]);
                  if (clusterChanges.containsKey(componentsCluster)) {
                      //both lines have been read, queue task
-                     waitUntilQueued(new Characterizer(componentsCluster,split[1],clusterChanges.get(componentsCluster),results));
+                     String componentList = "";
+                     if (split.length > 1) {
+                         componentList = split[1];
+                     }
+                     waitUntilQueued(new Characterizer(componentsCluster,componentList,clusterChanges.get(componentsCluster),results));
                      clusterChanges.remove(componentsCluster);
                      submitted++;
                  } else {
                      if (split.length > 1) {
                          //only one line has been read in and it has information
                          //store data for later
-                         clusterComponents.put(componentsCluster, split[1]);
+                         clusterComponents.put((long)componentsCluster, split[1]);
                      } //else no data, do nothing
                  }
              }
              if (changes != null) {
                  String[] split = changes.split("\t");
-                 int changesCluster = Integer.parseInt(split[0]);
+                 long changesCluster = Long.parseLong(split[0]);
                  if (clusterComponents.containsKey(changesCluster)) {
                      //both lines from cluster have been read in, queue task
                      waitUntilQueued(new Characterizer(changesCluster,split[1],clusterComponents.get(changesCluster),results));
@@ -88,7 +94,7 @@ public class ComponentCharacterizer {
              components = componentReader.readLine();
              changes = bytesChanged.readLine();
          }
-         for (int cluster : clusterChanges.keySet()) {
+         for (long cluster : clusterChanges.keySet()) {
              waitUntilQueued(new Characterizer(cluster,clusterChanges.get(cluster),"",results));
              submitted++;
          }
@@ -163,10 +169,10 @@ public class ComponentCharacterizer {
 
          private String components;
          private String changes;
-         private int cluster;
+         private long cluster;
          private LinkedBlockingQueue<String> results;
          
-         public Characterizer(int cluster, String components, String changes, LinkedBlockingQueue<String> results) {
+         public Characterizer(long cluster, String components, String changes, LinkedBlockingQueue<String> results) {
              this.components = components;
              this.changes = changes;
              this.results = results;
