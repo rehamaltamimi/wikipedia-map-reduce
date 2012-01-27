@@ -188,34 +188,49 @@ public class ComponentCharacterizer {
              * 3 second.  And so on with higher numbers
              */
             //initialize data structures with input
-            HashMap<Integer,HashSet<Integer>> componentMapping = new HashMap<Integer,HashSet<Integer>>();
-            HashMap<Integer,Integer> userChanges = new HashMap<Integer,Integer>();
+            HashMap<Integer,HashSet<Long>> componentMapping = new HashMap<Integer,HashSet<Long>>();
+            HashMap<Long,Integer> userChanges = new HashMap<Long,Integer>();
             int side = 0;
             int users = 0;
             int totalChanged = 0;
             for (String conflict : components.split("\\|")) {
-                componentMapping.put(side, new HashSet<Integer>());
-                componentMapping.put(side + 1, new HashSet<Integer>());
+                componentMapping.put(side, new HashSet<Long>());
+                componentMapping.put(side + 1, new HashSet<Long>());
                 for (String component : conflict.split(" ")) {
                     for (String user : component.split(",")) {
-                        int u = Integer.parseInt(user);
-                        componentMapping.get(side).add(u);
-                        userChanges.put(u,0);
+                        if (user.length() > 0) {
+                            long u = Long.parseLong(user);
+                            componentMapping.get(side).add(u);
+                            userChanges.put(u,0);
+                        }
                     }
                     side++;
                 }
             }
             for (String userInfo : changes.split("\\|")) {
                 String[] userDelta = userInfo.split("#");
-                int user;
+                long user;
                 if (userDelta[0].contains(":")) {
                     //we may want to fix this later
                     //we'd need two longs to represent IPv6 addresses, I think...
                     continue;
-                } else if (userDelta[0].contains("\\.")) {
+                } else if (userDelta[0].contains(".")) {
+                    if (userDelta[0].contains("xxx")) {
+                        //some IP addresses contain xxx
+                        //I'm ignoring them for now
+                        continue;
+                    }
                     user = -ipv4ToInt(userDelta[0]);
+                } else if (userDelta[0].contains("Template") || userDelta[0].contains("Conversion")) {
+                    //Anonymous 'users' that are actually scripts
+                    continue; 
                 } else {
-                    user = Integer.parseInt(userDelta[0]);
+                    try {
+                        user = Integer.parseInt(userDelta[0]);
+                    } catch (NumberFormatException e) {
+                        System.out.println("Error parsing user: " + userDelta[0]);
+                        continue;
+                    }
                 }
                 int delta = Integer.parseInt(userDelta[1]);
                 users++;
@@ -225,22 +240,37 @@ public class ComponentCharacterizer {
                 }
             }
             StringBuilder sb = new StringBuilder();
-            int average = totalChanged/users;
+            int average;
+            if (users > 0) {
+                average = totalChanged/users;
+            } else {
+                average = 0;
+            }
             //add cluster average edit size
             sb.append(average).append("|");
             //for each side, compute average without decimal
             //add to output string
-            for (int component = 0; component < componentMapping.keySet().size()/2; component++) {
-                int totalZero = 0;
-                for (int user : componentMapping.get(component*2)) {
-                    totalZero += userChanges.get(user);
+            for (int component = 0; component < componentMapping.keySet().size(); component += 2) {
+                int averageZero;
+                int averageOne;
+                if (componentMapping.get(component).size() > 0) {
+                    int totalZero = 0;
+                    for (long user : componentMapping.get(component)) {
+                        totalZero += userChanges.get(user);
+                    }
+                    averageZero = totalZero/componentMapping.get(component).size();
+                } else {
+                    averageZero = 0;
                 }
-                int averageZero = totalZero/componentMapping.get(component*2).size();
+                if (componentMapping.get(component + 1).size() > 0) {
                 int totalOne = 0;
-                for (int user : componentMapping.get(component*2 + 1)) {
+                for (long user : componentMapping.get(component + 1)) {
                     totalOne += userChanges.get(user);
                 }
-                int averageOne = totalOne/componentMapping.get(component*2 + 1).size();
+                averageOne = totalOne/componentMapping.get(component + 1).size();
+                } else {
+                    averageOne = 0;
+                }
                 sb.append(averageZero).append(" ").append(averageOne).append("|");
             }
             boolean added = false;
@@ -249,7 +279,7 @@ public class ComponentCharacterizer {
             }
         }
         
-        private static int ipv4ToInt(String ipv4) {
+        private static long ipv4ToInt(String ipv4) {
             String[] ipAddress = ipv4.split("\\.");
             return 16777216*Integer.parseInt(ipAddress[0]) + 65536*Integer.parseInt(ipAddress[1])
                             + 256*Integer.parseInt(ipAddress[2]) + Integer.parseInt(ipAddress[3]);
