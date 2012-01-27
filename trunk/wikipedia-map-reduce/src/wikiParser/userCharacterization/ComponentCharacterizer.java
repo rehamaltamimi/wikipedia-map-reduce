@@ -207,7 +207,16 @@ public class ComponentCharacterizer {
             }
             for (String userInfo : changes.split("\\|")) {
                 String[] userDelta = userInfo.split("#");
-                int user = Integer.parseInt(userDelta[0]);
+                int user;
+                if (userDelta[0].contains(":")) {
+                    //we may want to fix this later
+                    //we'd need two longs to represent IPv6 addresses, I think...
+                    continue;
+                } else if (userDelta[0].contains("\\.")) {
+                    user = -ipv4ToInt(userDelta[0]);
+                } else {
+                    user = Integer.parseInt(userDelta[0]);
+                }
                 int delta = Integer.parseInt(userDelta[1]);
                 users++;
                 totalChanged += delta;
@@ -238,6 +247,12 @@ public class ComponentCharacterizer {
             while (!added) {
                 added = results.add(cluster + "\t" + sb.toString());
             }
+        }
+        
+        private static int ipv4ToInt(String ipv4) {
+            String[] ipAddress = ipv4.split("\\.");
+            return 16777216*Integer.parseInt(ipAddress[0]) + 65536*Integer.parseInt(ipAddress[1])
+                            + 256*Integer.parseInt(ipAddress[2]) + Integer.parseInt(ipAddress[3]);
         }
          
      }
