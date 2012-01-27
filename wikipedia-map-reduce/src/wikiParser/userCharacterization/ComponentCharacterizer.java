@@ -198,39 +198,21 @@ public class ComponentCharacterizer {
                 componentMapping.put(side + 1, new HashSet<Long>());
                 for (String component : conflict.split(" ")) {
                     for (String user : component.split(",")) {
-                        if (user.length() > 0) {
-                            long u = Long.parseLong(user);
-                            componentMapping.get(side).add(u);
-                            userChanges.put(u,0);
+                        Long u = userIDtoLong(user);
+                        if (u == null) {
+                            continue;
                         }
+                        componentMapping.get(side).add(u);
+                        userChanges.put(u,0);
                     }
                     side++;
                 }
             }
             for (String userInfo : changes.split("\\|")) {
                 String[] userDelta = userInfo.split("#");
-                long user;
-                if (userDelta[0].contains(":")) {
-                    //we may want to fix this later
-                    //we'd need two longs to represent IPv6 addresses, I think...
+                Long user = userIDtoLong(userDelta[0]);
+                if (user == null) {
                     continue;
-                } else if (userDelta[0].contains(".")) {
-                    if (userDelta[0].contains("xxx")) {
-                        //some IP addresses contain xxx
-                        //I'm ignoring them for now
-                        continue;
-                    }
-                    user = -ipv4ToInt(userDelta[0]);
-                } else if (userDelta[0].contains("Template") || userDelta[0].contains("Conversion")) {
-                    //Anonymous 'users' that are actually scripts
-                    continue; 
-                } else {
-                    try {
-                        user = Integer.parseInt(userDelta[0]);
-                    } catch (NumberFormatException e) {
-                        System.out.println("Error parsing user: " + userDelta[0]);
-                        continue;
-                    }
                 }
                 int delta = Integer.parseInt(userDelta[1]);
                 users++;
@@ -263,11 +245,11 @@ public class ComponentCharacterizer {
                     averageZero = 0;
                 }
                 if (componentMapping.get(component + 1).size() > 0) {
-                int totalOne = 0;
-                for (long user : componentMapping.get(component + 1)) {
-                    totalOne += userChanges.get(user);
-                }
-                averageOne = totalOne/componentMapping.get(component + 1).size();
+                    int totalOne = 0;
+                    for (long user : componentMapping.get(component + 1)) {
+                        totalOne += userChanges.get(user);
+                    }
+                    averageOne = totalOne/componentMapping.get(component + 1).size();
                 } else {
                     averageOne = 0;
                 }
@@ -279,11 +261,36 @@ public class ComponentCharacterizer {
             }
         }
         
+        /**
+         * 
+         * @param uid
+         * @return user ID as a long, or null for invalid ID
+         */
+        private static Long userIDtoLong(String uid) {
+            try {
+                if (uid.length() == 0) {
+                    //Empty user ID
+                    return null;
+                } else if (uid.contains(":")) {
+                    //IPv6 address
+                    return null;
+                } else if (uid.contains(".")) {
+                    return -ipv4ToInt(uid);
+                } else {
+                    return Long.parseLong(uid);
+                }
+            } catch  (NumberFormatException e) {
+                //Non-numeric, IPv4, or IPv6 user ID
+                System.out.println("Error processing user: " + uid);
+                return null;
+            }
+        }
+        
         private static long ipv4ToInt(String ipv4) {
             String[] ipAddress = ipv4.split("\\.");
-            return 16777216*Integer.parseInt(ipAddress[0]) + 65536*Integer.parseInt(ipAddress[1])
+                return 16777216*Integer.parseInt(ipAddress[0]) + 65536*Integer.parseInt(ipAddress[1])
                             + 256*Integer.parseInt(ipAddress[2]) + Integer.parseInt(ipAddress[3]);
         }
-         
-     }
+    }
+      
 }
