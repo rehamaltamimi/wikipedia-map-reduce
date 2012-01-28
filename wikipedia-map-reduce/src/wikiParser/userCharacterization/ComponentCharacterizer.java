@@ -99,6 +99,7 @@ public class ComponentCharacterizer {
              submitted++;
          }
          writer.setTotalCases(submitted);
+         tpe.shutdown();
      }
      
      /**
@@ -235,7 +236,7 @@ public class ComponentCharacterizer {
             for (int component = 0; component < componentMapping.keySet().size(); component += 2) {
                 int averageZero;
                 int averageOne;
-                if (componentMapping.get(component).size() > 0) {
+                if (componentMapping.containsKey(component) && componentMapping.get(component).size() > 0) {
                     int totalZero = 0;
                     for (long user : componentMapping.get(component)) {
                         totalZero += userChanges.get(user);
@@ -244,7 +245,7 @@ public class ComponentCharacterizer {
                 } else {
                     averageZero = 0;
                 }
-                if (componentMapping.get(component + 1).size() > 0) {
+                if (componentMapping.containsKey(component + 1) && componentMapping.get(component + 1).size() > 0) {
                     int totalOne = 0;
                     for (long user : componentMapping.get(component + 1)) {
                         totalOne += userChanges.get(user);
@@ -279,7 +280,7 @@ public class ComponentCharacterizer {
                 } else {
                     return Long.parseLong(uid);
                 }
-            } catch  (NumberFormatException e) {
+            } catch  (Exception e) {
                 //Non-numeric, IPv4, or IPv6 user ID
                 System.out.println("Error processing user: " + uid);
                 return null;
@@ -288,8 +289,8 @@ public class ComponentCharacterizer {
         
         private static long ipv4ToInt(String ipv4) {
             String[] ipAddress = ipv4.split("\\.");
-                return 16777216*Integer.parseInt(ipAddress[0]) + 65536*Integer.parseInt(ipAddress[1])
-                            + 256*Integer.parseInt(ipAddress[2]) + Integer.parseInt(ipAddress[3]);
+            return 16777216*Integer.parseInt(ipAddress[0]) + 65536*Integer.parseInt(ipAddress[1])
+                + 256*Integer.parseInt(ipAddress[2]) + Integer.parseInt(ipAddress[3]);
         }
     }
       
