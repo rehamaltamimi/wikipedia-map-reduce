@@ -1,5 +1,5 @@
 /*
-  * <p>
+ * <p>
  * Last(8th) stage for document similarity calculation.
  * Generates articles and their similar articles.
  * </p>
@@ -93,7 +93,7 @@ public class Step6DocSimFormatter extends Configured implements Tool{
                     System.err.println("invalid value: " + t);
                 }
             }
-            
+
             StringBuilder builder = new StringBuilder();
             int flag = 0;
             for (WordScore ws : pqueue) {
@@ -106,7 +106,7 @@ public class Step6DocSimFormatter extends Configured implements Tool{
                 flag ++;
             }
             pqueue.clear();
-            
+
             context.write(new Text(key), new Text(builder.toString()));
             builder.setLength(0);
         }

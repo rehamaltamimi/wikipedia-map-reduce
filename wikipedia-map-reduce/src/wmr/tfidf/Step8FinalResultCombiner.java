@@ -151,7 +151,7 @@ public class Step8FinalResultCombiner extends Configured implements Tool {
                 return Double.NaN;  // unreliable!
             }
             double linkScore = -0.1;
-            double catScore = -0.1;
+            double catScore = -0.01;
             double wordScore = -0.1;
 
             for (SimPage sp : sps) {
