@@ -5,8 +5,19 @@
 
 package wmr.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringBufferInputStream;
+import java.math.BigInteger;
+import java.nio.charset.Charset;
+import java.security.DigestInputStream;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 /**
@@ -98,5 +109,22 @@ public class Utils {
             }
         }
         return sb.toString();
+    }
+
+    public static String md5(String input) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.reset();
+            md.update(Charset.forName("UTF-8").encode(input).array());
+            byte[] digest = md.digest();
+            String hash = new BigInteger(1, digest).toString(16);
+            while(hash.length() < 32 ){
+              hash = "0"+hash;
+            }
+            return hash;
+        } catch (NoSuchAlgorithmException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
+        }
     }
 }

@@ -2,64 +2,62 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
+package wmr.wmf;
 
-package wmr.tfidf;
 import java.io.IOException;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
-import org.apache.hadoop.mapreduce.Job;
-import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-
-import wikiParser.mapReduce.util.KeyValueTextInputFormat;
+import wmr.core.*;
 
 /**
- * Fifth step in similarity calculation.
  *
- * Example invocation:
- * hadoop jar ./wikiMiner-deps.jar edu.macademia.wikiminer.FinalDocSim
- *              /user/shilad/macademia/res/4 /user/shilad/macademia/res/5
+ * @author Nathaniel Miller
  * 
- * @author shilad
+ * First stage of citation counting process
+ * Output: 
+ * K: url@articleId, V: #added  #removed    #revisions
  */
-public class Step5FinalDocSim extends Configured implements Tool {
+public class AllRevisionsTest extends Configured implements Tool {
 
-    private static class MyReducer extends Reducer<Text, Text, Text, Text> {
+    /*
+     * Takes key-value 7zip hashes and outputs url-id pairs.
+     */
+    public static class MyMapper extends Mapper<Long, AllRevisions, Text, Text> {
 
         @Override
-        public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
-            double score = 0;
-            long i = 0;
+        public void map(Long pageId, AllRevisions revs, Mapper.Context context) throws IOException, InterruptedException {
+            int numRevs = 0;
+            int numBytes = 0;
 
-            for (Text t : values) {
-                String value = t.toString();
-                if (i++ % 100000 == 0) {
-                    context.progress();
-                }
-                try {               
-                    score += Double.valueOf(value);
-                } catch (NumberFormatException e) {
-                    System.err.println("invalid key/value pair: " + key + ", " + value);
-                }
-                
+            Page p = revs.getPage();
+
+            System.err.println("processing " + p.getName());
+            for (Revision r : revs.getRevisions()) {
+                numRevs += 1;
+                numBytes += r.getText().length();
+//                System.err.println("\trev is " + r.getId());
             }
-            context.write(key, new Text(""+score));
+            System.err.println("\tfinished!");
+
+            context.write(new Text(""+pageId),
+                    new Text("" + p.getId() + "@" + p.getName() + " " + numRevs + " " + numBytes + " " + (numBytes/numRevs))
+                    );
         }
     }
 
-    /**
-     * Runs this tool.
-     */
-    public int run(String[] args) throws Exception {
+    public int run(String args[]) throws Exception {
+
         if (args.length < 2) {
-            System.out.println("usage: input output");
+            System.out.println("usage: [input output]");
             ToolRunner.printGenericCommandUsage(System.out);
             return -1;
         }
@@ -68,20 +66,22 @@ public class Step5FinalDocSim extends Configured implements Tool {
         Path outputPath = new Path(args[1]);
 
         Configuration conf = getConf();
-
         Job job = new Job(conf, this.getClass().toString());
+
         FileInputFormat.setInputPaths(job, inputPath);
         FileOutputFormat.setOutputPath(job, outputPath);
 
-        job.setJarByClass(Step5FinalDocSim.class);
-        job.setInputFormatClass(KeyValueTextInputFormat.class);
+        
+        job.setJarByClass(AllRevisionsTest.class);
+        job.setInputFormatClass(AllRevisionsInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
-
-        job.setReducerClass(MyReducer.class);
+        
+        job.setMapperClass(MyMapper.class);
+        job.setReducerClass(Reducer.class); // identity reducer
         FileSystem hdfs = FileSystem.get(outputPath.toUri(), conf);
         if (hdfs.exists(outputPath)) {
             hdfs.delete(outputPath, true);
@@ -95,9 +95,7 @@ public class Step5FinalDocSim extends Configured implements Tool {
      * <code>ToolRunner</code>.
      */
     public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new Configuration(), new Step5FinalDocSim(), args);
+        int res = ToolRunner.run(new AllRevisionsTest(), args);
         System.exit(res);
-        return;
     }
 }
-

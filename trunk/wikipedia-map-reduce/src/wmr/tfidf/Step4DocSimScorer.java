@@ -37,12 +37,14 @@ import wikiParser.mapReduce.util.KeyValueTextInputFormat;
  *          /user/shilad/macademia/res/4
  *
  * Compression is crucial for this job because output size is the bottleneck.
+ * It's also crucial that the compression codec be LzoCodec, because the input
+ * must be splittable and Gzip is not.
  *
  * @author shilad
  */
 public class Step4DocSimScorer extends Configured implements Tool {
     private static final String KEY_MAX_DOCS_PER_TERM = "MAX_DOCS";
-    
+
     private static int MAX_DOCS_PER_TERM = 2000;
 
     private static class MyMapper extends Mapper<Text, Text, Text, Text> {
@@ -59,10 +61,10 @@ public class Step4DocSimScorer extends Configured implements Tool {
             }
         }
     }
-    
+
     private static class MyReducer extends Reducer<Text, Text, Text, Text> {
         private int maxDocsPerTerm = -1;
-        
+
         @Override
         public void setup(Context context) {
             maxDocsPerTerm = context.getConfiguration().getInt(KEY_MAX_DOCS_PER_TERM, -1);
@@ -122,8 +124,6 @@ public class Step4DocSimScorer extends Configured implements Tool {
         Job job = new Job(conf, this.getClass().toString());
         FileInputFormat.setInputPaths(job, inputPath);
         FileOutputFormat.setOutputPath(job, outputPath);
-
-        FileOutputFormat.setCompressOutput(job, true);
 
         job.setJarByClass(Step4DocSimScorer.class);
         job.setInputFormatClass(KeyValueTextInputFormat.class);

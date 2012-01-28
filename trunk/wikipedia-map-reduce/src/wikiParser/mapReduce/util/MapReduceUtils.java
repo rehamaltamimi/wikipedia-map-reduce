@@ -76,10 +76,14 @@ public class MapReduceUtils {
 		}
 		return unescaped;
 	}
-        
+
 	public static int unescapeInPlace(byte [] escaped, int length) {
+            return unescapeInPlace(escaped, 0, length);
+        }
+        
+	public static int unescapeInPlace(byte [] escaped, int offset, int length) {
 		int j = 0;	// index into unescaped string
-		for (int i = 0; i < length; i++) {
+		for (int i = offset; i < length; i++) {
 			byte b = escaped[i];
 			if (escaped[i] == '\\') {
 				switch (escaped[i+1]) {
