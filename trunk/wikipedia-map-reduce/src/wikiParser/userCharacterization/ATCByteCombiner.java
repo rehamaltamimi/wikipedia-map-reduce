@@ -38,11 +38,13 @@ public class ATCByteCombiner {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(args[0]))));
         String line = reader.readLine();
         System.out.println("Reading article to IDs file...");
+        int articlesRead = 0;
         while (line != null) {
             String[] info = line.split("\t");
             if (info.length > 1) {
                 articles.put(info[0].intern(), Long.parseLong(info[1]));
             }
+            articlesRead++;
             line = reader.readLine();
         }
         
@@ -62,7 +64,7 @@ public class ATCByteCombiner {
             cluster++;
             line = reader.readLine();
         }
-        
+        System.out.println("Read in " + cluster + " clusters with " + articlesRead + " articles.");
         for(String title : articles.keySet()) { //Only articles not in clusters
             aidCluster.put(articles.get(title),-articles.get(title));
         }
@@ -86,7 +88,7 @@ public class ATCByteCombiner {
                     for (int i = 1; i < userDelta.length - 1; i++) {//IPv6 addresses are separated by colons
                         userName += ":" + userDelta[i];
                     }
-                    if (!clusterDBytes.get(cluster).containsKey(userDelta[0])) {
+                    if (!clusterDBytes.get(cluster).containsKey(userName)) {
                         clusterDBytes.get(cluster).put(userName,Integer.parseInt(userDelta[userDelta.length - 1]));
                     } else {
                         clusterDBytes.get(cluster).put(userName,clusterDBytes.get(cluster).get(userName)
