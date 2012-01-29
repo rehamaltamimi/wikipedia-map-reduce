@@ -89,7 +89,7 @@ public class ATCByteCombiner {
                     if (!clusterDBytes.get(cluster).containsKey(userDelta[0])) {
                         clusterDBytes.get(cluster).put(userName,Integer.parseInt(userDelta[userDelta.length - 1]));
                     } else {
-                        clusterDBytes.get(cluster).put(userName,clusterDBytes.get(cluster).get(userDelta[0])
+                        clusterDBytes.get(cluster).put(userName,clusterDBytes.get(cluster).get(userName)
                                 + Integer.parseInt(userDelta[userDelta.length - 1]));
                     }
                 }
