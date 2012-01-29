@@ -209,18 +209,23 @@ public class ComponentCharacterizer {
                     side++;
                 }
             }
+            int usersUpdated = 0;
             for (String userInfo : changes.split("\\|")) {
                 String[] userDelta = userInfo.split("#");
                 Long user = userIDtoLong(userDelta[0]);
-                if (user == null) {
-                    continue;
+                if (userDelta.length > 1) {
+                    int delta = Integer.parseInt(userDelta[1]);
+                    users++;
+                    totalChanged += delta;
+                    if (user != null && userChanges.containsKey(user)) {
+                        usersUpdated++;
+                        userChanges.put(user,delta);
+                    }
                 }
-                int delta = Integer.parseInt(userDelta[1]);
-                users++;
-                totalChanged += delta;
-                if (userChanges.containsKey(user)) {
-                    userChanges.put(user,delta);
-                }
+            }
+            if (usersUpdated < userChanges.size()) {
+                System.out.println("Problem with user data in cluster " + cluster + " missing data for at least " + 
+                        (userChanges.size() - usersUpdated) + " users.");
             }
             StringBuilder sb = new StringBuilder();
             int average;
@@ -233,28 +238,23 @@ public class ComponentCharacterizer {
             sb.append(average).append("|");
             //for each side, compute average without decimal
             //add to output string
-            for (int component = 0; component < componentMapping.keySet().size(); component += 2) {
-                int averageZero;
-                int averageOne;
+            for (int component = 0; component < componentMapping.keySet().size(); component++) {
+                int componentAverage;
                 if (componentMapping.containsKey(component) && componentMapping.get(component).size() > 0) {
-                    int totalZero = 0;
+                    int total = 0;
                     for (long user : componentMapping.get(component)) {
-                        totalZero += userChanges.get(user);
+                        total += userChanges.get(user);
                     }
-                    averageZero = totalZero/componentMapping.get(component).size();
+                    componentAverage = total/componentMapping.get(component).size();
                 } else {
-                    averageZero = 0;
+                    componentAverage = 0;
                 }
-                if (componentMapping.containsKey(component + 1) && componentMapping.get(component + 1).size() > 0) {
-                    int totalOne = 0;
-                    for (long user : componentMapping.get(component + 1)) {
-                        totalOne += userChanges.get(user);
-                    }
-                    averageOne = totalOne/componentMapping.get(component + 1).size();
+                sb.append(componentAverage);
+                if (component % 2 == 0) {
+                    sb.append(" ");
                 } else {
-                    averageOne = 0;
+                    sb.append("|");
                 }
-                sb.append(averageZero).append(" ").append(averageOne).append("|");
             }
             boolean added = false;
             while (!added) {
