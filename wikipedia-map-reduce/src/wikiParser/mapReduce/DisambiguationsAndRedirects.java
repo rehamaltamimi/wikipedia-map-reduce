@@ -1,6 +1,7 @@
 package wikiParser.mapReduce;
 
 import java.io.IOException;
+import java.util.Arrays;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -18,7 +19,6 @@ import wmr.core.*;
  * @author Shilad Sen
  */
 public class DisambiguationsAndRedirects extends Configured implements Tool {
-
     public static class MyMapper extends Mapper<Long, CurrentRevision, Text, Text> {
 
         @Override
@@ -33,7 +33,7 @@ public class DisambiguationsAndRedirects extends Configured implements Tool {
                         context.write(
                                 new Text(""+key),
                                 new Text("r\t" + p.getName() + "\t" + r.getRedirectDestination()));
-                    } else if (r.isDisambiguation()) {
+                    } else if (p.getName().toLowerCase().endsWith("(disambiguation)") || r.isDisambiguation()) {
                         StringBuilder links = new StringBuilder();
                         for (String link : r.getAnchorLinksWithoutFragments()) {
                               // ignore categories and inter-language links like "en:Foo"

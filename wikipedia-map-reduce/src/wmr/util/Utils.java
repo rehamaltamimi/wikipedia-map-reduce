@@ -127,4 +127,12 @@ public class Utils {
             return null;
         }
     }
+
+    public static long longHashCode(String s) {
+        long hash = 0;
+        for (int i = 0; i < s.length(); i++) {
+            hash = s.charAt(i) + hash * 31;
+        }
+        return hash;
+    }
 }
