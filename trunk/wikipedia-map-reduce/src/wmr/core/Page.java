@@ -200,6 +200,30 @@ public class Page extends Vertex {
         return true;
     }
 
+    public String getNamespace() {
+        String ln = getName().toLowerCase();
+        int i = ln.indexOf(":");
+        if (i < 0) {
+            return "main";
+        }
+        String prefix = ln.substring(0, i).trim();
+        boolean isTalk = false;
+        if (prefix.endsWith(" talk")) {
+            isTalk = true;
+            prefix = prefix.substring(0, prefix.length() - 5).trim();
+        }
+        i = Arrays.binarySearch(NAMESPACE_PREFIXES, prefix);
+        if (i < 0 && !isTalk) {
+            return "main";
+        } else if (i < 0 && isTalk) {
+            return "main talk";
+        } else if (isTalk) {
+            return NAMESPACE_PREFIXES[i] + " talk";
+        } else {
+            return NAMESPACE_PREFIXES[i];
+        }
+    }
+
     public boolean isAnyTalk() {
         String ln = getName().toLowerCase();
         if (ln.startsWith("talk:")) {

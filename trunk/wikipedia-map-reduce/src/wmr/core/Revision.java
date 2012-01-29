@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import wmr.citations.Citation;
 import wmr.citations.CitationParser;
 import wmr.templates.TemplateParser;
+import wmr.util.Utils;
 
 public class Revision {
 
@@ -56,11 +57,7 @@ public class Revision {
     }
 
     public long getTextFingerprint() {
-        long hash = 0;
-        for (int i = 0; i < text.length(); i++) {
-            hash = text.charAt(i) + hash * 31;
-        }
-        return hash;
+        return Utils.longHashCode(text);
     }
 
     public String getTimestamp() {
@@ -83,7 +80,7 @@ public class Revision {
         return comment;
     }
 
-    public boolean getMinor() {
+    public boolean isMinor() {
         return minor;
     }
 
@@ -169,7 +166,7 @@ public class Revision {
         return TemplateParser.getOneOrMoreTemplates(text);
     }
 
-    private static final String DISAMBIGUATION_INDICATORS [] = {
+    private static final String DAB_BLACKLIST [] = {
         "disambiguation",
         "disambig",
         "dab",
@@ -187,8 +184,15 @@ public class Revision {
         "schooldis",
         "shipindex"
     };
+
+    private static final String DAB_WHITELIST [] = {
+        "dablink",
+        "disambiguation needed",
+        "expandable",
+    };
+    
     public boolean isDisambiguation() {
-        return hasTemplateWithNameContaining(DISAMBIGUATION_INDICATORS);
+        return hasTemplateWithNameContaining(DAB_WHITELIST, DAB_BLACKLIST);
     }
 
     private static final Pattern REDIRECT_PATTERN = Pattern.compile("#REDIRECT\\s*\\[\\[([^\\]]+)\\]\\]");
@@ -205,13 +209,24 @@ public class Revision {
         }
     }
 
-    private boolean hasTemplateWithNameContaining(String identifiers[]) {
+    private boolean hasTemplateWithNameContaining(String whitelist[], String identifiers[]) {
         for (Template t : getTemplates()) {
             String n = t.getName().toLowerCase();
-            for (String s : identifiers) {
-                if (n.contains(s)) {
-                    return true;
-                }
+            if (stringContainsOneOf(n, whitelist)) {
+                continue;
+            }
+            if (stringContainsOneOf(n, identifiers)) {
+                System.err.println("matched: '" + n + "'");
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean stringContainsOneOf(String s, String substrs[]) {
+        for (String ss : substrs) {
+            if (s.contains(ss)) {
+                return true;
             }
         }
         return false;
