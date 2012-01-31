@@ -28,30 +28,46 @@ import java.util.HashSet;
 public class ATCByteCombiner {
     
     public static void main(String args[]) throws FileNotFoundException, IOException {
-        if (args.length < 3) {
-            System.out.println("Usage: [articleIDs clusters outputDirectory]");
+        if (args.length < 4) {
+            System.out.println("Usage: [articleIDs articleList clusters outputDirectory]");
             System.exit(0);
         }
         
-        HashMap<String, Long> articles = new HashMap<String, Long>();
+        HashMap<String, Long> allArticles = new HashMap<String, Long>();
         
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(args[0]))));
         String line = reader.readLine();
         System.out.println("Reading article to IDs file...");
-        int articlesRead = 0;
+        int lines = 0;
         while (line != null) {
+            if (lines % 1000000 == 0) {
+                System.out.println("Read " + lines + " articles...");
+            }
             String[] info = line.split("\t");
             if (info.length > 1) {
-                articles.put(info[0].intern(), Long.parseLong(info[1]));
+                allArticles.put(info[0].replaceAll("_", " ").intern(), Long.parseLong(info[1]));
             }
-            articlesRead++;
+            lines++;
             line = reader.readLine();
+            lines++;
         }
+        
+        HashMap<String,Long> articles = new HashMap<String,Long>();
+        reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(args[1]))));
+        System.out.println("Reading article list...");
+        line = reader.readLine();
+        int articlesRead = 0;
+        while (line != null) {
+            String title = line.split("\t")[0];
+            articles.put(title, allArticles.get(title));
+            line = reader.readLine();
+            articlesRead++;
+        }        
         
         HashMap<Long,Long> aidCluster = new HashMap<Long,Long>(); //Maps from article ID to cluster #
         //Articles not in clusters are represented by the negative of their article ID
         
-        reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(args[1]))));
+        reader = new BufferedReader(new InputStreamReader(new FileInputStream(new File(args[2]))));
         line = reader.readLine();
         System.out.println("Reading article clusters file...");
         long cluster = 0;
@@ -100,7 +116,7 @@ public class ATCByteCombiner {
         }
         
         System.out.println("Writing output...");
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(args[2]))));
+        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(new File(args[3]))));
         for (long c : clusterDBytes.keySet()) {
             StringBuilder sb = new StringBuilder();
             sb.append(c).append("\t");
