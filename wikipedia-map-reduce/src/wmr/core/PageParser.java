@@ -3,6 +3,8 @@ package wmr.core;
 import static javax.xml.stream.XMLStreamConstants.END_DOCUMENT;
 
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
@@ -25,6 +27,8 @@ import org.xml.sax.SAXException;
  */
 public class PageParser {
 
+    private static final Logger LOG = Logger.getLogger(PageParser.class.getName());
+    
     /**
      * @uml.property  name="reader"
      * @uml.associationEnd
@@ -163,7 +167,8 @@ public class PageParser {
         } else if (ip != null) {
             return new User(ip);
         } else {		// both must be null
-            throw new IllegalStateException("found neither username nor ip after contributor");
+            LOG.log(Level.WARNING, "No username or IP found for editor; setting name to NO_USERNAME_OR_IP");
+            return new User("NO_USERNAME_OR_IP");
         }
     }
 
@@ -322,7 +327,7 @@ public class PageParser {
                 sb.append(t);
             } else if (!tooLong) {
                 tooLong = true;
-                System.err.println("PageParser.getCoalescedText(): Text to retrieve was too long.");
+                LOG.log(Level.WARNING, "XML element text too long (length capped at {0}).", MAX_LENGTH);
             }
             advance();
         }
@@ -344,7 +349,7 @@ public class PageParser {
             int k = text.indexOf(END_COMMENT, j);
             // FIXME: handling comments and end_comments could be better
             if (k < 0) {
-                System.err.println("no end comment found in " + article.getName() + " (" + timestamp + ")");
+                LOG.log(Level.WARNING, "No end comment found in {0} ({1}).", new Object[] {article.getName(), timestamp});
                 break;
             }
             i = k + END_COMMENT.length();

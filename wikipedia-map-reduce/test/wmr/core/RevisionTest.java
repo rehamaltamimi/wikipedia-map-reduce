@@ -126,4 +126,49 @@ public class RevisionTest {
                         "boo {{dab | 1 = 3}}","Undid revision by VictorianForts",false,false);
         assertTrue(r4.isDisambiguation());
     }
+
+
+    @Test public void testDisambiguationLinks() {
+        assertFalse(revision.isDisambiguation());
+        List<String> links = makeRevision("*[[Foo bar]]").getDisambiguationLinks();
+        assertEquals(links.size(), 1);
+        assertTrue(links.contains("Foo bar"));
+        links = makeRevision("*\"[[Foo bar]]\"").getDisambiguationLinks();
+        assertEquals(links.size(), 1);
+        assertTrue(links.contains("Foo bar"));
+        links = makeRevision("*z[[Foo bar]]").getDisambiguationLinks();
+        assertEquals(links.size(), 0);
+        links = makeRevision("*\"[[Foo bar]]\"\n[[Baz]]\n** [[Dah deh | Goz]]").getDisambiguationLinks();
+        assertEquals(links.size(), 2);
+        assertTrue(links.contains("Foo bar"));
+        assertTrue(links.contains("Dah deh "));
+        links = makeRevision("*\"[[Foo bar]]\"\n[[Baz]]\n** [[Dah deh#basss | Goz]]").getDisambiguationLinksWithoutFragments();
+        assertEquals(links.size(), 2);
+        assertTrue(links.contains("Foo bar"));
+        assertTrue(links.contains("Dah deh"));
+    }
+
+
+    @Test public void testVandalism() {
+        assertTrue(isVandalism("rvv"));
+        assertTrue(isVandalism("vandalism"));
+        assertTrue(isVandalism("rev spam"));
+        assertTrue(isVandalism("foo rvv"));
+        assertFalse(isVandalism("rev boo"));
+        assertTrue(isVandalism("reverted edits by foo using bar"));
+        assertTrue(isVandalism("undo revision by zad"));
+        assertTrue(isVandalism("([[WP:HG|HG]])"));
+        assertTrue(isVandalism("([[WP:TW|TW]])"));
+    }
+
+    private boolean isVandalism(String comment) {
+        Revision r = makeRevision("");
+        r.setComment(comment);
+        return r.isVandalism();
+    }
+    
+    private Revision makeRevision(String text) {
+        return new Revision("123456", "2011-06-11T14:35:00Z", user,
+                        text,"Undid revision by VictorianForts",false,false);
+    }
 }

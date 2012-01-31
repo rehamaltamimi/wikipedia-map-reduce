@@ -40,6 +40,9 @@ public class TemplateParser {
                 }
                 j++;
             }
+            if (bracketNesting > 0) {   // unclosed template!
+                break;
+            }
             String template = text.substring(i + 2, j - 2);
             templates.add(processTemplate(template, offset+i+2, offset+j-2));
             i = j;

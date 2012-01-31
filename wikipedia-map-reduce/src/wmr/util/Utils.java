@@ -5,13 +5,8 @@
 
 package wmr.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringBufferInputStream;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
-import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashSet;
@@ -115,13 +110,16 @@ public class Utils {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             md.reset();
-            md.update(Charset.forName("UTF-8").encode(input).array());
+            md.update(input.getBytes("UTF-8"));
             byte[] digest = md.digest();
             String hash = new BigInteger(1, digest).toString(16);
             while(hash.length() < 32 ){
               hash = "0"+hash;
             }
             return hash;
+        } catch (UnsupportedEncodingException ex) {
+            Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         } catch (NoSuchAlgorithmException ex) {
             Logger.getLogger(Utils.class.getName()).log(Level.SEVERE, null, ex);
             return null;

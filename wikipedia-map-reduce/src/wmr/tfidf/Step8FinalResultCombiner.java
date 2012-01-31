@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -150,9 +149,9 @@ public class Step8FinalResultCombiner extends Configured implements Tool {
             if (featureTypes.size() == 3 && sps.size() == 1 && sps.get(0).featureType == TYPE_CATS) {
                 return Double.NaN;  // unreliable!
             }
-            double linkScore = -0.1;
+            double linkScore = -0.05;
             double catScore = -0.01;
-            double wordScore = -0.1;
+            double wordScore = -0.05;
 
             for (SimPage sp : sps) {
                 if (sp.featureType == TYPE_WORDS) {
@@ -165,7 +164,7 @@ public class Step8FinalResultCombiner extends Configured implements Tool {
                 }
             }
 
-            return 5.9276 + 0.9525 * linkScore + 11.6783 * wordScore + 0.5680 * catScore;
+            return 5.84921 + 5.45869 * wordScore + 1.48050 * linkScore + 0.90944 * catScore;
         }
         
         private List<SimPage> parseSims(String line) {

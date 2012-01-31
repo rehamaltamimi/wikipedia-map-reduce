@@ -84,10 +84,45 @@ public class Revision {
         return minor;
     }
 
+    /**
+     * Regexes taken from:
+     *  "creating, destroying, restoring" value... (Preidhorsky et al).
+     *
+     * As coded in:
+     * https://bitbucket.org/halfak/wikimedia-utilities/src/1d499dcf52fe/wmf/util.py
+     */
+    private static final Pattern VLOOSE_RE = Pattern.compile(
+          "(^revert\\ to.+using) " +
+          "| (^reverted\\ edits\\ by.+using) " +
+          "| (^reverted\\ edits\\ by.+to\\ last\\ version\\ by) " +
+          "| (^bot\\ -\\ rv.+to\\ last\\ version\\ by) " +
+          "| (-assisted\\ reversion) " +
+          "| (^(revert(ed)?|rv).+to\\ last) " +
+          "| (^undo\\ revision.+by) " +
+          "| (\\(\\[\\[WP\\:HG\\|HG\\]\\]\\)) " +
+          "| (\\(\\[\\[WP\\:TW\\|TW\\]\\]\\))",
+          Pattern.DOTALL | Pattern.COMMENTS | Pattern.CASE_INSENSITIVE);
+
+    
+    private static final Pattern VSTRICT_RE = Pattern.compile(
+       "   (\\brvv) " +
+       " | (\\brv[/ ]v) " +
+       " | (vandal(?!proof|bot)) " +
+       " | (\\b(rv|rev(ert)?|rm)\\b.*(blank|spam|nonsense|porn|mass\\sdelet|vand)) ",
+          Pattern.DOTALL | Pattern.COMMENTS | Pattern.CASE_INSENSITIVE);
+
     public boolean isVandalism() {
+        return isVandalismLoose() || isVandalismStrict();
+    }
+
+    public boolean isVandalismLoose() {
         if (comment == null) return false;
-        String s = comment.toLowerCase();
-        return (s.indexOf("rvv") >= 0 || s.indexOf("vandal") >= 0);
+        return VLOOSE_RE.matcher(comment).find() || VSTRICT_RE.matcher(comment).find();
+    }
+    
+    public boolean isVandalismStrict() {
+        if (comment == null) return false;
+        return VSTRICT_RE.matcher(comment).find();
     }
 
     public boolean isRevert() {
@@ -124,17 +159,20 @@ public class Revision {
         return getAnchorLinks(this.text);
     }
 
-    public List<String> getAnchorLinksWithoutFragments() {
-        List<String> links = new ArrayList<String>();
-        for (String link : getAnchorLinks(this.text)) {
+    public static List<String> removeFragments(List<String> links) {
+        List<String> result = new ArrayList<String>();
+        for (String link : links) {
             int i = link.indexOf("#");
             if (i < 0) {
-                links.add(link);
+                result.add(link);
             } else {
-                links.add(link.substring(0, i));
+                result.add(link.substring(0, i));
             }
         }
-        return links;
+        return result;
+    }
+    public List<String> getAnchorLinksWithoutFragments() {
+        return removeFragments(getAnchorLinks(text));
     }
     private static final Pattern LINK_PATTERN = Pattern.compile("\\[\\[([^\\]]+?)\\]\\]");
 
@@ -152,6 +190,28 @@ public class Revision {
             }
         }
         return anchorLinks;
+    }
+
+    private static final Pattern DAB_LINK_PATTERN = Pattern.compile("\\*(?:\")?\\s*\\[\\[([^\\]]+?)\\]\\](?:\")?");
+
+    public List<String> getDisambiguationLinks() {
+        ArrayList<String> anchorLinks = new ArrayList<String>();
+        Matcher linkMatcher;
+        linkMatcher = DAB_LINK_PATTERN.matcher(text);
+        while (linkMatcher.find()) {
+            String addition = linkMatcher.group(1);
+            if (addition.contains("|")) {
+                addition = addition.substring(0, addition.indexOf("|"));
+            }
+            if (!addition.contains("Image:")) {
+                anchorLinks.add(addition);
+            }
+        }
+        return anchorLinks;
+    }
+
+    public List<String> getDisambiguationLinksWithoutFragments() {
+        return removeFragments(getDisambiguationLinks());
     }
 
     public List<Citation> getCitations(Page page) {
@@ -188,7 +248,6 @@ public class Revision {
     private static final String DAB_WHITELIST [] = {
         "dablink",
         "disambiguation needed",
-        "expandable",
     };
     
     public boolean isDisambiguation() {
@@ -216,7 +275,6 @@ public class Revision {
                 continue;
             }
             if (stringContainsOneOf(n, identifiers)) {
-                System.err.println("matched: '" + n + "'");
                 return true;
             }
         }
@@ -225,7 +283,7 @@ public class Revision {
 
     private static boolean stringContainsOneOf(String s, String substrs[]) {
         for (String ss : substrs) {
-            if (s.contains(ss)) {
+            if (s.startsWith(ss) || s.contains(" " + ss)) {
                 return true;
             }
         }
