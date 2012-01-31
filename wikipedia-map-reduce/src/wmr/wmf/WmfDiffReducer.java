@@ -47,7 +47,7 @@ public class WmfDiffReducer extends Reducer<Text, Text, Text, Text> {
                 }
                 prevJsonObj = jsonObj;
             }
-            // Catch the leftover
+            // Catch the final revision
             writeReduceJson(prevJsonObj, context);
         } catch (Exception e) {
             LOG.log(Level.SEVERE, "reduce for " + key + " failed", e);
