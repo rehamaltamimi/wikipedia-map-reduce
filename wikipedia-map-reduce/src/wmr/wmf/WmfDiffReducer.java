@@ -24,10 +24,13 @@ public class WmfDiffReducer extends Reducer<Text, Text, Text, Text> {
     @Override
     public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
         try {
+            context.progress();
             TLongIntHashMap fingerPrintRevs = new TLongIntHashMap();
             Map<String, Object> prevJsonObj = null;
             int revisionIndex = 0;
             for (Text val : values) {
+                context.progress();
+
                 // extract data from json
                 Map<String, Object> jsonObj;
                 try {
