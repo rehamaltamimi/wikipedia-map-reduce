@@ -91,6 +91,7 @@ public class DeltaByteCounter extends Configured implements Tool {
                         if (rev == null) {
                             break;
                         }
+                        System.err.println("timestamp is " + rev.getTimestamp());
                         length = rev.getText().length();
                         String userId = rev.getContributor().getId();
                         if (delta.containsKey(userId)) {

@@ -2,6 +2,7 @@ package wikiParser.mapReduce;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -34,8 +35,12 @@ public class DisambiguationsAndRedirects extends Configured implements Tool {
                                 new Text(""+key),
                                 new Text("r\t" + p.getName() + "\t" + r.getRedirectDestination()));
                     } else if (p.getName().toLowerCase().endsWith("(disambiguation)") || r.isDisambiguation()) {
+                        List<String> dabLinks = r.getDisambiguationLinksWithoutFragments();
+                        if (dabLinks.isEmpty()) {
+                            dabLinks = r.getAnchorLinksWithoutFragments();
+                        }
                         StringBuilder links = new StringBuilder();
-                        for (String link : r.getAnchorLinksWithoutFragments()) {
+                        for (String link : dabLinks) {
                               // ignore categories and inter-language links like "en:Foo"
                             if (link.indexOf(":") == 2 || link.startsWith("Category:")) {
                                 continue;
