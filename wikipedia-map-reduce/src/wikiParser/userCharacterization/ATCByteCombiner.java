@@ -45,9 +45,8 @@ public class ATCByteCombiner {
             }
             String[] info = line.split("\t");
             if (info.length > 1) {
-                allArticles.put(info[0].replaceAll("_", " ").intern(), Long.parseLong(info[1]));
+                allArticles.put(info[0].intern(), Long.parseLong(info[1]));
             }
-            lines++;
             line = reader.readLine();
             lines++;
         }
@@ -59,9 +58,13 @@ public class ATCByteCombiner {
         int articlesRead = 0;
         while (line != null) {
             String title = line.split("\t")[0];
-            articles.put(title, allArticles.get(title));
+            if (allArticles.containsKey(title)) {
+                articles.put(title, allArticles.get(title));
+                articlesRead++;
+            } else {
+                System.out.println("Title not found: " + title);
+            }
             line = reader.readLine();
-            articlesRead++;
         }        
         
         HashMap<Long,Long> aidCluster = new HashMap<Long,Long>(); //Maps from article ID to cluster #
@@ -82,7 +85,16 @@ public class ATCByteCombiner {
         }
         System.out.println("Read in " + cluster + " clusters with " + articlesRead + " articles.");
         for(String title : articles.keySet()) { //Only articles not in clusters
-            aidCluster.put(articles.get(title),-articles.get(title));
+            if (articles.containsKey(title)) {
+                try {
+                    aidCluster.put(articles.get(title),-articles.get(title));
+                } catch (NullPointerException e) {
+                    System.out.println("NPE:");
+                    System.out.println("AID: " + aidCluster + ", articles: " + articles + ", title: " + title);
+                }
+            } else {
+                System.out.println("Bad article title conversion: " + title);
+            }
         }
         
         HashMap<Long,HashMap<String,Integer>> clusterDBytes = new HashMap<Long,HashMap<String,Integer>>();

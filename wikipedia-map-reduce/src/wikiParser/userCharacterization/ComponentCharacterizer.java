@@ -224,8 +224,8 @@ public class ComponentCharacterizer {
                 }
             }
             if (usersUpdated < userChanges.size()) {
-                System.out.println("Problem with user data in cluster " + cluster + " missing data for at least " + 
-                        (userChanges.size() - usersUpdated) + " users.");
+                System.out.println("C#" + cluster + " " + 
+                        (userChanges.size() - usersUpdated));
             }
             StringBuilder sb = new StringBuilder();
             int average;
@@ -282,7 +282,7 @@ public class ComponentCharacterizer {
                 }
             } catch  (Exception e) {
                 //Non-numeric, IPv4, or IPv6 user ID
-                System.out.println("Error processing user: " + uid);
+                System.out.println("U#" + uid);
                 return null;
             }
         }
