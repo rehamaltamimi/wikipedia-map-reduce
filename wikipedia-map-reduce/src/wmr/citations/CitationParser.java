@@ -90,7 +90,9 @@ public class CitationParser {
                 url = splitInBrack[0].trim();
                 if (url.length() > 0 && url.charAt(0) == '[') {
                     String[] tmp = inBrackets.substring(1).split("\\|");
-                    url = "wiki:" + tmp[0];
+                    if (tmp.length > 0) {
+                        url = "wiki:" + tmp[0];
+                    }
                 }
                 cites.add(new Citation(page, rev, url, index));
             }

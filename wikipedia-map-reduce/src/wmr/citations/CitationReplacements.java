@@ -48,20 +48,25 @@ public class CitationReplacements extends Configured implements Tool {
             Map<String, String> prevContextAndCites = new HashMap<String, String>();
             for (Revision rev : allRevs.getRevisions()) {
                 mcontext.progress();
-                Map<String, String> contextAndCites = getContextAndCites(allRevs.getPage(), rev);
-                if (!rev.getContributor().isBot()) {
-                    for (Map.Entry<String, String> entry : contextAndCites.entrySet()) {
-                        String context = entry.getKey();
-                        String domain = entry.getValue();
-                        String oldDomain = prevContextAndCites.get(context);
-                        if (domain != null && oldDomain != null && !oldDomain.equals(domain)) {
-                            mcontext.write(
-                                    new Text(key + "@" + allRevs.getPage().getName()),
-                                    new Text("" + rev.getId() + "\t" + rev.getTimestamp() + "\t" + oldDomain + "\t" + domain));
+                try {
+                    Map<String, String> contextAndCites = getContextAndCites(allRevs.getPage(), rev);
+                    if (!rev.getContributor().isBot()) {
+                        for (Map.Entry<String, String> entry : contextAndCites.entrySet()) {
+                            String context = entry.getKey();
+                            String domain = entry.getValue();
+                            String oldDomain = prevContextAndCites.get(context);
+                            if (domain != null && oldDomain != null && !oldDomain.equals(domain)) {
+                                mcontext.write(
+                                        new Text(key + "@" + allRevs.getPage().getName()),
+                                        new Text("" + rev.getId() + "\t" + rev.getTimestamp() + "\t" + oldDomain + "\t" + domain));
+                            }
                         }
                     }
+                    prevContextAndCites = contextAndCites;
+                } catch (Exception e) {
+                    System.err.println("page " + allRevs.getPage().getName() + ", rev " + rev.getTimestamp() + " failed:");
+                    e.printStackTrace();
                 }
-                prevContextAndCites = contextAndCites;
             }
         }
 
