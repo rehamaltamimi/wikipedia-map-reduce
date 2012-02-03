@@ -18,6 +18,12 @@ import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.Reducer.Context;
 import wmr.util.Utils;
 
+/**
+ * TODO:
+ * - replace keyframe, prev, next with a single revision index.
+ * - consider encoding diffs as a list of strings, or a single string to reduce space.
+ * @author shilad
+ */
 public class WmfDiffReducer extends Reducer<Text, Text, Text, Text> {
     private static final Logger LOG = Logger.getLogger(WmfDiffReducer.class.getName());
 

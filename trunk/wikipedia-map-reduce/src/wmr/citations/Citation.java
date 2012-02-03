@@ -18,15 +18,17 @@ public class Citation {
     Revision revision;
     String url;
     Template template;
+    int location;
 
-    public Citation(Page page, Revision revision, String url) {
+    public Citation(Page page, Revision revision, String url, int location) {
         this.page = page;
         this.revision = revision;
         this.url = url;
+        this.location = location;
     }
 
-    public Citation(Page page, Revision revision, Template template) {
-        this(page, revision, getCitationUrl(template));
+    public Citation(Page page, Revision revision, Template template, int location) {
+        this(page, revision, getCitationUrl(template), location);
         this.template = template;
     }
 
@@ -42,12 +44,32 @@ public class Citation {
         return url;
     }
 
+    public String getUrlDomain() {
+        if (url == null) {
+            return null;
+        } else {
+            String urlSansSpace =  url.replaceAll("[\\s]+", " ");
+            String[] split = urlSansSpace.split("/");    // http://boo.com to { "http", "", "boo.com"}
+            if (split.length > 2) {
+                return split[2];
+            } else if (urlSansSpace.startsWith("wiki:")) {
+                return urlSansSpace;
+            } else {
+                return urlSansSpace.toLowerCase();
+            }
+        }
+    }
+
     public Template getTemplate() {
         return template;
     }
 
     public void setTemplate(Template template) {
         this.template = template;
+    }
+
+    public int getLocation() {
+        return location;
     }
 
     @Override
@@ -85,7 +107,7 @@ public class Citation {
         if (template != null) {
             contents += " from template " + template;
         }
-        return contents + ">";
+        return contents + " at " + location + ">";
     }
 
     public static String getCitationUrl(Template t) {
