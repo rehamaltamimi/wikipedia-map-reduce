@@ -98,6 +98,8 @@ public class CitationTest {
             System.out.println(c);
         }
         assertEquals(cites.size(), 21);
+        assertEquals(cites.get(0).getLocation(), 3059);
+        assertEquals(cites.get(1).getLocation(), 3769);
         List<Citation> refs = refRevision.getCitations(article); //should have two (one ref with url in brackets, one just a plain url)
         System.out.println("references :");
         for (Citation c : refs) {

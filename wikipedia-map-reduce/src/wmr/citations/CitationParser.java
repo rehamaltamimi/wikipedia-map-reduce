@@ -20,12 +20,21 @@ import wmr.templates.TemplateParser;
 public class CitationParser {
     
     public boolean isCitation(Template t) {
-        String name = t.getName().trim().split(" ")[0].toLowerCase();
-        return name.startsWith("cite") || name.startsWith("citation");
+        if (t == null) {
+            return false;
+        }
+        String words [] = t.getName().trim().split(" ");
+        if (words.length == 0) {
+            return false;
+        } else {
+            String name = words[0].toLowerCase();
+            return name.startsWith("cite") || name.startsWith("citation");
+        }
     }
 
     private static final Pattern REF_START = Pattern.compile("<[\\s]*ref[^/]*?>");
     private static final Pattern REF_END = Pattern.compile("(<[\\s]*/[\\s]*ref[\\s]*>)");
+
 
     public List<Citation> extractCitations(Page page, Revision revision) {
         List<Citation> cites = new ArrayList<Citation>();
@@ -37,6 +46,7 @@ public class CitationParser {
 
         // Look for citations in REF tags
         String content = revision.getText();
+        int i = 0;
         while (true) {
             Matcher open = REF_START.matcher(content);
             if (!open.find()) {
@@ -54,16 +64,17 @@ public class CitationParser {
             }
             // we have a beginning and an ending!
             String body = content.substring(open.end(), close.start());
-            cites.addAll(processOneRefTag(page, revision, body));
+            cites.addAll(processOneRefTag(page, revision, body, i + open.start()));
             content = content.substring(close.end());
+            i += close.end();
         }
         return cites;
     }
 
     private static final Pattern URL_CONTAINER = Pattern.compile(".*?\\[(.*?)\\].*?");
 
-    private List<Citation> processOneRefTag(Page page, Revision rev, String contents) {
-        List<Template> templates = TemplateParser.getOneOrMoreTemplates(contents);
+    private List<Citation> processOneRefTag(Page page, Revision rev, String contents, int index) {
+        List<Template> templates = TemplateParser.getOneOrMoreTemplates(contents, index);
         List<Citation> cites = new ArrayList<Citation>();
         for (Template t : templates) {
             if (!templateToCitations(page, rev, t).isEmpty()) {
@@ -75,19 +86,21 @@ public class CitationParser {
         if (urlMatcher.matches()) {
             String inBrackets = urlMatcher.group(1);
             String[] splitInBrack = inBrackets.split(" ");
-            url = splitInBrack[0].trim();
-            if (url.length() > 0 && url.charAt(0) == '[') {
-                String[] tmp = inBrackets.substring(1).split("\\|");
-                url = "wiki:" + tmp[0];
+            if (splitInBrack.length > 0) {
+                url = splitInBrack[0].trim();
+                if (url.length() > 0 && url.charAt(0) == '[') {
+                    String[] tmp = inBrackets.substring(1).split("\\|");
+                    url = "wiki:" + tmp[0];
+                }
+                cites.add(new Citation(page, rev, url, index));
             }
-            cites.add(new Citation(page, rev, url));
         } else {
             if (templates.size() > 0) {
-                cites.add(new Citation(page, rev, templates.get(0)));
+                cites.add(new Citation(page, rev, templates.get(0), index));
             } else if (contents.contains("http")) {
-                cites.add(new Citation(page, rev, contents.trim()));
+                cites.add(new Citation(page, rev, contents.trim(), index));
             } else {
-                cites.add(new Citation(page, rev, "noURL"));
+                cites.add(new Citation(page, rev, "noURL", index));
             }
         }
         return cites;
@@ -105,21 +118,41 @@ public class CitationParser {
         t.convertMapToLowercase();
         List<Citation> cites = new ArrayList<Citation>();
         if (isCitation(t)) {
-            cites.add(new Citation(page, rev, t));
+            cites.add(new Citation(page, rev, t, getCiteStart(rev, t)));
         } else {
             for (String param : t.getAllParams().keySet()) {
                 if (t.paramContainsTemplate(param)) {
                     for (Template t2 : t.getParamAsTemplate(param)) {
                         t2.convertMapToLowercase();
                         if (isCitation(t2)) {
-                            cites.add(new Citation(page, rev, t2));
+                            cites.add(new Citation(page, rev, t2, getCiteStart(rev, t)));    // location based on outer template
                         }
                     }
                 }
             }
         }
         return cites;
-
     }
 
+    private static final Pattern LAST_REF_START = Pattern.compile(".*(<[\\s]*ref[^/]*?>).*", Pattern.MULTILINE | Pattern.DOTALL);
+    private static final Pattern LAST_REF_END = Pattern.compile(".*(<[\\s]*/[\\s]*ref[\\s]*>).*", Pattern.MULTILINE | Pattern.DOTALL);
+    private int getCiteStart(Revision r, Template t) {
+        String beforeCite = r.getText().substring(0, t.getStart());
+        while (beforeCite.endsWith("{")) {
+            beforeCite = beforeCite.substring(0, beforeCite.length()-1);
+        }
+//        Matcher m0 = LAST_REF_START.matcher(beforeCite);
+//        Matcher m1 = LAST_REF_END.matcher(beforeCite);
+//        int i = (m0.matches()) ? m0.start(1) : -1;
+//        int j = (m1.matches()) ? m1.end(1) : -1;
+        int i = beforeCite.lastIndexOf("<ref");
+        int j = beforeCite.lastIndexOf("</ref");
+        if (i >= 0 && j < 0) {    // "<ref>{{template"
+            return i;
+        } else if (i >= 0 && j >= 0 && j <= i) { // "</ref>....<ref>{{template"
+            return i;
+        } else {
+            return t.getStart();
+        }
+    }
 }
