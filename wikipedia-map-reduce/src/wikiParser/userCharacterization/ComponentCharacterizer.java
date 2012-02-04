@@ -54,7 +54,7 @@ public class ComponentCharacterizer {
          clusterChanges = new HashMap<Long,String>();
          clusterComponents = new HashMap<Long,String>();
          while (components != null || changes != null) {
-             if (submitted == QUEUE_LENGTH/2) {
+             if (submitted > QUEUE_LENGTH/2 && writer == null) {
                  writer = new Writer(results, args[0]);
                  tpe.execute(writer);
              }
@@ -94,10 +94,14 @@ public class ComponentCharacterizer {
              components = componentReader.readLine();
              changes = bytesChanged.readLine();
          }
+         if (writer == null) {
+             writer = new Writer(results, args[0]);
+             tpe.execute(writer);
+         }
          for (long cluster : clusterChanges.keySet()) {
              waitUntilQueued(new Characterizer(cluster,clusterChanges.get(cluster),"",results));
              submitted++;
-         }
+         }         
          writer.setTotalCases(submitted);
          tpe.shutdown();
      }

@@ -27,7 +27,7 @@ import java.util.HashMap;
 public class ATCByteCombiner {
     
     public static void main(String args[]) throws FileNotFoundException, IOException {
-        if (args.length < 4) {
+        if (args.length < 2) {
             System.out.println("Usage: [clusters outputDirectory]");
             System.exit(0);
         }
@@ -40,7 +40,9 @@ public class ATCByteCombiner {
         long cluster = 0;
         while (line != null) {
             for (String id : line.split("\\|")) {
-                aidCluster.put(Long.parseLong(id),cluster);
+                if (id.length() > 0) {
+                    aidCluster.put(Long.parseLong(id),cluster);
+                }
             }
             cluster++;
             line = reader.readLine();
