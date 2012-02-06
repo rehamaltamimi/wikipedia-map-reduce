@@ -102,6 +102,10 @@ public class ComponentCharacterizer {
              waitUntilQueued(new Characterizer(cluster,clusterChanges.get(cluster),"",results));
              submitted++;
          }         
+         if (writer == null) {
+             writer = new Writer(results, args[0]);
+             tpe.execute(writer);
+         }
          writer.setTotalCases(submitted);
          tpe.shutdown();
      }
@@ -221,7 +225,9 @@ public class ComponentCharacterizer {
                     int delta = Integer.parseInt(userDelta[1]);
                     users++;
                     totalChanged += delta;
+                    //System.out.println("UId: " + user + ", UName: " + userDelta[0]);
                     if (user != null && userChanges.containsKey(user)) {
+                        //System.out.println("User updated!");
                         usersUpdated++;
                         userChanges.put(user,delta);
                     }
@@ -280,7 +286,7 @@ public class ComponentCharacterizer {
                     //IPv6 address
                     return null;
                 } else if (uid.contains(".")) {
-                    return -ipv4ToInt(uid);
+                    return -ipv4ToLong(uid);
                 } else {
                     return Long.parseLong(uid);
                 }
@@ -291,10 +297,10 @@ public class ComponentCharacterizer {
             }
         }
         
-        private static long ipv4ToInt(String ipv4) {
+        private static long ipv4ToLong(String ipv4) {
             String[] ipAddress = ipv4.split("\\.");
-            return 16777216*Integer.parseInt(ipAddress[0]) + 65536*Integer.parseInt(ipAddress[1])
-                + 256*Integer.parseInt(ipAddress[2]) + Integer.parseInt(ipAddress[3]);
+            return 16777216*Long.parseLong(ipAddress[0]) + 65536*Long.parseLong(ipAddress[1])
+                + 256*Long.parseLong(ipAddress[2]) + Long.parseLong(ipAddress[3]);
         }
     }
       
