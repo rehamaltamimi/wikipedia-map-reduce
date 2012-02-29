@@ -99,7 +99,7 @@ public class ComponentCharacterizer {
              tpe.execute(writer);
          }
          for (long cluster : clusterChanges.keySet()) {
-             waitUntilQueued(new Characterizer(cluster,clusterChanges.get(cluster),"",results));
+             waitUntilQueued(new Characterizer(cluster,"",clusterChanges.get(cluster),results));
              submitted++;
          }         
          if (writer == null) {

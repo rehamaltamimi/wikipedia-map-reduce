@@ -63,7 +63,7 @@ public class ATCByteCombiner {
                     clusterDBytes.put(cluster, new HashMap<String,Integer>());
                 }
                 for (String user : info[1].split("\\|")) {
-                    String[] userDelta = user.split(":");
+                    String[] userDelta = user.split("#");
                     String userName = userDelta[0];
                     for (int i = 1; i < userDelta.length - 1; i++) {//IPv6 addresses are separated by colons
                         userName += ":" + userDelta[i];
