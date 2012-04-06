@@ -202,19 +202,21 @@ public class ComponentCharacterizer {
             int side = 0;
             int users = 0;
             int totalChanged = 0;
-            for (String conflict : components.split("\\|")) {
-                componentMapping.put(side, new HashSet<Long>());
-                componentMapping.put(side + 1, new HashSet<Long>());
-                for (String component : conflict.split(" ")) {
-                    for (String user : component.split(",")) {
-                        Long u = userIDtoLong(user);
-                        if (u == null) {
-                            continue;
+            if (components.length() > 0) {
+                for (String conflict : components.split("\\|")) {
+                    componentMapping.put(side, new HashSet<Long>());
+                    componentMapping.put(side + 1, new HashSet<Long>());
+                    for (String component : conflict.split(" ")) {
+                        for (String user : component.split(",")) {
+                            Long u = userIDtoLong(user);
+                            if (u == null) {
+                                continue;
+                            }
+                            componentMapping.get(side).add(u);
+                            userChanges.put(u,0);
                         }
-                        componentMapping.get(side).add(u);
-                        userChanges.put(u,0);
+                        side++;
                     }
-                    side++;
                 }
             }
             int usersUpdated = 0;
