@@ -51,7 +51,8 @@ STATE_HEADER = 0
 STATE_REV = 1
 
 def main(output_path, titles):
-    writer = utils.Writer(output_path)
+    utils.LZMA_ARGS = ['lzma', '-z', '-c', '-']
+    writer = utils.Writer(output_path, False)
     for title in titles:
         send_page(title, writer)
     writer.send(utils.END_OF_FILE, None, None)
@@ -79,11 +80,8 @@ def getRevisions(page, minId, maxId):
         'rvendid' : maxId,
     }
 
-    #result = wikipedia.query.GetData(params, page.site())
     result = wikipedia.query.GetData(params, page.site())['query']['pages']
     return list(result.values())[0]['revisions']
-    ##return wikipedia.query.GetData(params, page.site())['query']['pages']['page']['revisions']
-    #return []
     
 
 def send_page(title, writer):
@@ -121,7 +119,7 @@ def send_page(title, writer):
             if is_ip(user):
                 writer.send(utils.NO_END, id, '<contributor><ip>%s</ip></contributor>\n' % (user))
             else:
-                writer.send(utils.NO_END, id, '<contributor><username>%s</username></contributor>\n' % (user))
+                writer.send(utils.NO_END, id, '<contributor><username>%s</username><id>-1</id></contributor>\n' % (user))
             if minor:
                 writer.send(utils.NO_END, id, '<minor>1</minor>\n')
             writer.send(utils.NO_END, id, '<comment>%s</comment>\n' % (comment))
@@ -129,8 +127,9 @@ def send_page(title, writer):
             writer.send(utils.NO_END, id, '</revision>\n')
         i += 10
 
-    writer.send(utils.END_OF_ARTICLE, id, '</revisions>\n')
-    writer.send(utils.END_OF_ARTICLE, id, utils.END_PAGE + '\n')
+    writer.send(utils.NO_END, id, '</revisions>\n')
+    writer.send(utils.NO_END, id, utils.END_PAGE + '\n')
+    writer.send(utils.END_OF_ARTICLE, id, utils.FOOTER)
 
 def is_ip(phrase):
     return re.match('\d+.\d+.\d+.\d+', phrase)

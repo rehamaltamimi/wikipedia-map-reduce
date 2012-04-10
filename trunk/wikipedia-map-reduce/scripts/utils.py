@@ -5,6 +5,8 @@ import re
 import subprocess
 import sys
 
+LZMA_ARGS = ['lzma', 'e', '-si', '-so']
+
 
 BEGIN_PAGE = '<page>'
 END_PAGE = '</page>'
@@ -30,18 +32,24 @@ class Writer:
     """
         A process responsible for writing articles to a single output file.
     """
-    def __init__(self, path):
+    def __init__(self, path, debug=False):
         self.path = path
+        self.debug_path = path + '.debug'
         open(path, 'w').close() # truncate
         self.compressor = None
+        self.debug = None
+        if debug:
+            self.debug = open(self.debug_path, 'w')
     
     def send(self, flag, id, page):
         if flag == END_OF_FILE:
+            if self.debug:
+                self.debug.close()
+                self.debug = None
             return
         logging.debug('writer received %s bytes' % len(page))
-
-        sys.stdout.write('writing %s' % page.encode('ascii', 'ignore'))
-        return
+        if self.debug:
+            self.debug.write(page.encode('UTF-8'))
 
         # launch the compressor if necessary
         # it will only be necessary at the beginning of each article
@@ -57,7 +65,7 @@ class Writer:
         logging.debug('writer about to write %s bytes' % len(page))
         remaining = page
         while remaining:
-            n = os.write(self.compressor.w, remaining)
+            n = os.write(self.compressor.w, remaining.encode('UTF-8'))
             assert(n >= 0)
             remaining = remaining[n:]
 
@@ -93,7 +101,7 @@ class Compressor(multiprocessing.Process):
         logging.debug('compressor spawning lzma')
         lzmaLog = open('lzma.log', 'a')
         lzma = subprocess.Popen(
-                        args=['lzma', 'e', '-si', '-so'],
+                        args=LZMA_ARGS,
                         stdin=self.childIn,
                         stdout=subprocess.PIPE,
                         stderr=lzmaLog,
