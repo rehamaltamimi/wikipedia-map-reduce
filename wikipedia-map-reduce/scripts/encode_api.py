@@ -102,34 +102,40 @@ def send_page(title, writer):
         minId = slice[0][0]
         maxId = slice[-1][0]
         revisions = getRevisions(p, minId, maxId)
-        logging.info('found %d revisions between ids %s and %s' % (len(revisions), minId, maxId))
+        logging.info('doing revision %d of %d' % (i, len(revInfos)))
         if len(revisions) != len(slice):
             logging.warn('too few revisions!')
         for rev in revisions:
-            user = escape(rev['user'])
-            comment = escape(rev['comment'])
-            content = escape(rev['*'])
-            timestamp = rev['timestamp']
-            revid = rev['revid']
-            minor = rev.get('flags')
-
-            writer.send(utils.NO_END, id, '<revision>\n')
-            writer.send(utils.NO_END, id, '<id>%s</id>\n' % (revid))
-            writer.send(utils.NO_END, id, '<timestamp>%s</timestamp>\n' % (timestamp))
-            if is_ip(user):
-                writer.send(utils.NO_END, id, '<contributor><ip>%s</ip></contributor>\n' % (user))
-            else:
-                writer.send(utils.NO_END, id, '<contributor><username>%s</username><id>-1</id></contributor>\n' % (user))
-            if minor:
-                writer.send(utils.NO_END, id, '<minor>1</minor>\n')
-            writer.send(utils.NO_END, id, '<comment>%s</comment>\n' % (comment))
-            writer.send(utils.NO_END, id, '<text>%s</text>\n' % (content))
-            writer.send(utils.NO_END, id, '</revision>\n')
+            try:
+                write_revision(writer, id, rev)
+            except:
+                logging.exception('rev %s failed with keys %s' % (id, `rev.keys()`))
         i += 10
 
     writer.send(utils.NO_END, id, '</revisions>\n')
     writer.send(utils.NO_END, id, utils.END_PAGE + '\n')
     writer.send(utils.END_OF_ARTICLE, id, utils.FOOTER)
+
+def write_revision(writer, id, rev):
+    user = escape(rev['user'])
+    comment = escape(rev['comment'])
+    content = escape(rev['*'])
+    timestamp = rev['timestamp']
+    revid = rev['revid']
+    minor = rev.get('flags')
+
+    writer.send(utils.NO_END, id, '<revision>\n')
+    writer.send(utils.NO_END, id, '<id>%s</id>\n' % (revid))
+    writer.send(utils.NO_END, id, '<timestamp>%s</timestamp>\n' % (timestamp))
+    if is_ip(user):
+        writer.send(utils.NO_END, id, '<contributor><ip>%s</ip></contributor>\n' % (user))
+    else:
+        writer.send(utils.NO_END, id, '<contributor><username>%s</username><id>-1</id></contributor>\n' % (user))
+    if minor:
+        writer.send(utils.NO_END, id, '<minor>1</minor>\n')
+    writer.send(utils.NO_END, id, '<comment>%s</comment>\n' % (comment))
+    writer.send(utils.NO_END, id, '<text>%s</text>\n' % (content))
+    writer.send(utils.NO_END, id, '</revision>\n')
 
 def is_ip(phrase):
     return re.match('\d+.\d+.\d+.\d+', phrase)
