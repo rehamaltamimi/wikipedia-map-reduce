@@ -61,7 +61,7 @@ public class CitationTest {
 
 	@Before public void setUp() throws FileNotFoundException, XMLStreamException, IOException {
 		user = new User("Just H", "2033654");
-		revision = new Revision("119623749", "2007-04-02T01:52:36Z", user, "#REDIRECT[[Capo di tutti capi]]", "Capo di tutti capi", false, false);
+		revision = new Revision("119623749", "2007-04-02T01:52:36Z", user, "#REDIRECT[[Capo di tutti capi]]", "Capo di tutti capi", false);
 		user.addToRevisions(revision);
 		article = new Page("Capo di tutti capo", "10414100");
                 article.addToRevisions(revision);
@@ -73,11 +73,11 @@ public class CitationTest {
 		article.addToEdges(link);
 		parser = new PageParser(new BufferedInputStream(new FileInputStream("virginislandecon.xml")));
                 citeRevision = new Revision("123456", "2011-06-11T14:35:00Z", user,
-                        readFile("palmerstonForts.txt"),"Undid revision by VictorianForts",false,false);
+                        readFile("palmerstonForts.txt"),"Undid revision by VictorianForts",false);
                 refRevision = new Revision("123456", "2011-06-11T14:35:00Z", user,
-                        readFile("mauritiusBroadcastingCorporation.txt"),"Undid revision by VictorianForts",false,false);
+                        readFile("mauritiusBroadcastingCorporation.txt"),"Undid revision by VictorianForts",false);
                 refRevision2 = new Revision("123456", "2011-06-11T14:35:00Z", user,
-                        readFile("refTest.txt"),"Undid revision by VictorianForts",false,false);
+                        readFile("refTest.txt"),"Undid revision by VictorianForts",false);
 	}
 
     private String readFile(String fileName) throws FileNotFoundException, IOException {
@@ -118,7 +118,7 @@ public class CitationTest {
     }
         
     @Test public void testLeftBracket() throws FileNotFoundException, IOException {
-        Revision weird = new Revision("12", "2011-06-11T14:35:00Z", user, readFile("phillipGogulla.txt"), "comment",false, false);
+        Revision weird = new Revision("12", "2011-06-11T14:35:00Z", user, readFile("phillipGogulla.txt"), "comment",false);
         List<Citation> refs = weird.getCitations(article);
         System.out.println("references :");
         for (Citation c : refs) {

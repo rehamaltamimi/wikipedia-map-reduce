@@ -26,7 +26,7 @@ public class AssessmentTest {
     
     @Before public void setUp() {
         page = new Page("41", "Talk: Horses");
-        revision = new Revision("41", "200011070832", null, "bar", "foo", false, false);
+        revision = new Revision("41", "200011070832", null, "bar", "foo", false);
     }
     
     @Test public void testBasicAssessment() {

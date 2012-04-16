@@ -12,6 +12,7 @@ import wmr.core.Page;
 import wmr.core.Revision;
 import wmr.templates.Template;
 import wmr.templates.TemplateParser;
+import wmr.util.Utils;
 
 /**
  *
@@ -52,8 +53,21 @@ public class CitationParser {
             if (!open.find()) {
                 break;
             }
+            int openIndex = open.end();
+            int closeIndex = -1;
             Matcher close = REF_END.matcher(content);
-            if (!close.find() || open.end() >= close.start()) {
+            Matcher open2 = REF_START.matcher(content.substring(openIndex));
+            if (close.find()) {
+                closeIndex = close.start();
+            }
+            if (open2.find() && (!close.find() || (open.end() + open2.start() < closeIndex))) {
+                System.err.println("Two consecutive opens found in reference found in page " + page.getName() +
+                        ", revision " + revision.getId() + " at time " + revision.getTimestamp() +
+                        " beginning at '" + Utils.cleanupString(content.substring(openIndex), 50) + "'");
+                closeIndex = open2.start() + openIndex;
+            }
+            
+            if (closeIndex < 0 || openIndex >= closeIndex) {
                 String str = content.substring(open.start());
                 str = (str.length() > 50) ? str.substring(0, 47) + "..." : str;
                 str = str.replaceAll("\\s+", " ");
@@ -63,8 +77,8 @@ public class CitationParser {
                 break;
             }
             // we have a beginning and an ending!
-            String body = content.substring(open.end(), close.start());
-            cites.addAll(processOneRefTag(page, revision, body, i + open.start()));
+            String body = content.substring(openIndex, closeIndex);
+            cites.addAll(processOneRefTag(page, revision, body, i + openIndex));
             content = content.substring(close.end());
             i += close.end();
         }

@@ -120,11 +120,11 @@ public class PageParser {
         boolean isVandalism = (vandalism != null) && vandalism.equals("1");
         // System.err.println("rev is " + text);
 
-        Revision rev = new Revision(id, timestamp, contributor, text, comment, isMinor, isVandalism);
+        Revision rev = new Revision(id, timestamp, contributor, text, comment, isMinor);
         if (storeFullTextInArticle) {
             article.addToRevisions(rev);
         } else if (storeRevisionMetadata) {
-            article.addToRevisions(new Revision(id, timestamp, contributor, null, comment, isMinor, isVandalism));
+            article.addToRevisions(new Revision(id, timestamp, contributor, null, comment, isMinor));
         }
         return rev;
     }

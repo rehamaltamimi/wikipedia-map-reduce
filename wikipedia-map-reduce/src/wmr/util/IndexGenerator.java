@@ -2,11 +2,9 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package wikiParser.mapReduce.graphs;
-
+package wmr.util;
 
 import java.io.IOException;
-import java.util.*;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -14,27 +12,32 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.*;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import wmr.core.*;
 import wikiParser.mapReduce.util.*;
-import wmr.util.*;
 
 /**
  *
  * @author Shilad Sen
  * 
  */
-public class RevertGraphGenerator extends Configured implements Tool {
+public class IndexGenerator extends Configured implements Tool {
 
     /*
-     * Takes key-value 7zip hashes and outputs url-id pairs.
+     * Takes key-value 7zip hashes and outputs article name / id pairs
      */
     public static class MyMapper extends Mapper<Text, Text, Text, Text> {
 
+        @Override
         public void map(Text key, Text value, Mapper.Context context) throws IOException {
+            FileSplit split = (FileSplit) context.getInputSplit();
+            String parts[] = split.getPath().toString().split("/");
+            String path = parts.length == 0 ? "null" : parts[parts.length-1];
+
             LzmaPipe pipe = null;
             try {
                 context.progress();
@@ -42,50 +45,10 @@ public class RevertGraphGenerator extends Configured implements Tool {
                 pipe = new LzmaPipe(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();
-                User lastEditor = null;
-                context.progress();
-                if (article.isNormalPage()) {
-                    System.err.println("processing article " + key + "(" + article.getName() + ")");
-                    Set<Long> fingerprints = new HashSet<Long>();
-                    while (true) {
-                        context.progress();
-                        Revision rev = parser.getNextRevision();
-                        if (rev == null) {
-                            break;
-                        }
-
-                        Long fingerprint = rev.getTextFingerprint();
-                        String code = null;
-                        if (rev.isVandalismRevert()) {
-                            code = "cv";
-                        } else if (rev.isRevert()) {
-                            code = "cr";
-                        } else if (fingerprints.contains(fingerprint)) {
-                            code = "fr";
-                        }
-                        if (code != null && lastEditor != null) {
-                            context.write(
-                                    new Text(key + "@" + article.getName()),
-                                    new Text(
-                                        rev.getId() + "\t" +
-                                        rev.getTimestamp() + "\t" +
-                                        code + "\t" +
-                                        lastEditor.getId() + "@" + lastEditor.getName() + "\t" +
-                                        rev.getContributor().getId() + "@" + rev.getContributor().getName())
-                                );
-//                            System.err.println(
-//                                        article.getName() + "\t" +
-//                                        rev.getId() + "\t" +
-//                                        rev.getTimestamp() + "\t" +
-//                                        code + "\t" +
-//                                        lastEditor.getId() + "@" + lastEditor.getName() + "\t" +
-//                                        rev.getContributor().getId() + "@" + rev.getContributor().getName()
-//                                    );
-                        }
-                        fingerprints.add(fingerprint);
-                        lastEditor = rev.getContributor();
-                    }
-                }
+                context.write(
+                        new Text(article.toUnderscoredString()),
+                        new Text(article.getId() + "\t" + article.getNamespace() + "\t" + path)
+                    );
             } catch (Exception e) {
                 context.progress();
                 System.err.println("error when processing " + key + ":");
@@ -116,7 +79,7 @@ public class RevertGraphGenerator extends Configured implements Tool {
         FileOutputFormat.setOutputPath(job, outputPath);
 
         
-        job.setJarByClass(RevertGraphGenerator.class);
+        job.setJarByClass(IndexGenerator.class);
         job.setInputFormatClass(KeyValueTextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setMapOutputKeyClass(Text.class);
@@ -139,7 +102,7 @@ public class RevertGraphGenerator extends Configured implements Tool {
      * <code>ToolRunner</code>.
      */
     public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new RevertGraphGenerator(), args);
+        int res = ToolRunner.run(new IndexGenerator(), args);
         System.exit(res);
     }
 }
