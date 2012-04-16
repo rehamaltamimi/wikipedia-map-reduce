@@ -5,7 +5,9 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -23,8 +25,11 @@ public class Revision {
     private String timestamp;
     private String comment;
     private boolean minor;
+    private boolean reverted = false;       // is this revision reverted by a later one
+    private boolean revert = false;         // does this revision revert an earlier one
+    private boolean vandalism = false;      // does this revision contain vandalism
 
-    public Revision(String id, String timestamp, User contributor, String text, String comment, boolean minor, boolean isVandalism) {
+    public Revision(String id, String timestamp, User contributor, String text, String comment, boolean minor) {
         this.id = id;
         this.contributor = contributor;
         this.text = text;
@@ -111,24 +116,27 @@ public class Revision {
        " | (\\b(rv|rev(ert)?|rm)\\b.*(blank|spam|nonsense|porn|mass\\sdelet|vand)) ",
           Pattern.DOTALL | Pattern.COMMENTS | Pattern.CASE_INSENSITIVE);
 
-    public boolean isVandalism() {
-        return isVandalismLoose() || isVandalismStrict();
+    public boolean isVandalismRevert() {
+        return isVandalismLooseRevert() || isVandalismStrictRevert();
     }
 
-    public boolean isVandalismLoose() {
+    public boolean isVandalismLooseRevert() {
+        if (revert) return true;
         if (comment == null) return false;
         return VLOOSE_RE.matcher(comment).find() || VSTRICT_RE.matcher(comment).find();
     }
     
-    public boolean isVandalismStrict() {
+    public boolean isVandalismStrictRevert() {
         if (comment == null) return false;
         return VSTRICT_RE.matcher(comment).find();
     }
 
+    public void setRevert(boolean revert) {
+        this.revert = revert;
+    }
+    
     public boolean isRevert() {
-        if (comment == null) return false;
-        String s = comment.toLowerCase();
-        return (s.indexOf("rv") >= 0 || s.indexOf("revert") >= 0);
+        return isVandalismLooseRevert();
     }
 
     public void setId(String id) {
@@ -154,9 +162,56 @@ public class Revision {
     public void setMinor(boolean minor) {
         this.minor = minor;
     }
+
+    public boolean isReverted() {
+        return reverted;
+    }
+
+    public void setReverted(boolean isReverted) {
+        this.reverted = isReverted;
+    }
+
+    public boolean isVandalism() {
+        return vandalism;
+    }
+
+    public void setVandalism(boolean vandalism) {
+        this.vandalism = vandalism;
+    }
     
     public List<String> getAnchorLinks() {
         return getAnchorLinks(this.text);
+    }
+
+    private static final Pattern ALL_LINK_PATTERN = Pattern.compile("(http://[^ \\]}<|]+)");
+    public static class Hyperlink {
+        private String url;
+        private int location;
+        public Hyperlink(String url, int location) {
+            this.url = url;
+            this.location = location;
+        }
+        public String getUrl() { return url; }
+        public int getLocation() { return location; }
+    }
+
+    public List<Hyperlink> getHyperlinks() {
+        List<Hyperlink> links = new ArrayList<Hyperlink>();
+        Matcher linkMatcher = ALL_LINK_PATTERN.matcher(text);
+        while (linkMatcher.find()) {
+            links.add(new Hyperlink(linkMatcher.group(1), linkMatcher.start()));
+        }
+        return links;
+    }
+
+    private static final Pattern SECTION_PATTERN = Pattern.compile("[^=]==([^=]+)==[^=]");
+    public Map<String, Integer> getSections() {
+        Map<String, Integer> sections = new HashMap<String, Integer>();
+        Matcher matcher = SECTION_PATTERN.matcher(text);
+        while (matcher.find()) {
+            sections.put(matcher.group(1), matcher.start());
+        }
+        return sections;
     }
 
     public static List<String> removeFragments(List<String> links) {

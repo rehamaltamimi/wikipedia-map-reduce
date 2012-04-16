@@ -81,10 +81,10 @@ public class WmfDiffMapper extends Mapper<Long, AllRevisions, Text, Text> {
         if (r.isRevert()) {
             record.put("revert", true);
         }
-        if (r.isVandalismLoose()) {
+        if (r.isVandalismLooseRevert()) {
             record.put("vandalism", 'l');
         }
-        if (r.isVandalismStrict()) {
+        if (r.isVandalismStrictRevert()) {
             record.put("vandalism", 's'); // strict overrides loose
         }
         if (r.isMinor()) {

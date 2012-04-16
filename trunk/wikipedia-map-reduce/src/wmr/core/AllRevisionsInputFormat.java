@@ -78,7 +78,7 @@ public class AllRevisionsInputFormat extends FileInputFormat<Long, AllRevisions>
             }
         }
 
-        private boolean processLine(Text line) {
+        public boolean processLine(Text line) {
             closePipe();
 
             int i = line.find("\t");
@@ -106,7 +106,7 @@ public class AllRevisionsInputFormat extends FileInputFormat<Long, AllRevisions>
         }
 
 
-        private static class RevisionIterable implements Iterable<Revision>, Iterator<Revision> {
+        public static class RevisionIterable implements Iterable<Revision>, Iterator<Revision> {
             private PageParser parser = null;
             private Revision revision = null;
             private Page page;

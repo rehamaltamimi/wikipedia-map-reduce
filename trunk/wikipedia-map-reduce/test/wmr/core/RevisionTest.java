@@ -1,10 +1,5 @@
 package wmr.core;
 
-import wmr.core.Edge;
-import wmr.core.PageParser;
-import wmr.core.Page;
-import wmr.core.Revision;
-import wmr.core.User;
 import java.io.IOException;
 import static org.junit.Assert.*;
 
@@ -12,11 +7,13 @@ import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.List;
+import java.util.Map;
 
 import javax.xml.stream.XMLStreamException;
 
 import org.junit.Before;
 import org.junit.Test;
+import wmr.core.Revision.Hyperlink;
 
 public class RevisionTest {
 
@@ -46,20 +43,20 @@ public class RevisionTest {
 	 */
 	private PageParser parser;
         /**
-	 * @uml.property  name="citeRevision"
+	 * @uml.property  name="palmerstonRev"
 	 * @uml.associationEnd  
 	 */
-	private Revision citeRevision;
+	private Revision palmerstonRev;
         /**
-	 * @uml.property  name="refRevision"
+	 * @uml.property  name="mauritiusRev"
 	 * @uml.associationEnd  
 	 */
-	private Revision refRevision;
-        private Revision refRevision2;
+	private Revision mauritiusRev;
+        private Revision refTestRev;
 
 	@Before public void setUp() throws FileNotFoundException, XMLStreamException, IOException {
 		user = new User("Just H", "2033654");
-		revision = new Revision("119623749", "2007-04-02T01:52:36Z", user, "#REDIRECT[[Capo di tutti capi]]", "Capo di tutti capi", false, false);
+		revision = new Revision("119623749", "2007-04-02T01:52:36Z", user, "#REDIRECT[[Capo di tutti capi]]", "Capo di tutti capi", false);
 		user.addToRevisions(revision);
 		article = new Page("Capo di tutti capo", "10414100");
                 article.addToRevisions(revision);
@@ -70,12 +67,12 @@ public class RevisionTest {
 		user.addToEdges(link);
 		article.addToEdges(link);
 		parser = new PageParser(new BufferedInputStream(new FileInputStream("virginislandecon.xml")));
-                citeRevision = new Revision("123456", "2011-06-11T14:35:00Z", user,
-                        readFile("palmerstonForts.txt"),"Undid revision by VictorianForts",false,false);
-                refRevision = new Revision("123456", "2011-06-11T14:35:00Z", user,
-                        readFile("mauritiusBroadcastingCorporation.txt"),"Undid revision by VictorianForts",false,false);
-                refRevision2 = new Revision("123456", "2011-06-11T14:35:00Z", user,
-                        readFile("refTest.txt"),"Undid revision by VictorianForts",false,false);
+                palmerstonRev = new Revision("123456", "2011-06-11T14:35:00Z", user,
+                        readFile("palmerstonForts.txt"),"Undid revision by VictorianForts",false);
+                mauritiusRev = new Revision("123456", "2011-06-11T14:35:00Z", user,
+                        readFile("mauritiusBroadcastingCorporation.txt"),"Undid revision by VictorianForts",false);
+                refTestRev = new Revision("123456", "2011-06-11T14:35:00Z", user,
+                        readFile("refTest.txt"),"Undid revision by VictorianForts",false);
 	}
 
     private String readFile(String fileName) throws FileNotFoundException, IOException {
@@ -102,11 +99,11 @@ public class RevisionTest {
     }
 
     @Test public void testRedirects() throws XMLStreamException {
-        assertFalse(refRevision.isRedirect());
+        assertFalse(mauritiusRev.isRedirect());
         assertTrue(revision.isRedirect());
         assertEquals(revision.getRedirectDestination(), "Capo di tutti capi");
         Revision weird = new Revision("123456", "2011-06-11T14:35:00Z", user,
-                        "asdfasf asdfas\n #REDIRECT  [[foo\\blah! de  ]]","Undid revision by VictorianForts",false,false);
+                        "asdfasf asdfas\n #REDIRECT  [[foo\\blah! de  ]]","Undid revision by VictorianForts",false);
         assertTrue(weird.isRedirect());
         assertEquals(weird.getRedirectDestination(), "foo\\blah! de");
     }
@@ -114,16 +111,16 @@ public class RevisionTest {
     @Test public void testDisambiguation() {
         assertFalse(revision.isDisambiguation());
         Revision r1 = new Revision("123456", "2011-06-11T14:35:00Z", user,
-                        "boo {{disambig}}","Undid revision by VictorianForts",false,false);
+                        "boo {{disambig}}","Undid revision by VictorianForts",false);
         assertTrue(r1.isDisambiguation());
         Revision r2 = new Revision("123456", "2011-06-11T14:35:00Z", user,
-                        "{{disambiguation}}","Undid revision by VictorianForts",false,false);
+                        "{{disambiguation}}","Undid revision by VictorianForts",false);
         assertTrue(r2.isDisambiguation());
         Revision r3 = new Revision("123456", "2011-06-11T14:35:00Z", user,
-                        "boo {{hndis | foo bar}}  ","Undid revision by VictorianForts",false,false);
+                        "boo {{hndis | foo bar}}  ","Undid revision by VictorianForts",false);
         assertTrue(r3.isDisambiguation());
         Revision r4 = new Revision("123456", "2011-06-11T14:35:00Z", user,
-                        "boo {{dab | 1 = 3}}","Undid revision by VictorianForts",false,false);
+                        "boo {{dab | 1 = 3}}","Undid revision by VictorianForts",false);
         assertTrue(r4.isDisambiguation());
     }
 
@@ -148,6 +145,23 @@ public class RevisionTest {
         assertTrue(links.contains("Dah deh"));
     }
 
+    @Test public void testHyperlinks() {
+        assertEquals(palmerstonRev.getHyperlinks().size(), 40);
+        Hyperlink first = palmerstonRev.getHyperlinks().get(0);
+        Hyperlink last = palmerstonRev.getHyperlinks().get(palmerstonRev.getHyperlinks().size() - 1);
+        assertEquals(first.getLocation(), 3107);
+        assertEquals(last.getLocation(), 12231);
+    }
+
+    @Test public void testSections() {
+        Map<String, Integer> sections = palmerstonRev.getSections();
+        assertEquals(sections.size(), 5);
+        assertTrue(sections.containsKey("Western end"));
+        assertTrue(sections.containsKey("External links"));
+        assertEquals(sections.get("Western end"), new Integer(5881));
+        assertEquals(sections.get("External links"), new Integer(12209));
+    }
+
 
     @Test public void testVandalism() {
         assertTrue(isVandalism("rvv"));
@@ -164,11 +178,11 @@ public class RevisionTest {
     private boolean isVandalism(String comment) {
         Revision r = makeRevision("");
         r.setComment(comment);
-        return r.isVandalism();
+        return r.isVandalismRevert();
     }
     
     private Revision makeRevision(String text) {
         return new Revision("123456", "2011-06-11T14:35:00Z", user,
-                        text,"Undid revision by VictorianForts",false,false);
+                        text,"Undid revision by VictorianForts",false);
     }
 }

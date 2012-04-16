@@ -133,4 +133,10 @@ public class Utils {
         }
         return hash;
     }
+
+    public static String cleanupString(String str, int maxLen) {
+        str = (str.length() > maxLen) ? str.substring(0, maxLen - 3) + "..." : str;
+        str = str.replaceAll("\\s+", " ");
+        return str;
+    }
 }

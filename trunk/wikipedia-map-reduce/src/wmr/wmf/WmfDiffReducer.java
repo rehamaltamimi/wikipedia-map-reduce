@@ -4,6 +4,7 @@ import gnu.trove.map.hash.TLongIntHashMap;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -94,7 +95,11 @@ public class WmfDiffReducer extends Reducer<Text, Text, Text, Text> {
 
     private void addRevDiffs(String prevText, String text, Map<String, Object> jsonObj) {
         diff_match_patch dmp = new diff_match_patch();
-        List<Diff> diffs = dmp.diff_main(prevText, text, false);
+        LinkedList<Diff> diffs = dmp.diff_main(prevText, text, false);
+
+        // may be slightly non-optimal, but makes much more sense
+        dmp.diff_cleanupSemantic(diffs);
+
         List<Map<String, Object>> diffJson = new ArrayList<Map<String, Object>>();
         int insertedBytes = 0;
         int deletedBytes = 0;
