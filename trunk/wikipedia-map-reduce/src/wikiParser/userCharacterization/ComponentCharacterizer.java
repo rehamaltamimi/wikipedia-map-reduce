@@ -247,7 +247,7 @@ public class ComponentCharacterizer {
                 average = 0;
             }
             //add cluster average edit size
-            sb.append(average).append("|");
+            sb.append(average).append("#").append(users).append("|");
             //for each side, compute average without decimal
             //add to output string
             for (int component = 0; component < componentMapping.keySet().size(); component++) {
@@ -261,7 +261,7 @@ public class ComponentCharacterizer {
                 } else {
                     componentAverage = 0;
                 }
-                sb.append(componentAverage);
+                sb.append(componentAverage).append("#").append(componentMapping.get(component).size());
                 if (component % 2 == 0) {
                     sb.append(" ");
                 } else {
