@@ -53,32 +53,18 @@ public class CitationParser {
             if (!open.find()) {
                 break;
             }
-            int openIndex = open.end();
-            int closeIndex = -1;
             Matcher close = REF_END.matcher(content);
-            Matcher open2 = REF_START.matcher(content.substring(openIndex));
-            if (close.find()) {
-                closeIndex = close.start();
-            }
-            if (open2.find() && (!close.find() || (open.end() + open2.start() < closeIndex))) {
-                System.err.println("Two consecutive opens found in reference found in page " + page.getName() +
-                        ", revision " + revision.getId() + " at time " + revision.getTimestamp() +
-                        " beginning at '" + Utils.cleanupString(content.substring(openIndex), 50) + "'");
-                closeIndex = open2.start() + openIndex;
-            }
-            
-            if (closeIndex < 0 || openIndex >= closeIndex) {
+            if (!close.find() || open.end() >= close.start()) {
                 String str = content.substring(open.start());
-                str = (str.length() > 50) ? str.substring(0, 47) + "..." : str;
-                str = str.replaceAll("\\s+", " ");
+                str = Utils.cleanupString(str, 47);
                 System.err.println("No end of reference found in page " + page.getName() +
                         ", revision " + revision.getId() + " at time " + revision.getTimestamp() +
                         " beginning at '" + str + "'");
                 break;
             }
             // we have a beginning and an ending!
-            String body = content.substring(openIndex, closeIndex);
-            cites.addAll(processOneRefTag(page, revision, body, i + openIndex));
+            String body = content.substring(open.end(), close.start());
+            cites.addAll(processOneRefTag(page, revision, body, i + open.start()));
             content = content.substring(close.end());
             i += close.end();
         }
