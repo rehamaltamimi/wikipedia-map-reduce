@@ -1,6 +1,5 @@
 package wmr.core;
 
-import wmr.core.PageParser;
 import java.io.IOException;
 import static org.junit.Assert.*;
 
@@ -14,10 +13,6 @@ import javax.xml.stream.XMLStreamException;
 import org.junit.Before;
 import org.junit.Test;
 
-import wmr.core.Page;
-import wmr.core.Edge;
-import wmr.core.Revision;
-import wmr.core.User;
 import wmr.citations.Citation;
 
 public class CitationTest {
