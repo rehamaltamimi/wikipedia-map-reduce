@@ -136,17 +136,11 @@ public class CitationParser {
         return cites;
     }
 
-    private static final Pattern LAST_REF_START = Pattern.compile(".*(<[\\s]*ref[^/]*?>).*", Pattern.MULTILINE | Pattern.DOTALL);
-    private static final Pattern LAST_REF_END = Pattern.compile(".*(<[\\s]*/[\\s]*ref[\\s]*>).*", Pattern.MULTILINE | Pattern.DOTALL);
     private int getCiteStart(Revision r, Template t) {
         String beforeCite = r.getText().substring(0, t.getStart());
         while (beforeCite.endsWith("{")) {
             beforeCite = beforeCite.substring(0, beforeCite.length()-1);
         }
-//        Matcher m0 = LAST_REF_START.matcher(beforeCite);
-//        Matcher m1 = LAST_REF_END.matcher(beforeCite);
-//        int i = (m0.matches()) ? m0.start(1) : -1;
-//        int j = (m1.matches()) ? m1.end(1) : -1;
         int i = beforeCite.lastIndexOf("<ref");
         int j = beforeCite.lastIndexOf("</ref");
         if (i >= 0 && j < 0) {    // "<ref>{{template"
