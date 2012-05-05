@@ -19,6 +19,7 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import wmr.core.*;
+import wmr.util.Utils;
 
 /**
  *
@@ -39,7 +40,8 @@ public class RevertGraphGenerator extends Configured implements Tool {
             User lastEditor = null;
             context.progress();
             if (article.isNormalPage()) {
-                Queue<Long> fingerprints = new LinkedList<Long>();
+                LinkedList<Long> windowPrints = new LinkedList<Long>();
+                LinkedList<Revision> windowRevs = new LinkedList<Revision>();
                 for (Revision rev : revs.getRevisions()) {
                     context.progress();
                     if (rev == null) {
@@ -48,39 +50,49 @@ public class RevertGraphGenerator extends Configured implements Tool {
 
                     Long fingerprint = rev.getTextFingerprint();
                     String code = null;
+                    Revision reverted = null;
                     if (rev.isVandalismStrictRevert()) {
                         code = "vs";
                     } else if (rev.isVandalismLooseRevert()) {
                         code = "vl";
-                    } else if (fingerprints.contains(fingerprint)) {
+                    } else if (windowPrints.contains(fingerprint)) {
                         code = "f";
                     }
                     if (code != null && rev.getContributor().isBot()) {
                         code = "b" + code;
                     }
-                    if (code != null && rev.getText().length() < 20) {
+                    if (code != null && rev.getText().length() < 60) {
                         code += "s" + code;
                     }
-                    if (code != null && lastEditor != null) {
+                    if (code != null && !windowRevs.isEmpty()) {
+                        int i = windowPrints.indexOf(fingerprint);
+                        reverted = windowRevs.get((i == -1) ? 0 : i);
+                    }
+                    if (reverted != null) {
                         context.write(
                                 new Text(pageId + "@" + article.getName()),
-                                new Text(
-                                    rev.getId() + "\t" +
-                                    rev.getTimestamp() + "\t" +
-                                    code + "\t" +
-                                    lastEditor.getId() + "@" + lastEditor.getName() + "\t" +
-                                    rev.getContributor().getId() + "@" + rev.getContributor().getName())
+                                new Text(code + "\t" + formatRevision(rev) + "\t" + formatRevision(reverted))
                             );
                     }
-                    fingerprints.offer(fingerprint);
-                    if (fingerprints.size() > WINDOW_SIZE) {
-                        fingerprints.remove();
+                    windowPrints.add(0, fingerprint);
+                    windowRevs.add(0, rev);
+                    if (windowPrints.size() > WINDOW_SIZE) {
+                        windowPrints.remove(windowPrints.size() - 1);
+                        windowRevs.remove(windowRevs.size() - 1);
                     }
-
-                    lastEditor = rev.getContributor();
                 }
             }
         }
+    }
+
+    public static String formatRevision(Revision rev) {
+        String comment = rev.getComment();
+        if (comment == null || comment.length() == 0) comment = "null";
+        comment = Utils.cleanupString(comment, 250);
+        return rev.getId() + "\t"
+             + rev.getTimestamp() + "\t"
+             + rev.getContributor().getId() + "@" + rev.getContributor().getName() + "\t"
+             + comment;
     }
 
     public int run(String args[]) throws Exception {
