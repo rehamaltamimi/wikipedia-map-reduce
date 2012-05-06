@@ -37,7 +37,6 @@ public class RevertGraphGenerator extends Configured implements Tool {
         @Override
         public void map(Long pageId, AllRevisions revs, Mapper.Context context) throws IOException, InterruptedException {
             Page article = revs.getPage();
-            User lastEditor = null;
             context.progress();
             if (article.isNormalPage()) {
                 LinkedList<Long> windowPrints = new LinkedList<Long>();
@@ -50,7 +49,6 @@ public class RevertGraphGenerator extends Configured implements Tool {
 
                     Long fingerprint = rev.getTextFingerprint();
                     String code = null;
-                    Revision reverted = null;
                     if (rev.isVandalismStrictRevert()) {
                         code = "vs";
                     } else if (rev.isVandalismLooseRevert()) {
@@ -58,17 +56,15 @@ public class RevertGraphGenerator extends Configured implements Tool {
                     } else if (windowPrints.contains(fingerprint)) {
                         code = "f";
                     }
-                    if (code != null && rev.getContributor().isBot()) {
-                        code = "b" + code;
-                    }
-                    if (code != null && rev.getText().length() < 60) {
-                        code += "s" + code;
-                    }
                     if (code != null && !windowRevs.isEmpty()) {
                         int i = windowPrints.indexOf(fingerprint);
-                        reverted = windowRevs.get((i == -1) ? 0 : i);
-                    }
-                    if (reverted != null) {
+                        Revision reverted = windowRevs.get((i == -1) ? 0 : i);
+                        if (rev.getContributor().isBot() || reverted.getContributor().isBot()) {
+                            code = "b" + code;
+                        }
+                        if (rev.getText().length() < 60) {
+                            code = "s" + code;
+                        }
                         context.write(
                                 new Text(pageId + "@" + article.getName()),
                                 new Text(code + "\t" + formatRevision(rev) + "\t" + formatRevision(reverted))
