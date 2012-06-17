@@ -17,6 +17,10 @@ public class User extends Vertex {
 		super(name, id);
 	}
 
+        public boolean isAnonymous() {
+            return (getName() == null || getName().equals("null"));
+        }
+
 	public ArrayList<Revision> getRevisionsByArticle(Page article) {
 		ArrayList<Revision> revList = new ArrayList<Revision>();
 		for (Revision r : article.getRevisions()) {

@@ -183,7 +183,7 @@ public class Revision {
         return getAnchorLinks(this.text);
     }
 
-    private static final Pattern ALL_LINK_PATTERN = Pattern.compile("(http://[^ \\]}<|]+)");
+    private static final Pattern ALL_LINK_PATTERN = Pattern.compile("(http[s]*://[^ \\]}<|]+)");
     public static class Hyperlink {
         private String url;
         private int location;
