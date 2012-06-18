@@ -82,6 +82,8 @@ public class PageParser {
         }
         String title = searchTextElement("title", true);
         //		System.err.println("title is " + title);
+
+        String ns = matchTextElement("ns", false);  // unused, for now.
         String id = matchTextElement("id", true);
         article = new Page(title, id);
         return article;
