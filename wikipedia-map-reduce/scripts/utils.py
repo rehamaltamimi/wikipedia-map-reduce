@@ -15,7 +15,8 @@ FIND_ID = re.compile('<id>(\d+)</id>').search
 FIND_TITLE = re.compile('<title>([^<]+)</title>').search
 FIND_NS = re.compile('<namespace [^>]+>([^<]+)</namespace>').search
 
-HEADER = """<?xml version="1.0" encoding="utf-8"?>
+XML_HEADER = """<?xml version="1.0" encoding="utf-8"?>"""
+HEADER = XML_HEADER + """
 <mediawiki xmlns="http://www.mediawiki.org/xml/export-0.3/" version="0.3">
 """
 
@@ -49,7 +50,7 @@ class Writer:
             return
         logging.debug('writer received %s bytes' % len(page))
         if self.debug:
-            self.debug.write(page.encode('UTF-8'))
+            self.debug.write(page)
 
         # launch the compressor if necessary
         # it will only be necessary at the beginning of each article
@@ -65,7 +66,7 @@ class Writer:
         logging.debug('writer about to write %s bytes' % len(page))
         remaining = page
         while remaining:
-            n = os.write(self.compressor.w, remaining.encode('UTF-8'))
+            n = os.write(self.compressor.w, remaining)
             assert(n >= 0)
             remaining = remaining[n:]
 
