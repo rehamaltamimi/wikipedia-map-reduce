@@ -14,4 +14,4 @@ mkdir -p $dest/logs
 
 echo $@ | \
 tr ' ' '\n' | \
-parallel ./scripts/encode_one.sh $current $dest {}
+parallel --progress ./scripts/encode_one.sh $current $dest {}
