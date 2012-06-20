@@ -5,6 +5,26 @@ import java.io.*;
 import org.joda.time.Duration;
 import org.joda.time.DateTime;
 
+/**
+ * 
+ * Takes a list of tab-delimited username, timestamp doubles and determines which 
+ * edits constitute a session, and creates an output file of tab-delimited 
+ * username, beginning session timestamp, ending session timestamp, session 
+ * duration (in seconds) 4-tuples, each corresponding to the session of a user.
+ * 
+ * The input list must be sorted by username and timestamp. If ordered correctly, 
+ * the output file will be ordered the same way.
+ * 
+ * Currently the criteria for a session is an hour between edits, although this can be 
+ * easily parameterized with a few minor changes. Sessions consisting of one edit 
+ * are defined as having zero length. An offset is provided as an argument to give 
+ * these edits a nonzero value (the offset in seconds is added to the duration of every 
+ * listed session).
+ * 
+ * @author Guanyu Wang
+ * @author Andy Bristol
+ *
+ */
 public class SessionBreaker {
 	
 	public static String user = null;
