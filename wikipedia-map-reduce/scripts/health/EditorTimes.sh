@@ -12,9 +12,9 @@ echo "placing jar in $jar_dest"
 s3cmd put ./dist/wikipedia-map-reduce.jar $jar_dest || exit 1
 
 elastic-mapreduce --create --name 'EditorTimes' \
-    --instance-group master --instance-type cc1.4xlarge \
+    --instance-group master --instance-type cc2.8xlarge \
     --instance-count 1 \
-    --instance-group core --instance-type cc1.4xlarge \
+    --instance-group core --instance-type cc2.8xlarge \
     --instance-count 1 \
     --instance-group task --instance-type cc2.8xlarge \
     --instance-count 6 --bid-price 2.00  \
@@ -24,4 +24,5 @@ elastic-mapreduce --create --name 'EditorTimes' \
     --enable-debugging \
     --jar $jar_dest \
     --main-class $class \
-    --args "$input,$output"
+    --args "$input,$output" \
+    --availability-zone us-east-1e 

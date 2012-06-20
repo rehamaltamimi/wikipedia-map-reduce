@@ -36,18 +36,18 @@ public class EditorTimes extends Configured implements Tool {
             Page article = revs.getPage();
             context.progress();
             
-                for (Revision rev : revs.getRevisions()) {
-                    context.progress();
-                    if (rev == null) {
-                        continue;
-                    }
-                    User u = rev.getContributor();
-                    if (!u.isBot() && !u.isAnonymous()) {
-                        String key = u.getName();
-                        String val = "" + rev.getTimestamp();
-                        context.write(new Text(key), new Text(val));
-                    }
-                }            
+            for (Revision rev : revs.getRevisions()) {
+               context.progress();
+               if (rev == null) {
+                    continue;
+               }
+               User u = rev.getContributor();
+               if (!u.isBot() && !u.isAnonymous()) {
+                  String key = u.getName();
+                  String val = "" + rev.getTimestamp();
+                  context.write(new Text(key), new Text(val));
+               }
+            }            
         }
     }
 
