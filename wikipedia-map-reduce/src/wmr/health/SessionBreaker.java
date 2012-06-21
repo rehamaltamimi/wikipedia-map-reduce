@@ -21,6 +21,9 @@ import org.joda.time.DateTime;
  * these edits a nonzero value (the offset in seconds is added to the duration of every 
  * listed session).
  * 
+ * Usage:
+ * <Run SessionBreaker.java as main class> <input file path> <output file path> <session offset>
+ * 
  * @author Guanyu Wang
  * @author Andy Bristol
  *
