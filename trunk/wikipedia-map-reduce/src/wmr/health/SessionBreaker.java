@@ -80,7 +80,7 @@ public class SessionBreaker {
 	        	 
 	        	Collator collator = Collator.getInstance(Locale.ROOT);
 	        	if (collator.compare(user, currentuser) > 0)
-	        		System.err.println("Input file not sorted by username.");
+	        		System.err.println("Input file not sorted by username: "+user+", "+currentuser);
 	        	*/
 	        	
 	        	interSessionDuration = new Duration(lasttime, currenttime);
