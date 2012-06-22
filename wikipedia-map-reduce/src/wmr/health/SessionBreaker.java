@@ -1,6 +1,8 @@
 package wmr.health;
 
 import java.io.*;
+import java.text.Collator;
+import java.util.Locale;
 
 import org.joda.time.Duration;
 import org.joda.time.DateTime;
@@ -60,7 +62,7 @@ public class SessionBreaker {
 	        	String[] value = line.split("\t");
 	        	
 	        	if(value.length < 2)
-	        		System.out.println("Expecting two values: username, timestamp!");
+	        		System.err.println("Expecting two values: username, timestamp!");
 	        	
 	        	currentuser = value[0];
 	        	currenttime = DateTime.parse(value[1]);
@@ -70,6 +72,16 @@ public class SessionBreaker {
 	        		lasttime = currenttime;
 	        		user = currentuser;
 	        	}
+	        	
+	        	if (user.equals(currentuser) && lasttime.compareTo(currenttime) > 0)
+	        		System.err.println("Input file not sorted by timestamp.");
+	        	
+	        	/* This does not work, even though by the Collator/Locale doc it should.
+	        	 
+	        	Collator collator = Collator.getInstance(Locale.ROOT);
+	        	if (collator.compare(user, currentuser) > 0)
+	        		System.err.println("Input file not sorted by username.");
+	        	*/
 	        	
 	        	interSessionDuration = new Duration(lasttime, currenttime);
 	        	if (!currentuser.equals(user) || interSessionDuration.getStandardHours() >= 1)
@@ -84,11 +96,11 @@ public class SessionBreaker {
 	        bufferedwriter.close();
 			
 		} catch (FileNotFoundException e) {
-			System.out.println("File not found!");
+			System.err.println("File not found!");
 			e.printStackTrace();
 		}
 		catch (IOException e) {
-			System.out.println("There was an IO error reading or writing.");
+			System.err.println("There was an IO error reading or writing.");
 			e.printStackTrace();
 		}
 		
@@ -122,7 +134,7 @@ public class SessionBreaker {
 			try {
 				outputFile.createNewFile();
 			} catch (IOException e) {
-				System.out.println("IO error occurred while creating output file.");
+				System.err.println("IO error occurred while creating output file.");
 				e.printStackTrace();
 				System.exit(1);
 			}
