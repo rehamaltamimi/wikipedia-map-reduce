@@ -95,7 +95,7 @@ public class SessionBreaker {
 	}
 	
 	public static void newSession() throws IOException {
-		System.out.println(user+"\t"+firsttime.toString()+"\t"+lasttime.toString());
+		//System.out.println(user+"\t"+firsttime.toString()+"\t"+lasttime.toString());
 		sessionDuration = new Duration(firsttime, lasttime);
 		long seconds = sessionDuration.getStandardSeconds()+offset;
 		bufferedwriter.write(user + "\t" + firsttime.toString() + "\t" + 
