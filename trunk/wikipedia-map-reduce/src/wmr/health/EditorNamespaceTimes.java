@@ -6,7 +6,6 @@ package wmr.health;
 
 
 import java.io.IOException;
-import java.util.AbstractMap;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
