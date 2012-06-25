@@ -21,8 +21,6 @@ mkdir ./sessions
 while ($index <= $end)
 
 	# setup the file name to use the five-digit emr indices
-	
-	echo start words
 
 	@ numchars = `echo $index | wc -m`
 	if ($numchars == 2) then
@@ -37,12 +35,9 @@ while ($index <= $end)
 		set fileindex = $index
 	endif
 
-	echo end words
-
 	set filename = ${nametemplate}${fileindex}
-	echo using file $filename
-
-	echo start translate
+	
+	echo Translating file $filename.
 	
 	echo Sanitizing usernames, removing anons and pre-2003 data.
 	cat ./$filename | python $tooldir/cleanNames.py > ./cleaned/$filename
@@ -56,7 +51,7 @@ while ($index <= $end)
 	echo Translating usage and survival data.
 	cat ./sessions/$filename | python $tooldir/obtainInfo.py > ./out/$filename
 	
-	echo end translate
+	echo Finished translating file $filename.
 
 	@ index = $index + 1
 
