@@ -41,22 +41,30 @@ public class SessionBreaker {
 	public static DateTime currenttime = null;
 	public static long offset = 0;
 	
-	public static FileReader filereader;
-	public static BufferedReader bufferedreader;
-	public static FileWriter filewriter;
-	public static BufferedWriter bufferedwriter;
-
+	public static FileInputStream inputStream = null;
+	public static InputStreamReader streamReader = null;
+	public static BufferedReader bufferedReader = null;
+	
+	public static FileOutputStream outputStream = null;
+	public static OutputStreamWriter streamWriter = null;
+	public static BufferedWriter bufferedWriter = null;
+	
+	public static final String UTF_8 = "UTF-8";
+	
 	public static void breakSessions (File inputFile, File outputFile){
 		
 		
 		try {
-			filereader = new FileReader (inputFile);
-			bufferedreader = new BufferedReader (filereader);
 			
-			filewriter = new FileWriter (outputFile);
-			bufferedwriter = new BufferedWriter (filewriter);
+			inputStream = new FileInputStream(inputFile);
+			streamReader = new InputStreamReader(inputStream, UTF_8);
+			bufferedReader = new BufferedReader(streamReader);
 			
-	        String line = bufferedreader.readLine();
+			outputStream = new FileOutputStream(outputFile);
+			streamWriter = new OutputStreamWriter(outputStream, UTF_8);
+			bufferedWriter = new BufferedWriter(streamWriter);
+			
+	        String line = bufferedReader.readLine();
 	       
 	        while (line != null) {	        		        		
 	        	String[] value = line.split("\t");
@@ -74,7 +82,7 @@ public class SessionBreaker {
 	        	}
 	        	
 	        	if (user.equals(currentuser) && lasttime.compareTo(currenttime) > 0)
-	        		System.err.println("Input file not sorted by timestamp.");
+	        		System.err.println("Input file not sorted by timestamp: "+user+", "+currentuser);
 	        	
 	        	/* This does not work, even though by the Collator/Locale doc it should.
 	        	 
@@ -89,11 +97,11 @@ public class SessionBreaker {
 	        	
 	        	lasttime = currenttime;
 	        	
-	        	line = bufferedreader.readLine();
+	        	line = bufferedReader.readLine();
 	        }
 	        
-	        bufferedreader.close();
-	        bufferedwriter.close();
+	        bufferedReader.close();
+	        bufferedWriter.close();
 			
 		} catch (FileNotFoundException e) {
 			System.err.println("File not found!");
@@ -110,7 +118,7 @@ public class SessionBreaker {
 		//System.out.println(user+"\t"+firsttime.toString()+"\t"+lasttime.toString());
 		sessionDuration = new Duration(firsttime, lasttime);
 		long seconds = sessionDuration.getStandardSeconds()+offset;
-		bufferedwriter.write(user + "\t" + firsttime.toString() + "\t" + 
+		bufferedWriter.write(user + "\t" + firsttime.toString() + "\t" + 
 				lasttime.toString() + "\t" + seconds +"\n");
 		firsttime = currenttime;
 		lasttime = currenttime;
