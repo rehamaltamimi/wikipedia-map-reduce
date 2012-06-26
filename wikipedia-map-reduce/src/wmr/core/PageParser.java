@@ -85,7 +85,7 @@ public class PageParser {
 
         String ns = matchTextElement("ns", false);  // unused, for now.
         String id = matchTextElement("id", true);
-        article = new Page(title, id);
+        article = new Page(title, id, ns);
         return article;
     }
 
