@@ -1,6 +1,6 @@
 bucket=s3://macalester                          # s3 bucket
 health=$bucket/health                           # everything for maxima goes under here
-input=$bucket/wikipedia/en-2011-11-15/          # the processed full text input file
+input=$bucket/wikipedia/en-2012-05-02/          # the processed full text input file
 output=$health/out/editornamespacetimes/        # output directory. CAREFUL - WILL BE OVERWRITTEN!
 logs=$health/logs
 class=wmr.health.EditorNamespaceTimes
