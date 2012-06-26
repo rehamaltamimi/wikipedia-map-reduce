@@ -13,6 +13,7 @@ public class Vertex {
 
 	private String name;
 	private String id;
+	private String ns;
 	private List<Revision> revisions = new ArrayList<Revision>();
 	private List<Edge> edges = new ArrayList<Edge>();
 

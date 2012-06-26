@@ -53,7 +53,7 @@ public class EditorNamespaceTimes extends Configured implements Tool {
                   // Output the namespace (between user name and timestamp).Format!
                   //System.out.println(namespace);                 // test namespace
                   //AbstractMap.SimpleEntry<String, String> pair = new AbstractMap.SimpleEntry<String, String>(namespace, val);
-                  String pair = namespace + "\t" + val;
+                  String pair = val + "\t" + namespace;
                   context.write(new Text(key), new Text(pair));
                }
             }            
