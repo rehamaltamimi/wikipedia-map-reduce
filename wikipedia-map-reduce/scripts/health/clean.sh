@@ -1,16 +1,16 @@
 #!/bin/csh
 
-# Sort all the extracted datafiles using unix sort
-# Specify a starting index (0) and an ending index (index of last part-r-xxxxx file where the index is xxxxx)\
+# Clean extracted datafiles to remove anonymous contributors and data that is before 2003
+# Specify a starting index (0) and an ending index (the xxxxx in the last part-r-xxxxx you want to clean)
 # Specify a directory where the input files are.
 # Specify a directory where the output files will go.
-# Specify optional extra arguments to give to unix sort.
+# Specify a directory where the python clean script lives.
 
 set begin = $1
 set end = $2
-set inputdir = $3
+set inputdir = $3 
 set outputdir = $4
-set sortargs = $5
+set tooldir = $5
 
 set nametemplate = "part-r-"
 
@@ -19,7 +19,7 @@ set numchars = 0
 set filename = nametemplate
 set fileindex = "0"
 
-echo Sorting files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and optional sort args $sortargs.
+echo Cleaning files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and clean script from $tooldir.
 
 mkdir $outputdir
 
@@ -42,14 +42,14 @@ while ($index <= $end)
 
 	set filename = ${nametemplate}${fileindex}
 	
-	echo Sorting file $filename.
-
-	sort -o $outputdir/$filename $inputdir/$filename
+	echo Cleaning file $filename.
 	
-	echo Finished sorting file $filename.
+	cat $inputdir/$filename | python $tooldir/cleanNames.py > $outputdir/$filename
+	
+	echo Finished cleaning file $filename.
 
 	@ index = $index + 1
 
 end
 
-echo Finished sorting files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and optional sort args $sortargs.
+echo Finished cleaning files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and clean script from $tooldir.
