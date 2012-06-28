@@ -24,15 +24,14 @@ import wmr.core.*;
 /**
  *
  * @author Shilad Sen
- * @editor Guanyu Wang
  * 
  */
-public class EditorNamespaceTimes extends Configured implements Tool {
+public class GetBytes extends Configured implements Tool {
 
     public static class MyMapper extends Mapper<Long, AllRevisions, Text, Text> {
 
         /**
-         * Outputs contributor name, namespace and timestamp for every revision. -Guanyu
+         * Outputs ...
          */
         @Override
         public void map(Long pageId, AllRevisions revs, Mapper.Context context) throws IOException, InterruptedException {
@@ -47,11 +46,13 @@ public class EditorNamespaceTimes extends Configured implements Tool {
                User u = rev.getContributor();
                if (!u.isBot() && !u.isAnonymous()) {
                   String key = u.getName();
-                  String namespace = "" + article.getNamespace();  //getting namespace
+                  String namespace = "" + article.getNamespace();  
                   String val = "" + rev.getTimestamp();
                   
-                  //Output the namespace (between user name and timestamp).
-                  //System.out.println(namespace);                 
+                  String text = rev.getText();
+                  byte[] bytes = text.getBytes("UTF_8");
+                  int numbytes = bytes.length;
+                                 
                   String pair = val + "\t" + namespace;
                   context.write(new Text(key), new Text(pair));
                }
@@ -77,7 +78,7 @@ public class EditorNamespaceTimes extends Configured implements Tool {
         FileOutputFormat.setOutputPath(job, outputPath);
 
         
-        job.setJarByClass(EditorNamespaceTimes.class);
+        job.setJarByClass(GetBytes.class);
         job.setInputFormatClass(AllRevisionsInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setMapOutputKeyClass(Text.class);
@@ -100,7 +101,7 @@ public class EditorNamespaceTimes extends Configured implements Tool {
      * <code>ToolRunner</code>.
      */
     public static void main(String[] args) throws Exception {
-        int res = ToolRunner.run(new EditorNamespaceTimes(), args);
+        int res = ToolRunner.run(new GetBytes(), args);
         System.exit(res);
     }
 }
