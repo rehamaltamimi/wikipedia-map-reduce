@@ -19,7 +19,7 @@ set numchars = 0
 set filename = nametemplate
 set fileindex = "0"
 
-echo Sorting files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and optional sort args $sortargs.
+echo `date` Sorting files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and optional sort args $sortargs.
 
 mkdir $outputdir
 
@@ -42,14 +42,14 @@ while ($index <= $end)
 
 	set filename = ${nametemplate}${fileindex}
 	
-	echo Sorting file $filename.
+	echo `date` Sorting file $filename.
 
 	sort -o $outputdir/$filename $inputdir/$filename
 	
-	echo Finished sorting file $filename.
+	echo `date` Finished sorting file $filename.
 
 	@ index = $index + 1
 
 end
 
-echo Finished sorting files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and optional sort args $sortargs.
+echo `date` Finished sorting files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and optional sort args $sortargs.
