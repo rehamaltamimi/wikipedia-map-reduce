@@ -19,7 +19,7 @@ set numchars = 0
 set filename = nametemplate
 set fileindex = "0"
 
-echo Cleaning files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and clean script from $tooldir.
+echo `date` Cleaning files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and clean script from $tooldir.
 
 mkdir $outputdir
 
@@ -42,14 +42,14 @@ while ($index <= $end)
 
 	set filename = ${nametemplate}${fileindex}
 	
-	echo Cleaning file $filename.
+	echo `date` Cleaning file $filename.
 	
 	cat $inputdir/$filename | python $tooldir/cleanNames.py > $outputdir/$filename
 	
-	echo Finished cleaning file $filename.
+	echo `date` Finished cleaning file $filename.
 
 	@ index = $index + 1
 
 end
 
-echo Finished cleaning files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and clean script from $tooldir.
+echo `date` Finished cleaning files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and clean script from $tooldir.

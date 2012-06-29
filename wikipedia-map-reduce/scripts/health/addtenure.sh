@@ -20,7 +20,7 @@ set numchars = 0
 set filename = nametemplate
 set fileindex = "0"
 
-echo Adding tenure to files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and addtenure script from $tooldir.
+echo `date` Adding tenure to files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and addtenure script from $tooldir.
 
 mkdir $outputdir
 
@@ -43,14 +43,14 @@ while ($index <= $end)
 
 	set filename = ${nametemplate}${fileindex}
 	
-	echo Adding tenure to file $filename.
+	echo `date` Adding tenure to file $filename.
 	
 	cat $inputdir/$filename | python $tooldir/addTenure.py > $outputdir/$filename
 	
-	echo Finished adding tenure to file $filename.
+	echo `date` Finished adding tenure to file $filename.
 
 	@ index = $index + 1
 
 end
 
-echo Finished adding tenure to files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and addtenure script from $tooldir.
+echo `date` Finished adding tenure to files $nametemplate from $begin to $end with input from $inputdir, output to $outputdir, and addtenure script from $tooldir.
