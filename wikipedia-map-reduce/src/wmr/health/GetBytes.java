@@ -6,6 +6,11 @@ package wmr.health;
 
 
 import java.io.IOException;
+import java.util.LinkedList;
+
+import name.fraser.neil.plaintext.diff_match_patch;
+import name.fraser.neil.plaintext.diff_match_patch.Diff;
+import name.fraser.neil.plaintext.diff_match_patch.Operation;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
@@ -24,6 +29,7 @@ import wmr.core.*;
 /**
  *
  * @author Shilad Sen
+ * @author Guanyu Wang
  * 
  */
 public class GetBytes extends Configured implements Tool {
@@ -31,12 +37,16 @@ public class GetBytes extends Configured implements Tool {
     public static class MyMapper extends Mapper<Long, AllRevisions, Text, Text> {
 
         /**
-         * Outputs ...
+         * Outputs the editor name, namespace, bytes of the inserted text, bytes of the 
+         * deleted text, delta bytes, and year of the edit.  -- Guanyu  
          */
         @Override
         public void map(Long pageId, AllRevisions revs, Mapper.Context context) throws IOException, InterruptedException {
             Page article = revs.getPage();
             context.progress();
+            
+            //int prev = 0;
+            String prevtext = "";
             
             for (Revision rev : revs.getRevisions()) {
                context.progress();
@@ -48,17 +58,59 @@ public class GetBytes extends Configured implements Tool {
                   String key = u.getName();
                   String namespace = "" + article.getNamespace();  
                   String val = "" + rev.getTimestamp();
+                  String year = val.substring(0, 4);
                   
-                  String text = rev.getText();
-                  byte[] bytes = text.getBytes("UTF_8");
-                  int numbytes = bytes.length;
-                                 
-                  String pair = val + "\t" + namespace;
-                  context.write(new Text(key), new Text(pair));
+                  String text = rev.getText();              // get the text edited
+                  //int numbytes = text.length();             // get bytes of the text                 
+                  //int delta = numbytes - prev;
+                  
+                  int[] deltatext = addRevDiffs(prevtext,text);
+                  String insertedtext = Integer.toString(deltatext[0]);
+                  String deletedtext = Integer.toString(deltatext[1]);
+                  
+                  //String entries = namespace + "\t" + Integer.toString(delta) + "\t" + year;
+                  String entries = namespace + "\t" + insertedtext + "\t"  
+                                   + deletedtext + "\t" + Integer.toString(deltatext[0]-deltatext[1]) 
+                                   + "\t" + year;
+                  context.write(new Text(key), new Text(entries));
                }
+               //prev = rev.getText().length();
+               prevtext = rev.getText();
             }            
         }
     }
+    
+    public static int[] addRevDiffs(String prevText, String text) {
+        diff_match_patch dmp = new diff_match_patch();
+        LinkedList<Diff> diffs = dmp.diff_main(prevText, text, false);
+
+        // may be slightly non-optimal, but makes much more sense
+        dmp.diff_cleanupSemantic(diffs);
+
+        //List<Map<String, Object>> diffJson = new ArrayList<Map<String, Object>>();
+        int insertedBytes = 0;
+        int deletedBytes = 0;
+        int origLocation = 0;
+        for (Diff d : diffs) {
+            if (d.operation.equals(Operation.EQUAL)) {
+                origLocation += d.text.length();
+                continue;
+            }
+            //Map<String, Object> diffRec = new HashMap<String, Object>();
+            if (d.operation.equals(Operation.INSERT)) {
+                insertedBytes += d.text.length();
+            } else if (d.operation.equals(Operation.DELETE)) {
+                origLocation += d.text.length();
+                deletedBytes += d.text.length();
+            } else {
+                assert (false);
+            }
+            //diffJson.add(diffRec);           
+        }
+        int[] deltatext = new int[]{insertedBytes,deletedBytes};
+        return deltatext;
+    }
+    
 
     public int run(String args[]) throws Exception {
 

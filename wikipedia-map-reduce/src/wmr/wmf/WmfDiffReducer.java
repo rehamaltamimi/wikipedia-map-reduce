@@ -131,7 +131,8 @@ public class WmfDiffReducer extends Reducer<Text, Text, Text, Text> {
         jsonObj.put("insertedBytes", insertedBytes);
         jsonObj.put("deletedBytes", deletedBytes);
         jsonObj.put("md5", Utils.md5(text));
-    }
+    }   
+
 
     private void writeReduceJson(Map<String, Object> jsonObj, Reducer.Context context) throws IOException, InterruptedException {
         if (jsonObj != null) {
