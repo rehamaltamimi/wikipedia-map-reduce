@@ -1,5 +1,9 @@
 #!/bin/csh
 
+#################################################################################
+# This works differently now, don't use this unless you know what you're doing. #
+#################################################################################
+
 # Build statistics about namespace data that was processed by namespaceSeparator.py
 # Takes an input directory where the namespaces/years output directory from the separator script is. (this dir is called 'separated' the way we do it).
 # Takes an output directory where the built statistics file will be written out to.
