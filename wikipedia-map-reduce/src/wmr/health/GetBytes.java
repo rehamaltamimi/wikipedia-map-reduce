@@ -54,7 +54,12 @@ public class GetBytes extends Configured implements Tool {
                     continue;
                }
                User u = rev.getContributor();
-               if (!u.isBot() && !u.isAnonymous()) {
+               
+               /**
+                * For RevertAwareAllRevisionsInputFormat, add limitations for u:
+                * !u.isReverted() && !u.isVandalism()
+                */
+               if (!u.isBot() && !u.isAnonymous()) {  
                   String key = u.getName();
                   String namespace = "" + article.getNamespace();  
                   String val = "" + rev.getTimestamp();
@@ -131,7 +136,7 @@ public class GetBytes extends Configured implements Tool {
 
         
         job.setJarByClass(GetBytes.class);
-        job.setInputFormatClass(AllRevisionsInputFormat.class);
+        job.setInputFormatClass(AllRevisionsInputFormat.class); /**RevertAwareAllRevisionsInputFormat*/
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
