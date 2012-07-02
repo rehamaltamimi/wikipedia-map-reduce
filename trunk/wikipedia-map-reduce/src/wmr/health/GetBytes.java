@@ -66,11 +66,11 @@ public class GetBytes extends Configured implements Tool {
                   String year = val.substring(0, 4);
                   
                   String text = rev.getText();              // get the text edited
-                  //int numbytes = text.length();             // get bytes of the text                 
+                  //int numbytes = text.length();                              
                   //int delta = numbytes - prev;
                   
-                  int[] deltatext = addRevDiffs(prevtext,text);
-                  String insertedtext = Integer.toString(deltatext[0]);
+                  int[] deltatext = addRevDiffs(prevtext,text);         // an array of inserted and deleted text  
+                  String insertedtext = Integer.toString(deltatext[0]);  
                   String deletedtext = Integer.toString(deltatext[1]);
                   
                   //String entries = namespace + "\t" + Integer.toString(delta) + "\t" + year;
