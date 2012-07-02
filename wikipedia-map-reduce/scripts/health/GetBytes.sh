@@ -17,7 +17,7 @@ elastic-mapreduce --create --name 'GetBytes' \
     --instance-group core --instance-type cc2.8xlarge \
     --instance-count 1 \
     --instance-group task --instance-type cc2.8xlarge \
-    --instance-count 18 --bid-price 2.00  \
+    --instance-count 16 --bid-price 2.00  \
     --bootstrap-action s3://elasticmapreduce/bootstrap-actions/configure-hadoop \
     --args "-s,mapred.task.timeout=2000000" \
     --log-uri $logs \
