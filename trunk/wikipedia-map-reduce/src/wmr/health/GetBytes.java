@@ -55,28 +55,28 @@ public class GetBytes extends Configured implements Tool {
                }
                User u = rev.getContributor();
                
-               /**
-                * For RevertAwareAllRevisionsInputFormat, add limitations for u:
-                * !u.isReverted() && !u.isVandalism()
+               /*
+                * For RevertAwareAllRevisionsInputFormat, add limitations for rev:
+                * !rev.isReverted() && !rev.isVandalism()
                 */
-               if (!u.isBot() && !u.isAnonymous()) {  
+               if (!u.isBot() && !u.isAnonymous() && !rev.isReverted() && !rev.isVandalism()) {  
                   String key = u.getName();
                   String namespace = "" + article.getNamespace();  
                   String val = "" + rev.getTimestamp();
                   String year = val.substring(0, 4);
                   
-                  String text = rev.getText();              // get the text edited
+                  String text = rev.getText();                         // get the text edited
                   //int numbytes = text.length();                              
                   //int delta = numbytes - prev;
                   
-                  int[] deltatext = addRevDiffs(prevtext,text);         // an array of inserted and deleted text  
+                  int[] deltatext = addRevDiffs(prevtext,text);        // an array of inserted and deleted text  
                   String insertedtext = Integer.toString(deltatext[0]);  
                   String deletedtext = Integer.toString(deltatext[1]);
                   
                   //String entries = namespace + "\t" + Integer.toString(delta) + "\t" + year;
                   String entries = namespace + "\t" + insertedtext + "\t"  
                                    + deletedtext + "\t" + Integer.toString(deltatext[0]-deltatext[1]) 
-                                   + "\t" + year;
+                                   + "\t" + val;
                   context.write(new Text(key), new Text(entries));
                }
                //prev = rev.getText().length();
@@ -92,7 +92,6 @@ public class GetBytes extends Configured implements Tool {
         // may be slightly non-optimal, but makes much more sense
         dmp.diff_cleanupSemantic(diffs);
 
-        //List<Map<String, Object>> diffJson = new ArrayList<Map<String, Object>>();
         int insertedBytes = 0;
         int deletedBytes = 0;
         int origLocation = 0;
@@ -101,7 +100,7 @@ public class GetBytes extends Configured implements Tool {
                 origLocation += d.text.length();
                 continue;
             }
-            //Map<String, Object> diffRec = new HashMap<String, Object>();
+  
             if (d.operation.equals(Operation.INSERT)) {
                 insertedBytes += d.text.length();
             } else if (d.operation.equals(Operation.DELETE)) {
@@ -109,8 +108,7 @@ public class GetBytes extends Configured implements Tool {
                 deletedBytes += d.text.length();
             } else {
                 assert (false);
-            }
-            //diffJson.add(diffRec);           
+            }       
         }
         int[] deltatext = new int[]{insertedBytes,deletedBytes};
         return deltatext;
@@ -136,7 +134,8 @@ public class GetBytes extends Configured implements Tool {
 
         
         job.setJarByClass(GetBytes.class);
-        job.setInputFormatClass(AllRevisionsInputFormat.class); /**RevertAwareAllRevisionsInputFormat*/
+        //job.setInputFormatClass(AllRevisionsInputFormat.class); 
+        job.setInputFormatClass(RevertAwareAllRevisionsInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
