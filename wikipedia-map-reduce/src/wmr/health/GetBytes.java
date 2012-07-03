@@ -53,36 +53,44 @@ public class GetBytes extends Configured implements Tool {
                if (rev == null) {
                     continue;
                }
-               User u = rev.getContributor();
+               User u = rev.getContributor();              
                
-               /*
-                * For RevertAwareAllRevisionsInputFormat, add limitations for rev:
-                * !rev.isReverted() && !rev.isVandalism()
-                */
-               if (!u.isBot() && !u.isAnonymous() && !rev.isReverted() && !rev.isVandalism()) {  
+                /* For RevertAwareAllRevisionsInputFormat, add limitations for rev:
+                   !rev.isReverted() && !rev.isRevert() */
+               if (!u.isBot() && !u.isAnonymous()) {  
                   String key = u.getName();
                   String namespace = "" + article.getNamespace();  
                   String val = "" + rev.getTimestamp();
                   String year = val.substring(0, 4);
                   
-                  String text = rev.getText();                         // get the text edited
+                  String text = rev.getText();                         
                   //int numbytes = text.length();                              
                   //int delta = numbytes - prev;
                   
-                  int[] deltatext = addRevDiffs(prevtext,text);        // an array of inserted and deleted text  
+                  int[] deltatext = addRevDiffs(prevtext,text);          
                   String insertedtext = Integer.toString(deltatext[0]);  
                   String deletedtext = Integer.toString(deltatext[1]);
                   
                   //String entries = namespace + "\t" + Integer.toString(delta) + "\t" + year;
-                  String entries = namespace + "\t" + insertedtext + "\t"  
-                                   + deletedtext + "\t" + Integer.toString(deltatext[0]-deltatext[1]) 
-                                   + "\t" + val;
+                  String entries = namespace + "\t" + insertedtext + "\t"  + deletedtext 
+                		           + "\t" + Integer.toString(deltatext[0]-deltatext[1]) 
+                                   + "\t" + val + "\t" + revertStatus(rev);
                   context.write(new Text(key), new Text(entries));
                }
                //prev = rev.getText().length();
                prevtext = rev.getText();
             }            
         }
+    }
+    
+    public static String revertStatus(Revision rev){
+    	if (rev.isReverted())
+    	    return "Reverted";
+    	else 
+    		if (rev.isRevert())
+    			return "Revert";
+    		else
+    			return "";
     }
     
     public static int[] addRevDiffs(String prevText, String text) {
