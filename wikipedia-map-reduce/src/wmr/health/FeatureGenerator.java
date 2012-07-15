@@ -74,10 +74,10 @@ public class FeatureGenerator extends Configured implements Tool {
                    if (t.getName().toLowerCase().startsWith("infobox")) {
                        numBoxes++;
                    }
-                   if (t.getName().toLowerCase().startsWith("File")) {
+                   if (t.getName().toLowerCase().startsWith("file")) {
                        numFiles++;
                    }
-                   if (t.getName().toLowerCase().startsWith("Image")) {
+                   if (t.getName().toLowerCase().startsWith("image")) {
                        numFiles++;
                    }
                }
