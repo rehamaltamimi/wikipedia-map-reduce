@@ -55,6 +55,7 @@ public class FeatureGenerator extends Configured implements Tool {
                int bytes = text.length();
                int words = text.split("\\W").length;
                int sections = rev.getSections().size();
+               int citations = rev.getCitations(article).size();
                float flesch = FleschIndex.calculate(text);
 
                // Flatten nested templates up to two levels deep
@@ -83,6 +84,7 @@ public class FeatureGenerator extends Configured implements Tool {
                        numHyperlinks + "\t" +
                        bytes + "\t" +
                        words + "\t" +
+                       citations + "\t" + 
                        sections + "\t" +
                        flesch + "\t" +
                        numBoxes + "\t" +
