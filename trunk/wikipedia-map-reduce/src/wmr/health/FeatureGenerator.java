@@ -69,18 +69,12 @@ public class FeatureGenerator extends Configured implements Tool {
                }
 
                int numBoxes = 0;
-               int numFiles = 0;
                for (Template t : templates) {
                    if (t.getName().toLowerCase().startsWith("infobox")) {
                        numBoxes++;
                    }
-                   if (t.getName().toLowerCase().startsWith("file")) {
-                       numFiles++;
-                   }
-                   if (t.getName().toLowerCase().startsWith("image")) {
-                       numFiles++;
-                   }
                }
+               int numFiles = rev.getFileLinks().size();
 
                context.write(
                    new Text("" + rev.getId()),
