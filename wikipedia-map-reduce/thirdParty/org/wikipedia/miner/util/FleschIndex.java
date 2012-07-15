@@ -6,20 +6,24 @@ package org.wikipedia.miner.util;
 import java.util.StringTokenizer;
 
 public class FleschIndex {
+    static final String PATTERN_NON_WORD = "[^\\pL\\pM\\p{Nd}\\p{Nl}\\p{Pc}[\\p{InEnclosedAlphanumerics}&&\\p{So}]]+";
 
     public static float calculate(String content) {
         int syllables = 0;
         int sentences = 0;
         int words = 0;
 
-        String delimiters = ".,':;?{}[]=-+_!@#$%^&*() ";
-        StringTokenizer tokenizer = new StringTokenizer(content, delimiters);
         //go through all words
-        while (tokenizer.hasMoreTokens()) {
-            String word = tokenizer.nextToken();
-            syllables += countSyllables(word);
-            words++;
+        for (String word : content.split(PATTERN_NON_WORD)) {
+            if (word.length() > 0) {
+//                if (words < 10) {
+//                    System.err.print("'" + word + "' ");
+//                }
+                syllables += countSyllables(word);
+                words++;
+            }
         }
+//        System.err.println("words is " + words);
         //look for sentence delimiters
         String sentenceDelim = ".:;?!";
         StringTokenizer sentenceTokenizer = new StringTokenizer(content, sentenceDelim);
