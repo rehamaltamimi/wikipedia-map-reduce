@@ -229,6 +229,10 @@ public class Revision {
     public List<String> getAnchorLinksWithoutFragments() {
         return removeFragments(getAnchorLinks(text));
     }
+
+    public List<String> getFileLinks() {
+        return getFileLinks(text);
+    }
     private static final Pattern LINK_PATTERN = Pattern.compile("\\[\\[([^\\]]+?)\\]\\]");
 
     public static ArrayList<String> getAnchorLinks(String text) {
@@ -241,6 +245,22 @@ public class Revision {
                 addition = addition.substring(0, addition.indexOf("|"));
             }
             if (!addition.contains("Image:")) {
+                anchorLinks.add(addition);
+            }
+        }
+        return anchorLinks;
+    }
+
+    public static ArrayList<String> getFileLinks(String text) {
+        ArrayList<String> anchorLinks = new ArrayList<String>();
+        Matcher linkMatcher;
+        linkMatcher = LINK_PATTERN.matcher(text);
+        while (linkMatcher.find()) {
+            String addition = linkMatcher.group(1);
+            if (addition.contains("|")) {
+                addition = addition.substring(0, addition.indexOf("|"));
+            }
+            if (addition.contains("Image:") || addition.contains("File:")) {
                 anchorLinks.add(addition);
             }
         }
