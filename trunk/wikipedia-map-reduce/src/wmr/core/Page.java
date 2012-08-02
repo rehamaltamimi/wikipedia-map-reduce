@@ -171,27 +171,6 @@ public class Page extends Vertex {
 	
 	protected String namespaceName;
 	protected int namespaceIndex;
-	
-    /* We also check for prefix + " talk"
-    public static final String[] NAMESPACE_PREFIXES = {
-        "book",
-        "category",
-        "help",
-        "file",
-        "mediawiki",
-        "portal",
-        "project",
-        "talk",
-        "template",
-        "user",
-        "wikipedia",
-        "wp",
-    };
-
-    static {
-        Arrays.sort(NAMESPACE_PREFIXES);    // just in case
-    } */
-
 
     public Page(String id) {
         super(id);
@@ -277,230 +256,91 @@ public class Page extends Vertex {
         }
         return contributors;
     }
-
-    /*
-    public boolean isTalk() {
-        return getName().startsWith("Talk:");
-    }*/
     
     public boolean isTalk() {
     	return getNamespaceIndex() == NS_TALK;
     }
-
-    /*
-    public boolean isUser() {
-        return getName().startsWith("User:");
-    }*/
     
     public boolean isUser() {
     	return getNamespaceIndex() == NS_USER;
     }
-
-    /*
-    public boolean isUserTalk() {
-        return getName().startsWith("User talk:");
-    }*/
     
     public boolean isUserTalk() {
     	return getNamespaceIndex() == NS_USER_TALK;
     }
-
-    /*
-    public boolean isProject() {
-        return getName().startsWith("Wikipedia:")
-                || getName().startsWith("WP:")
-                || getName().startsWith("Project:");
-    }*/
     
     public boolean isProject() {
     	return getNamespaceIndex() == NS_PROJECT;
     }
-
-    /*
-    public boolean isProjectTalk() {
-        return getName().startsWith("Wikipedia talk:")
-                || getName().startsWith("WP:")
-                || getName().startsWith("Project talk:");
-    }*/
     
     public boolean isProjectTalk() {
     	return getNamespaceIndex() == NS_PROJECT_TALK;
     }
-
-    /*
-    public boolean isPortal() {
-        return getName().startsWith("Portal:");
-    }*/
     
     public boolean isPortal() {
     	return getNamespaceIndex() == NS_PORTAL;
     }
-
-    /*
-    public boolean isPortalTalk() {
-        return getName().startsWith("Portal talk:");
-    }*/
     
     public boolean isPortalTalk() {
     	return getNamespaceIndex() == NS_PORTAL_TALK;
     }
-
-    /*
-    public boolean isFile() {
-        return getName().startsWith("File:")
-                || getName().startsWith("Image:");
-    }*/
     
     public boolean isFile() {
     	return getNamespaceIndex() == NS_FILE;
     }
-
-    /*
-    public boolean isFileTalk() {
-        return getName().startsWith("File talk:")
-                || getName().startsWith("Image talk:");
-    }*/
     
     public boolean isFileTalk() {
     	return getNamespaceIndex() == NS_FILE_TALK;
     }
 
-    /*
-    public boolean isMediaWiki() {
-        return getName().startsWith("MediaWiki:");
-    }*/
-    
     public boolean isMediaWiki() {
     	return getNamespaceIndex() == NS_MEDIAWIKI;
     }
 
-    /*
-    public boolean isMediaWikiTalk() {
-        return getName().startsWith("MediaWiki talk:");
-    }*/
-    
     public boolean isMediaWikiTalk() {
     	return getNamespaceIndex() == NS_MEDIAWIKI_TALK;
     }
 
-    /*
-    public boolean isTemplate() {
-        return getName().startsWith("Template:");
-    }*/
-    
     public boolean isTemplate() {
     	return getNamespaceIndex() == NS_TEMPLATE;
     }
 
-    /*
-    public boolean isTemplateTalk() {
-        return getName().startsWith("Template talk:");
-    }*/
-    
     public boolean isTemplateTalk() {
     	return getNamespaceIndex() == NS_TEMPLATE_TALK;
     }
 
-    /*
-    public boolean isCategory() {
-        return getName().startsWith("Category:");
-    }*/
-    
     public boolean isCategory() {
     	return getNamespaceIndex() == NS_CATEGORY;
     }
 
-    /*
-    public boolean isCategoryTalk() {
-        return getName().startsWith("Category talk:");
-    }*/
-    
     public boolean isCategoryTalk() {
     	return getNamespaceIndex() == NS_CATEGORY_TALK;
     }
 
-    /*
-    public boolean isBook() {
-        return getName().startsWith("Book:");
-    }*/
-    
     public boolean isBook() {
     	return getNamespaceIndex() == NS_BOOK;
     }
 
-    /*
-    public boolean isBookTalk() {
-        return getName().startsWith("Book talk:");
-    }*/
-    
     public boolean isBookTalk() {
     	return getNamespaceIndex() == NS_BOOK_TALK;
     }
 
-    /*
-    public boolean isHelp() {
-        return getName().startsWith("Help:");
-    }*/
-    
     public boolean isHelp() {
     	return getNamespaceIndex() == NS_HELP;
     }
 
-    /*
-    public boolean isHelpTalk() {
-        return getName().startsWith("Help talk:");
-    }*/
-    
     public boolean isHelpTalk() {
     	return getNamespaceIndex() == NS_HELP_TALK;
     }
 
-    /*
-    public boolean isNormalPage() {
-        String ln = getName().toLowerCase();
-        int i = ln.indexOf(":");
-        if (i < 0) {
-            return true;
-        }
-        String prefix = ln.substring(0, i).trim();
-        if (prefix.endsWith(" talk")) {
-            prefix = prefix.substring(0, prefix.length() - 5).trim();
-        }
-        if (Arrays.binarySearch(NAMESPACE_PREFIXES, prefix) >= 0) {
-            return false;
-        }
-        return true;
-    }*/
-    
     public boolean isNormalPage() {
     	return getNamespaceIndex() == NS_MAIN || getNamespaceIndex() == NS_TALK;
     }
 
-    /*
-    public String getNamespace() {
-        String ln = getName().toLowerCase();
-        int i = ln.indexOf(":");
-        if (i < 0) {
-            return "main";
-        }
-        String prefix = ln.substring(0, i).trim();
-        boolean isTalk = false;
-        if (prefix.endsWith(" talk")) {
-            isTalk = true;
-            prefix = prefix.substring(0, prefix.length() - 5).trim();
-        }
-        i = Arrays.binarySearch(NAMESPACE_PREFIXES, prefix);
-        if (i < 0 && !isTalk) {
-            return "main";
-        } else if (i < 0 && isTalk) {
-            return "main talk";
-        } else if (isTalk) {
-            return NAMESPACE_PREFIXES[i] + " talk";
-        } else {
-            return NAMESPACE_PREFIXES[i];
-        }
-    }*/
-    
+    public boolean isMain() {
+    	return getNamespaceIndex() == NS_MAIN;
+    }
+
     public String getNamespace() {
     	return namespaceName;
     }
@@ -520,9 +360,6 @@ public class Page extends Vertex {
     	return -1;
     }
     
-    
-
-    
     public boolean isAnyTalk() {
     	switch(getNamespaceIndex()) {
     		case NS_TALK: return true; 
@@ -540,18 +377,4 @@ public class Page extends Vertex {
     		default: return false;
     	}
     }
-    
-    /*
-    public boolean isAnyTalk() {
-        String ln = getName().toLowerCase();
-        if (ln.startsWith("talk:")) {
-            return true;
-        } 
-        int i = ln.indexOf(" talk:");
-        if (i > 0) {
-            String prefix = ln.substring(0, i);
-            return (Arrays.binarySearch(NAMESPACE_PREFIXES, prefix) >= 0);
-        }
-        return false;
-    }*/
 }
