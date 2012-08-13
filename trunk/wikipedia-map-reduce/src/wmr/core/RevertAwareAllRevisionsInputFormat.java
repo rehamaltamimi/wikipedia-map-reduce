@@ -98,14 +98,11 @@ public class RevertAwareAllRevisionsInputFormat extends FileInputFormat<Long, Al
                 }
 
                 Revision head = queue.remove(0);
+                Long fp = head.getTextFingerprint();
                 
                 // if the revision is long enough and we haven't seen the text before, remember it
-                if (head.getText().trim().length() > 10) {
-                    if (fingerprints.containsKey(head.getTextFingerprint())) {
-                        head.setRevert(true);   // reverting revision
-                    } else {
-                        fingerprints.put(head.getTextFingerprint(), Long.valueOf(head.getId()));
-                    }
+                if (head.getText().trim().length() > 10 && fingerprints.containsKey(fp)) {
+                    head.setRevert(true);   // reverting revision
                 }
 
                 // look for a strict vandalism revert in the next edit
@@ -120,6 +117,10 @@ public class RevertAwareAllRevisionsInputFormat extends FileInputFormat<Long, Al
                         head.setReverted(true);
                         break;
                     }
+                }
+
+                if (head.getText().trim().length() > 10 && !fingerprints.containsKey(fp)) {
+                    fingerprints.put(fp, Long.valueOf(head.getId()));
                 }
                 
                 return head;
