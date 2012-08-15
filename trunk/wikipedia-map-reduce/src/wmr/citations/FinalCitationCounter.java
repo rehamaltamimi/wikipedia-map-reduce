@@ -34,7 +34,7 @@ public class FinalCitationCounter extends Configured implements Tool {
         public void map(Long pageId, AllRevisions revs, Context context) throws IOException, InterruptedException {
             try {
                 Page page = revs.getPage();
-                if (!page.isNormalPage()) {
+                if (!page.isMain()) {
                 	return;
                 }
                 context.progress();
