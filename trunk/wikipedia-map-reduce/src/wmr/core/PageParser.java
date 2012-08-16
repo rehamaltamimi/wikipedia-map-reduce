@@ -64,7 +64,7 @@ public class PageParser {
 
         // configure it to create readers that coalesce adjacent character sections
         // Setting this would be nice, but it results in a stackoverflow exception.  Grr!
-        // factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
+//         factory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.TRUE);
 
         factory.setProperty(XMLInputFactory.IS_NAMESPACE_AWARE, Boolean.FALSE);
         this.reader = factory.createXMLStreamReader(stream);
