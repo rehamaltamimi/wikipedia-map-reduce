@@ -2,7 +2,6 @@ package wmr.citations;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.hadoop.conf.Configuration;
@@ -114,30 +113,30 @@ public class FinalCitationCounter extends Configured implements Tool {
         }
 
         private Map<String, Integer> processRevision(Page article, Revision rev) throws IOException {
-            HashMap<String, Integer> citeCounts = new HashMap<String, Integer>();
+            HashMap<String, Integer> counts = new HashMap<String, Integer>();
             for (Citation c : rev.getCitations(article)) {
                 String url = c.getUrl();
                 url = (url == null) ? "noURL" : url.replaceAll("[\\s]+", " ");
                 String key = "cite\t" + url;
-                if (citeCounts.containsKey(key)) {
-                    citeCounts.put(key, citeCounts.get(key) + 1);
+                if (counts.containsKey(key)) {
+                    counts.put(key, counts.get(key) + 1);
                 } else {
-                    citeCounts.put(key, 1);
+                    counts.put(key, 1);
                 }
             }
 
             for (Revision.Hyperlink link : rev.getHyperlinks()) {
                 String url = link.getUrl().replaceAll("[\\s]+", " ");
                 String key = "url\t" + url;
-                if (citeCounts.containsKey("cite\t" + url)) {
+                if (counts.containsKey("cite\t" + url)) {
                 	// already counted
-                } else if (citeCounts.containsKey(key)) {
-                	citeCounts.put(key, citeCounts.get(key) + 1);
+                } else if (counts.containsKey(key)) {
+                	counts.put(key, counts.get(key) + 1);
                 } else {
-                	citeCounts.put(key, 1);
+                	counts.put(key, 1);
                 }
             }
-            return citeCounts;
+            return counts;
         }
     }
 
