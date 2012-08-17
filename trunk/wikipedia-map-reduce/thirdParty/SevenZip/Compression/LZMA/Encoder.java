@@ -1443,7 +1443,9 @@ public class Encoder
 	/**
 	 * @uml.property  name="processedInSize" multiplicity="(0 -1)" dimension="1"
 	 */
-	long[] processedInSize = new long[1]; /**
+	long[] processedInSize = new long[1]; 
+	
+	/**
 	 * @uml.property  name="processedOutSize" multiplicity="(0 -1)" dimension="1"
 	 */
 	long[] processedOutSize = new long[1]; /**
@@ -1600,6 +1602,14 @@ public class Encoder
 	public void SetEndMarkerMode(boolean endMarkerMode)
 	{
 		_writeEndMark = endMarkerMode;
+	}
+	
+	/**
+	 * Added by shilad
+	 * @return
+	 */
+	public long getProcessedInSize() {
+		return processedInSize[0];
 	}
 }
 
