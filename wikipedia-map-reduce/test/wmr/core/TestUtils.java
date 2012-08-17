@@ -38,6 +38,7 @@ public class TestUtils {
 				"\nfoo",
 				"\nfoo\t",
 				"\n\nfoo\tbar\t\t",
+				"\n\nfoo\tbar\\\r\t\t",
 				"\n\t"
 		};
 		for (String t : tests) {

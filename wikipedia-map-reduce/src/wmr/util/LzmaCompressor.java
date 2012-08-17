@@ -42,6 +42,8 @@ public class LzmaCompressor {
      */
     private PipedOutputStream outputStream;
 
+	private long receivedLength;
+
     /*
      *
      */
@@ -95,6 +97,7 @@ public class LzmaCompressor {
 		}
 		encoder.Code(inputStream, compressed, -1, -1, null);
 		compressed.flush();
+    	this.receivedLength = encoder.getProcessedInSize();
     }
 
     public synchronized void cleanup() {
@@ -122,6 +125,9 @@ public class LzmaCompressor {
                 e.printStackTrace();
             }
         }
+    	if (receivedLength != uncompressedLength) {
+    		System.err.println("expected " + uncompressedLength + " bytes but received " + receivedLength);
+    	}
     }
     
     public byte[] getCompressed() {

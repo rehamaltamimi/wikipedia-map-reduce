@@ -63,65 +63,6 @@ public class Utils {
         }
     }
 
-    public static String escapeWhitespace(String s) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < s.length(); i++) {
-            char ch = s.charAt(i);
-            switch (ch) {
-            case '\\':
-                sb.append("\\\\");
-                break;
-            case '\f':
-                sb.append("\\f");
-                break;
-            case '\n':
-                sb.append("\\n");
-                break;
-            case '\r':
-                sb.append("\\r");
-                break;
-            case '\t':
-                sb.append("\\t");
-                break;
-            default:
-                sb.append(ch);
-            }
-        }
-        return sb.toString();
-    }
-    
-    public static String unescapeWhitespace(String s) {
-    	StringBuffer sb = new StringBuffer();
-    	for (int i = 0; i < s.length(); i++) {
-    		char c1 = s.charAt(i);
-			if (c1 == '\\') {
-                char c2 = s.charAt(++i);
-                switch (c2) {
-                case '\\':
-                    sb.append("\\");
-                    break;
-                case 'f':
-                    sb.append("\f");
-                    break;
-                case 'n':
-                    sb.append("\n");
-                    break;
-                case 'r':
-                    sb.append("\r");
-                    break;
-                case 't':
-                    sb.append("\t");
-                    break;
-                default:
-                    sb.append(c2);
-                }
-    		} else {
-    			sb.append(c1);
-    		}
-    	}
-    	return sb.toString();
-    }
-
     public static String md5(String input) {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
@@ -154,6 +95,54 @@ public class Utils {
         str = (str.length() > maxLen) ? str.substring(0, maxLen - 3) + "..." : str;
         str = str.replaceAll("\\s+", " ");
         return str;
+    }
+
+    public static String escapeWhitespace(String s) {
+    	return new String(escapeWhitespace(s.getBytes()));
+    }
+    
+    public static byte[] escapeWhitespace(byte[] in) {
+    	int escapes = 0;
+    	for (int i = 0; i < in.length; i++) {
+    		byte c = in[i];
+    		if (c == '\\' || c == '\n' || c == '\r' || c == '\t') {
+    			escapes++;
+    		}
+    	}
+    	
+    	byte[] out = new byte[in.length + escapes];
+    	int j = 0;
+    	
+    	for (int i = 0; i < in.length; i++) {
+            byte ch = in[i];
+            switch (ch) {
+            case '\\':
+            	out[j++] = '\\';
+            	out[j++] = '\\';
+                break;
+            case '\n':
+            	out[j++] = '\\';
+            	out[j++] = 'n';
+                break;
+            case '\r':
+            	out[j++] = '\\';
+            	out[j++] = 'r';
+                break;
+            case '\t':
+            	out[j++] = '\\';
+            	out[j++] = 't';
+                break;
+            default:
+            	out[j++] = ch;
+            }
+        }
+    	return out;
+    }
+    
+    public static String unescapeWhitespace(String s) {
+    	byte[] bytes = s.getBytes();
+    	int l = unescapeInPlace(bytes, bytes.length);
+    	return new String(bytes, 0, l);
     }
 
 	public static byte[] unescape(byte [] escaped, int length) {
