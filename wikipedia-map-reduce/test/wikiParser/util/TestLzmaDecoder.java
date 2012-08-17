@@ -1,7 +1,7 @@
 package wikiParser.util;
 
 
-import wmr.util.LzmaPipe;
+import wmr.util.LzmaDecompresser;
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -13,7 +13,7 @@ import org.junit.Test;
 
 import SevenZip.LzmaAlone;
 
-public class TestLzmaPipe {
+public class TestLzmaDecoder {
 	@Test public void testPipe() throws Exception {
 		File tmpIn = File.createTempFile("lzmaIn", null);
 		File tmpOut = File.createTempFile("lzmaOut", null);
@@ -35,7 +35,7 @@ public class TestLzmaPipe {
 		int r = stream.read(contents);
 		assertEquals(r, contents.length);
 		
-		LzmaPipe pipe = new LzmaPipe(contents);
+		LzmaDecompresser pipe = new LzmaDecompresser(contents);
 		InputStream input = pipe.decompress();
 		assertEquals(input.read(), 'f');
 		assertEquals(input.read(), 'o');
@@ -76,7 +76,7 @@ public class TestLzmaPipe {
 		int r = stream.read(contents);
 		assertEquals(r, contents.length);
 		
-		LzmaPipe pipe = new LzmaPipe(contents, trueLength);
+		LzmaDecompresser pipe = new LzmaDecompresser(contents, trueLength);
 		InputStream input = pipe.decompress();
 		assertEquals(input.read(), 'f');
 		assertEquals(input.read(), 'o');
@@ -121,7 +121,7 @@ public class TestLzmaPipe {
 		int r = stream.read(contents);
 		assertEquals(r, contents.length);
 		
-		LzmaPipe pipe = new LzmaPipe(contents, trueLength);
+		LzmaDecompresser pipe = new LzmaDecompresser(contents, trueLength);
 		InputStream input = pipe.decompress();
                 int c = input.read();
                 assertEquals((char)c, 'f');

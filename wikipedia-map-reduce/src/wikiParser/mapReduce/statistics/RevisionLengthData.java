@@ -12,7 +12,7 @@ import wmr.core.Page;
 import wmr.core.PageParser;
 import wmr.core.Revision;
 import wikiParser.mapReduce.util.*;
-import wmr.util.LzmaPipe;
+import wmr.util.LzmaDecompresser;
 
 public class RevisionLengthData {
 
@@ -26,10 +26,10 @@ public class RevisionLengthData {
 			 * 2. Get revision lengths
 			 * 3. Emit individual ArticleID_RevisionID-revision length pairs
 			 */
-			LzmaPipe pipe = null;
+			LzmaDecompresser pipe = null;
 			try {
 				byte [] unescaped = MapReduceUtils.unescape(value.getBytes(), value.getLength());
-				pipe = new LzmaPipe(unescaped);
+				pipe = new LzmaDecompresser(unescaped);
 				PageParser parser = new PageParser(pipe.decompress());
 				parser.setStoreFullTextInArticle(false);
 				parser.setStoreRevisionMetadata(false);

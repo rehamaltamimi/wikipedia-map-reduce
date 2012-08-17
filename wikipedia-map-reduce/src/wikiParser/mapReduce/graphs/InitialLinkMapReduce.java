@@ -17,7 +17,7 @@ import wmr.core.Revision;
 import wikiParser.mapReduce.util.UniqueConcatenateReduce;
 import wikiParser.mapReduce.util.MapReduceUtils;
 import wikiParser.mapReduce.util.SimpleJobConf;
-import wmr.util.LzmaPipe;
+import wmr.util.LzmaDecompresser;
 
 public class InitialLinkMapReduce {
 
@@ -38,10 +38,10 @@ public class InitialLinkMapReduce {
              * 4. Find links
              * 5. Emit individual ID-link pairs with connection type markers.
              */
-            LzmaPipe pipe = null;
+            LzmaDecompresser pipe = null;
             try {
                 byte[] unescaped = MapReduceUtils.unescape(value.getBytes(), value.getLength());
-                pipe = new LzmaPipe(unescaped);
+                pipe = new LzmaDecompresser(unescaped);
                 PageParser parser = new PageParser(pipe.decompress());
                 EdgeParser lp = new EdgeParser();
                 Page article = parser.getArticle();

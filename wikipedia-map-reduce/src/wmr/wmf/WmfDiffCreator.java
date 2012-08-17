@@ -50,7 +50,6 @@ public class WmfDiffCreator extends Configured implements Tool {
         FileOutputFormat.setOutputPath(job, outputPath);
         SecondarySortOnSpace.setupSecondarySortOnSpace(job);
 
-
         job.setJarByClass(WmfDiffCreator.class);
         job.setInputFormatClass(AllRevisionsInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);

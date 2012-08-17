@@ -3,7 +3,6 @@ package wmr.core;
 import static org.junit.Assert.*;
 
 import org.junit.Test;
-import org.junit.Assert.*;
 import wmr.util.Utils;
 
 
@@ -27,5 +26,24 @@ public class TestUtils {
 //            System.out.println(md5);
 //            assertEquals(md5, "d3b07384d113edec49eaa6238ad5ff00");
 //	}
+	
+	@Test public void testEscape() {
+		String [] tests = new String [] {
+				"foobar",
+				"f",
+				"",
+				"foo bar",
+				"foo\nbar",
+				"foo\tbar",
+				"\nfoo",
+				"\nfoo\t",
+				"\n\nfoo\tbar\t\t",
+				"\n\t"
+		};
+		for (String t : tests) {
+			System.err.println("'" + t + "' to '" + Utils.escapeWhitespace(t) + "'");
+			assertEquals(t, Utils.unescapeWhitespace(Utils.escapeWhitespace(t)));
+		}
+	}
 	
 }

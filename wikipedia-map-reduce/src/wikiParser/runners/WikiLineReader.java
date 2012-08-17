@@ -12,7 +12,7 @@ import javax.xml.stream.XMLStreamException;
 import wmr.core.PageParser;
 import wmr.core.Revision;
 import wikiParser.mapReduce.util.MapReduceUtils;
-import wmr.util.LzmaPipe;
+import wmr.util.LzmaDecompresser;
 import wmr.util.SevenUnzip;
 
 /**
@@ -90,11 +90,11 @@ public class WikiLineReader {
     }
 
     public void printLine(byte[] escaped) {
-        LzmaPipe pipe = null;
+        LzmaDecompresser pipe = null;
         try {
             byte[] unescaped = MapReduceUtils.unescape(escaped, escaped.length);
             System.err.println("unescaped length is " + unescaped.length);
-            pipe = new LzmaPipe(unescaped);
+            pipe = new LzmaDecompresser(unescaped);
             PipedInputStream in = pipe.decompress();
             byte[] buff = new byte[80];
             while (true) {
@@ -115,11 +115,11 @@ public class WikiLineReader {
     }
 
     public void processLine(byte[] escaped) {
-        LzmaPipe pipe = null;
+        LzmaDecompresser pipe = null;
         try {
             byte[] unescaped = MapReduceUtils.unescape(escaped, escaped.length);
             System.err.println("unescaped length is " + unescaped.length);
-            pipe = new LzmaPipe(unescaped);
+            pipe = new LzmaDecompresser(unescaped);
             PageParser parser = new PageParser(pipe.decompress());
             processArticle(parser);
         } catch (Exception e) {

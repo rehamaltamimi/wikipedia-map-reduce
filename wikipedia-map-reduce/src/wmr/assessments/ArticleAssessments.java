@@ -48,11 +48,11 @@ public class ArticleAssessments extends Configured implements Tool {
     public static class MyMapper extends Mapper<Text, Text, Text, Text> {
 
         public void map(Text key, Text value, Mapper.Context context) throws IOException {
-            LzmaPipe pipe = null;
+            LzmaDecompresser pipe = null;
             try {
                 context.progress();
                 int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
-                pipe = new LzmaPipe(value.getBytes(), length);
+                pipe = new LzmaDecompresser(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();
                 context.progress();

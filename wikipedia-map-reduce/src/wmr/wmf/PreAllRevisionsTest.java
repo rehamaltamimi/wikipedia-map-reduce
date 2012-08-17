@@ -19,7 +19,7 @@ import org.apache.hadoop.util.ToolRunner;
 import wikiParser.mapReduce.util.KeyValueTextInputFormat;
 import wikiParser.mapReduce.util.MapReduceUtils;
 import wmr.core.*;
-import wmr.util.LzmaPipe;
+import wmr.util.LzmaDecompresser;
 
 /**
  *
@@ -38,11 +38,11 @@ public class PreAllRevisionsTest extends Configured implements Tool {
 
         @Override
         public void map(Text key, Text value, Mapper.Context context) throws IOException {
-            LzmaPipe pipe = null;
+            LzmaDecompresser pipe = null;
             try {
                 context.progress();
                 int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
-                pipe = new LzmaPipe(value.getBytes(), length);
+                pipe = new LzmaDecompresser(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
 
                 int numRevs = 0;

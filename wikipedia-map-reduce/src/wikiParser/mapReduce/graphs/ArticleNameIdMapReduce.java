@@ -13,7 +13,7 @@ import wmr.core.PageParser;
 import wikiParser.mapReduce.util.IdentityReduce;
 import wikiParser.mapReduce.util.MapReduceUtils;
 import wikiParser.mapReduce.util.SimpleJobConf;
-import wmr.util.LzmaPipe;
+import wmr.util.LzmaDecompresser;
 
 public class ArticleNameIdMapReduce {
 
@@ -28,10 +28,10 @@ public class ArticleNameIdMapReduce {
              * 2. Get page info
              * 3. Emit individual name-ID pairs
              */
-            LzmaPipe pipe = null;
+            LzmaDecompresser pipe = null;
             try {
                 byte[] unescaped = MapReduceUtils.unescape(value.getBytes(), value.getLength());
-                pipe = new LzmaPipe(unescaped);
+                pipe = new LzmaDecompresser(unescaped);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();
                 output.collect(new Text(article.toUnderscoredString()), new Text("a" + article.getId()));
