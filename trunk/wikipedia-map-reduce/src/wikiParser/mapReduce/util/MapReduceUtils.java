@@ -7,7 +7,7 @@ import javax.xml.stream.XMLStreamException;
 import org.apache.hadoop.io.Text;
 
 import wmr.core.PageParser;
-import wmr.util.LzmaPipe;
+import wmr.util.LzmaDecompresser;
 
 public class MapReduceUtils {
         public static String [] S3_INPUTS = new String[] {
@@ -33,10 +33,10 @@ public class MapReduceUtils {
 
 	public static PageParser formatArticleParser(Text value)
 	throws XMLStreamException, IOException {
-		LzmaPipe pipe = null;
+		LzmaDecompresser pipe = null;
 		try {
 			byte [] unescaped = unescape(value.getBytes(), value.getLength());
-			pipe = new LzmaPipe(unescaped);
+			pipe = new LzmaDecompresser(unescaped);
 			PageParser parser = new PageParser(pipe.decompress());
 			parser.setStoreFullTextInArticle(false);
 			parser.setStoreRevisionMetadata(false);

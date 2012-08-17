@@ -14,7 +14,7 @@ import wmr.core.Revision;
 import wikiParser.mapReduce.util.IdentityReduce;
 import wikiParser.mapReduce.util.MapReduceUtils;
 import wikiParser.mapReduce.util.SimpleJobConf;
-import wmr.util.LzmaPipe;
+import wmr.util.LzmaDecompresser;
 
 public class UserNameIdMapReduce {
 
@@ -32,10 +32,10 @@ public class UserNameIdMapReduce {
              * Alternate idea for users:
              *  ouput all editor id -> editor name pairs
              */
-            LzmaPipe pipe = null;
+            LzmaDecompresser pipe = null;
             try {
                 byte[] unescaped = MapReduceUtils.unescape(value.getBytes(), value.getLength());
-                pipe = new LzmaPipe(unescaped);
+                pipe = new LzmaDecompresser(unescaped);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();
                 while (true) {

@@ -21,7 +21,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.input.LineRecordReader;
 import wikiParser.mapReduce.util.MapReduceUtils;
-import wmr.util.LzmaPipe;
+import wmr.util.LzmaDecompresser;
 
 /**
  *
@@ -52,7 +52,7 @@ public class AllRevisionsInputFormat extends FileInputFormat<Long, AllRevisions>
         private TaskAttemptContext context;
         private Long key;
         private AllRevisions value;
-        private LzmaPipe pipe = null;
+        private LzmaDecompresser pipe = null;
 
         @Override
         public void initialize(InputSplit split, TaskAttemptContext context) throws IOException, InterruptedException {
@@ -92,7 +92,7 @@ public class AllRevisionsInputFormat extends FileInputFormat<Long, AllRevisions>
             try {
                 context.progress();
                 int length = MapReduceUtils.unescapeInPlace(line.getBytes(), i+1, line.getLength());
-                pipe = new LzmaPipe(line.getBytes(), length);
+                pipe = new LzmaDecompresser(line.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page page = parser.getArticle();
                 this.value = new AllRevisions(page, new RevisionIterable(context, page, parser));

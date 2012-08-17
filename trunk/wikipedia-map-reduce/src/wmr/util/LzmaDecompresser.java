@@ -18,7 +18,7 @@ import java.util.logging.Logger;
  * @author shilad
  *
  */
-public class LzmaPipe {
+public class LzmaDecompresser {
     private BufferedWriter debugFile = null;
 
     /**
@@ -43,23 +43,23 @@ public class LzmaPipe {
     /*
      *
      */
-    public LzmaPipe(byte[] compressed) {
+    public LzmaDecompresser(byte[] compressed) {
         this.compressed = compressed;
         compressedLength = compressed.length;
     }
 
-    public LzmaPipe(byte[] compressed, int length) {
+    public LzmaDecompresser(byte[] compressed, int length) {
         this.compressed = compressed;
         compressedLength = length;
     }
 
-    public LzmaPipe(byte[] compressed, int length, File debugPath) {
+    public LzmaDecompresser(byte[] compressed, int length, File debugPath) {
         this.compressed = compressed;
         compressedLength = length;
         try {
             debugFile = new BufferedWriter(new FileWriter(debugPath));
         } catch (IOException ex) {
-            Logger.getLogger(LzmaPipe.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(LzmaDecompresser.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

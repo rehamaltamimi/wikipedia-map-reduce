@@ -26,7 +26,7 @@ import wmr.core.Revision;
 import wmr.core.User;
 import wikiParser.mapReduce.util.KeyValueTextInputFormat;
 import wikiParser.mapReduce.util.MapReduceUtils;
-import wmr.util.LzmaPipe;
+import wmr.util.LzmaDecompresser;
 /**
  * Creates Article to Article graph with directed edges using links only
  * @author Nathaniel Miller
@@ -51,13 +51,13 @@ public class ArticlesForEditors extends Configured implements Tool {
              * Input: ArticleID-7zipHash key-value pairs (no article text).
              * Output: user article revision date
              */
-            LzmaPipe pipe = null;
+            LzmaDecompresser pipe = null;
             try {
                 reportProgress(context, "init");
 
                 // setup decoder
                 int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
-                pipe = new LzmaPipe(value.getBytes(), length);
+                pipe = new LzmaDecompresser(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 parser.setHasText(false);
                 Page article = parser.getArticle();

@@ -10,7 +10,7 @@ import org.apache.hadoop.mapred.Reporter;
 
 import wmr.core.PageParser;
 import wmr.core.Revision;
-import wmr.util.LzmaPipe;
+import wmr.util.LzmaDecompresser;
 import wikiParser.mapReduce.util.*;
 
 public class RevisionCountData {
@@ -26,10 +26,10 @@ public class RevisionCountData {
              * 2. Get page info
              * 3. Emit individual ID-name pairs
              */
-            LzmaPipe pipe = null;
+            LzmaDecompresser pipe = null;
             try {
                 byte[] unescaped = MapReduceUtils.unescape(value.getBytes(), value.getLength());
-                pipe = new LzmaPipe(unescaped);
+                pipe = new LzmaDecompresser(unescaped);
                 PageParser parser = new PageParser(pipe.decompress());
                 parser.setStoreFullTextInArticle(false);
                 parser.setStoreRevisionMetadata(false);

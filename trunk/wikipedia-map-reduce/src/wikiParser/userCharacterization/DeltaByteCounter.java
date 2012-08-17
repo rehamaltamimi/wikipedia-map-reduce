@@ -31,7 +31,7 @@ import wikiParser.mapReduce.util.MapReduceUtils;
 import wmr.core.Page;
 import wmr.core.PageParser;
 import wmr.core.Revision;
-import wmr.util.LzmaPipe;
+import wmr.util.LzmaDecompresser;
 
 /**
  *
@@ -73,11 +73,11 @@ public class DeltaByteCounter extends Configured implements Tool {
         
         @Override
         public void map(Text key, Text value, Mapper.Context context) throws IOException, InterruptedException {
-            LzmaPipe pipe = null;
+            LzmaDecompresser pipe = null;
             try {
                 context.progress();
                 int size = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
-                pipe = new LzmaPipe(value.getBytes(), size);
+                pipe = new LzmaDecompresser(value.getBytes(), size);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();
                 if (article.isNormalPage()) {

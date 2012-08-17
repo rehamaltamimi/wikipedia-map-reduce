@@ -38,11 +38,11 @@ public class IndexGenerator extends Configured implements Tool {
             String parts[] = split.getPath().toString().split("/");
             String path = parts.length == 0 ? "null" : parts[parts.length-1];
 
-            LzmaPipe pipe = null;
+            LzmaDecompresser pipe = null;
             try {
                 context.progress();
                 int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
-                pipe = new LzmaPipe(value.getBytes(), length);
+                pipe = new LzmaDecompresser(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();
                 context.write(
