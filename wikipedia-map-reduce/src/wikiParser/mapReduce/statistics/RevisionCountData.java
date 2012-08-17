@@ -11,6 +11,7 @@ import org.apache.hadoop.mapred.Reporter;
 import wmr.core.PageParser;
 import wmr.core.Revision;
 import wmr.util.LzmaDecompresser;
+import wmr.util.Utils;
 import wikiParser.mapReduce.util.*;
 
 public class RevisionCountData {
@@ -28,7 +29,7 @@ public class RevisionCountData {
              */
             LzmaDecompresser pipe = null;
             try {
-                byte[] unescaped = MapReduceUtils.unescape(value.getBytes(), value.getLength());
+                byte[] unescaped = Utils.unescape(value.getBytes(), value.getLength());
                 pipe = new LzmaDecompresser(unescaped);
                 PageParser parser = new PageParser(pipe.decompress());
                 parser.setStoreFullTextInArticle(false);

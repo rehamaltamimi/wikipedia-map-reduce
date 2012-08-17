@@ -51,7 +51,7 @@ public class ArticleAssessments extends Configured implements Tool {
             LzmaDecompresser pipe = null;
             try {
                 context.progress();
-                int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
+                int length = Utils.unescapeInPlace(value.getBytes(), value.getLength());
                 pipe = new LzmaDecompresser(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();

@@ -20,8 +20,8 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.input.LineRecordReader;
-import wikiParser.mapReduce.util.MapReduceUtils;
 import wmr.util.LzmaDecompresser;
+import wmr.util.Utils;
 
 /**
  *
@@ -91,7 +91,7 @@ public class AllRevisionsInputFormat extends FileInputFormat<Long, AllRevisions>
 
             try {
                 context.progress();
-                int length = MapReduceUtils.unescapeInPlace(line.getBytes(), i+1, line.getLength());
+                int length = Utils.unescapeInPlace(line.getBytes(), i+1, line.getLength());
                 pipe = new LzmaDecompresser(line.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page page = parser.getArticle();

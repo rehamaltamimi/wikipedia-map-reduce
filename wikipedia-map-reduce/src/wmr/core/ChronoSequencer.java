@@ -1,9 +1,12 @@
 package wmr.core;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.Iterator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.apache.hadoop.conf.Configuration;
@@ -22,20 +25,25 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 
-import wikiParser.mapReduce.util.MapReduceUtils;
+import wmr.util.LzmaCompressor;
 import wmr.util.LzmaDecompresser;
 import wmr.util.SecondarySortOnSpace;
 import wmr.util.Utils;
 
 public class ChronoSequencer extends Configured implements Tool {
+    private static final Logger LOG = Logger.getLogger(ChronoSequencer.class.getName());
+	
+	// these values must be ordered alphabetically
+	private static final char KEY_LENGTH = '0';
+	private static final char KEY_HEADER = '1';
+	private static final char KEY_REVISION = '2';
+	private static final char KEY_FOOTER = '9';
+	
+	// Maximum number of bytes in the text of a revision 
 	private static int MAX_LENGTH = 500000;
 	
-    private static final Logger LOG = Logger.getLogger(ChronoSequencer.class.getName());
     
     public static class MyMapper extends Mapper<LongWritable, Text, Text, Text> {
-    	private static final String KEY_LENGTH = "00";
-		private static final String KEY_HEADER = "01";
-		private static final String KEY_FOOTER = "99";
 		
 		LzmaDecompresser pipe = null;
     	BufferedReader reader = null;
@@ -53,10 +61,10 @@ public class ChronoSequencer extends Configured implements Tool {
             String pageId = new String(record.getBytes(), 0, i);
             
             context.progress();
-            int length = MapReduceUtils.unescapeInPlace(record.getBytes(), i+1, record.getLength());
+            int length = Utils.unescapeInPlace(record.getBytes(), i+1, record.getLength());
             try {
             	pipe = new LzmaDecompresser(record.getBytes(), length);
-            	reader = new BufferedReader(new InputStreamReader(pipe.decompress()));
+            	reader = new BufferedReader(new InputStreamReader(pipe.decompress(), "UTF-8"));
             	long nChars = 0;
             	
             	// write header
@@ -75,7 +83,7 @@ public class ChronoSequencer extends Configured implements Tool {
             			break;
             		}
             	} 
-            	nChars += writeRevision(context, pageId, KEY_HEADER, buffer);
+            	nChars += writeRevision(context, pageId, KEY_HEADER, null, buffer);
             	
             	// write revisions
             	buffer = new StringBuilder();
@@ -97,7 +105,7 @@ public class ChronoSequencer extends Configured implements Tool {
             				tstamp = "1990-01-01T01:01:01Z";
             			}
             			buffer.append(line + "\n");
-            			nChars += writeRevision(context, pageId, tstamp, buffer);
+            			nChars += writeRevision(context, pageId, KEY_REVISION, tstamp, buffer);
             			
             			buffer = new StringBuilder();
             			tstamp = null;
@@ -126,17 +134,20 @@ public class ChronoSequencer extends Configured implements Tool {
             		}
         			buffer.append(line + "\n");
             	}
-            	nChars += writeRevision(context, pageId, KEY_FOOTER, buffer);
-            	writeRevision(context, pageId, KEY_LENGTH, new StringBuilder(""+nChars));
+            	nChars += writeRevision(context, pageId, KEY_FOOTER, null, buffer);
+            	writeRevision(context, pageId, KEY_LENGTH, null, new StringBuilder(""+nChars));
             } finally {
             	closePipe();
             }
         }
 
-		private int writeRevision(Mapper.Context context, String pageId, String tstamp, StringBuilder buffer) throws IOException, InterruptedException {
-			String escaped = Utils.escapeWhitespace(buffer.toString());
-			context.write(new Text(pageId.toString() + " " + tstamp), new Text(escaped));
-			return escaped.length();
+		private int writeRevision(Mapper.Context context, String pageId, char field, String tstamp, StringBuilder buffer) throws IOException, InterruptedException {
+			String text = buffer.toString();
+			String escaped = Utils.escapeWhitespace(text);
+			String key = pageId.toString() + " " + field;
+			if (tstamp != null) key += tstamp;
+			context.write(new Text(key), new Text(escaped.getBytes("UTF-8")));
+			return text.length();
 		}
         
         private void closePipe() {
@@ -166,8 +177,78 @@ public class ChronoSequencer extends Configured implements Tool {
     }
 
     public static class MyReducer extends Reducer<Text, Text, Text, Text> {
-    	ByteArrayOutputStream out = new ByteArrayOutputStream();
-        SevenZip.Compression.LZMA.Encoder encoder = new SevenZip.Compression.LZMA.Encoder();
+        @Override
+        public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException {
+        	String pageId = getPageId(key);
+        	char code = getFieldCode(key);
+        	if (code != KEY_LENGTH) {
+        		LOG.warning("illegal first key in reducer: " + key);
+        		return;
+        	}
+        	Iterator<Text> iter = values.iterator();
+        	long length = Long.valueOf(iter.next().toString());
+        	
+        	LzmaCompressor pipe = null;
+        	OutputStream out = null;
+        	try {
+        		pipe = new LzmaCompressor(length);
+        		out = pipe.compress();
+        		if (getFieldCode(key) != KEY_HEADER) {
+            		LOG.warning("illegal second key in reducer: " + key);
+            		return;
+        		}
+        		out.write(iter.next().getBytes());
+        		while (true) {
+        			if (getFieldCode(key) != KEY_REVISION) {
+        				break;
+        			}
+            		out.write(iter.next().getBytes());
+        		}
+        		if (getFieldCode(key) != KEY_FOOTER) {
+            		LOG.warning("illegal key in reducer (expected footer): " + key);
+            		return;
+        		}
+        		out.write(iter.next().getBytes());
+        		if (iter.hasNext()) {
+            		LOG.warning("extra unexpected values with key " + key + " (ignoring them)");
+        		}
+        		pipe.cleanup();
+        		String compressed = new String(pipe.getCompressed(), "UTF-8");
+        		pipe = null;
+        		context.write(new Text(pageId), new Text(Utils.escapeWhitespace(compressed)));
+        	} finally {
+        		try {
+        			if (pipe != null) pipe.cleanup();
+        			out.close();
+        		} catch (Exception e) {
+        			LOG.log(Level.WARNING, "Pipe cleanup failed", e);
+        		}
+        	}
+        }
+
+        private String getPageId(Text key) {
+        	int i = key.find(" ");
+        	if (i < 0) {
+        		throw new IllegalStateException("invalid key: " + key);
+        	}
+        	return key.toString().substring(0, i);
+        }
+        
+        private char getFieldCode(Text key) {
+        	int i = key.find(" ");
+        	if (i < 0 || (i+1) >= key.getLength()) {
+        		throw new IllegalStateException("invalid key: " + key);
+        	}
+        	return (char)key.charAt(i+1);
+        }
+        
+        private String getTstamp(Text key) {
+        	int i = key.find(" ");
+        	if (i < 0 || (i+1) >= key.getLength()) {
+        		throw new IllegalStateException("invalid key: " + key);
+        	}
+        	return key.toString().substring(i+2);
+        }
     }
     
     

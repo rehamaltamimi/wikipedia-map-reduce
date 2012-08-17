@@ -13,6 +13,7 @@ import wmr.core.PageParser;
 import wmr.core.Revision;
 import wikiParser.mapReduce.util.*;
 import wmr.util.LzmaDecompresser;
+import wmr.util.Utils;
 
 public class RevisionLengthData {
 
@@ -28,7 +29,7 @@ public class RevisionLengthData {
 			 */
 			LzmaDecompresser pipe = null;
 			try {
-				byte [] unescaped = MapReduceUtils.unescape(value.getBytes(), value.getLength());
+				byte [] unescaped = Utils.unescape(value.getBytes(), value.getLength());
 				pipe = new LzmaDecompresser(unescaped);
 				PageParser parser = new PageParser(pipe.decompress());
 				parser.setStoreFullTextInArticle(false);

@@ -11,9 +11,9 @@ import java.util.Arrays;
 import javax.xml.stream.XMLStreamException;
 import wmr.core.PageParser;
 import wmr.core.Revision;
-import wikiParser.mapReduce.util.MapReduceUtils;
 import wmr.util.LzmaDecompresser;
 import wmr.util.SevenUnzip;
+import wmr.util.Utils;
 
 /**
  * Reads in a wikipedia file in the standard hadoop format.
@@ -92,7 +92,7 @@ public class WikiLineReader {
     public void printLine(byte[] escaped) {
         LzmaDecompresser pipe = null;
         try {
-            byte[] unescaped = MapReduceUtils.unescape(escaped, escaped.length);
+            byte[] unescaped = Utils.unescape(escaped, escaped.length);
             System.err.println("unescaped length is " + unescaped.length);
             pipe = new LzmaDecompresser(unescaped);
             PipedInputStream in = pipe.decompress();
@@ -117,7 +117,7 @@ public class WikiLineReader {
     public void processLine(byte[] escaped) {
         LzmaDecompresser pipe = null;
         try {
-            byte[] unescaped = MapReduceUtils.unescape(escaped, escaped.length);
+            byte[] unescaped = Utils.unescape(escaped, escaped.length);
             System.err.println("unescaped length is " + unescaped.length);
             pipe = new LzmaDecompresser(unescaped);
             PageParser parser = new PageParser(pipe.decompress());
