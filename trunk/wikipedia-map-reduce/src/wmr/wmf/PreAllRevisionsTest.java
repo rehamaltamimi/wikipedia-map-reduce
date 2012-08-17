@@ -17,9 +17,9 @@ import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import wikiParser.mapReduce.util.KeyValueTextInputFormat;
-import wikiParser.mapReduce.util.MapReduceUtils;
 import wmr.core.*;
 import wmr.util.LzmaDecompresser;
+import wmr.util.Utils;
 
 /**
  *
@@ -41,7 +41,7 @@ public class PreAllRevisionsTest extends Configured implements Tool {
             LzmaDecompresser pipe = null;
             try {
                 context.progress();
-                int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
+                int length = Utils.unescapeInPlace(value.getBytes(), value.getLength());
                 pipe = new LzmaDecompresser(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
 

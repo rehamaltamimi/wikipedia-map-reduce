@@ -12,9 +12,9 @@ import wmr.core.Page;
 import wmr.core.PageParser;
 import wmr.core.Revision;
 import wikiParser.mapReduce.util.IdentityReduce;
-import wikiParser.mapReduce.util.MapReduceUtils;
 import wikiParser.mapReduce.util.SimpleJobConf;
 import wmr.util.LzmaDecompresser;
+import wmr.util.Utils;
 
 public class UserNameIdMapReduce {
 
@@ -34,7 +34,7 @@ public class UserNameIdMapReduce {
              */
             LzmaDecompresser pipe = null;
             try {
-                byte[] unescaped = MapReduceUtils.unescape(value.getBytes(), value.getLength());
+                byte[] unescaped = Utils.unescape(value.getBytes(), value.getLength());
                 pipe = new LzmaDecompresser(unescaped);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();

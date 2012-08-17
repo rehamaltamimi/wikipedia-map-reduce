@@ -27,11 +27,11 @@ import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import wikiParser.mapReduce.util.KeyValueTextInputFormat;
-import wikiParser.mapReduce.util.MapReduceUtils;
 import wmr.core.Page;
 import wmr.core.PageParser;
 import wmr.core.Revision;
 import wmr.util.LzmaDecompresser;
+import wmr.util.Utils;
 
 /**
  *
@@ -76,7 +76,7 @@ public class DeltaByteCounter extends Configured implements Tool {
             LzmaDecompresser pipe = null;
             try {
                 context.progress();
-                int size = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
+                int size = Utils.unescapeInPlace(value.getBytes(), value.getLength());
                 pipe = new LzmaDecompresser(value.getBytes(), size);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();

@@ -25,8 +25,8 @@ import wmr.core.PageParser;
 import wmr.core.Revision;
 import wmr.core.User;
 import wikiParser.mapReduce.util.KeyValueTextInputFormat;
-import wikiParser.mapReduce.util.MapReduceUtils;
 import wmr.util.LzmaDecompresser;
+import wmr.util.Utils;
 /**
  * Creates Article to Article graph with directed edges using links only
  * @author Nathaniel Miller
@@ -56,7 +56,7 @@ public class ArticlesForEditors extends Configured implements Tool {
                 reportProgress(context, "init");
 
                 // setup decoder
-                int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
+                int length = Utils.unescapeInPlace(value.getBytes(), value.getLength());
                 pipe = new LzmaDecompresser(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 parser.setHasText(false);

@@ -25,8 +25,8 @@ import wmr.core.Edge;
 import wmr.core.Revision;
 import wikiParser.edges.ArticleArticleGenerator;
 import wikiParser.mapReduce.util.KeyValueTextInputFormat;
-import wikiParser.mapReduce.util.MapReduceUtils;
 import wmr.util.LzmaDecompresser;
+import wmr.util.Utils;
 /**
  * Creates Article to Article graph with directed edges using links only
  * @author Nathaniel Miller
@@ -52,7 +52,7 @@ public class InitialArticleLinkMapReduce extends Configured implements Tool {
             LzmaDecompresser pipe = null;
             try {
                 context.progress();
-                int length = MapReduceUtils.unescapeInPlace(value.getBytes(), value.getLength());
+                int length = Utils.unescapeInPlace(value.getBytes(), value.getLength());
                 pipe = new LzmaDecompresser(value.getBytes(), length);
                 PageParser parser = new PageParser(pipe.decompress());
                 Page article = parser.getArticle();

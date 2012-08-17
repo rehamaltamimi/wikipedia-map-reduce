@@ -14,6 +14,9 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.hadoop.io.Text;
+
+
 
 /**
  *
@@ -152,5 +155,73 @@ public class Utils {
         str = str.replaceAll("\\s+", " ");
         return str;
     }
+
+	public static byte[] unescape(byte [] escaped, int length) {
+		int newLength = 0;
+		for (int i = 0; i < length; i++) {
+			newLength++;
+			if (escaped[i] == '\\') {
+				i++;
+			}
+		}
+		byte [] unescaped = new byte[newLength];
+		int j = 0;	// index into unescaped string
+		for (int i = 0; i < length; i++) {
+			byte b = escaped[i];
+			if (escaped[i] == '\\') {
+				switch (escaped[i+1]) {
+				case 'r': b = '\r'; break;
+				case '\\': b = '\\'; break;
+				case 'n': b = '\n'; break;
+				case 't': b = '\t'; break;
+	                                
+				default:
+					throw new RuntimeException("unexpected character following escape " + escaped[i+1]);
+				}
+				i++;
+			}
+			unescaped[j++] = b;
+		}
+		return unescaped;
+	}
+
+	public static int unescapeInPlace(byte [] escaped, int length) {
+	    return Utils.unescapeInPlace(escaped, 0, length);
+	}
+
+	public static int unescapeInPlace(byte [] escaped, int offset, int length) {
+		int j = 0;	// index into unescaped string
+		for (int i = offset; i < length; i++) {
+			byte b = escaped[i];
+			if (escaped[i] == '\\') {
+				switch (escaped[i+1]) {
+				case 'r': b = '\r'; break;
+				case '\\': b = '\\'; break;
+				case 'n': b = '\n'; break;
+				case 't': b = '\t'; break;
+				default:
+					throw new RuntimeException("unexpected character following escape " + escaped[i+1]);
+				}
+				i++;
+			}
+			escaped[j++] = b;
+		}
+		return j;
+	}
+
+	/**
+	 * Convert a map-reduce key such as "324242.xml.7z" to 324242
+	 * @param key
+	 * @return
+	 */
+	static public long keyToId(Text key) {
+	    String s = key.toString();
+	    int i = s.indexOf('.');
+	    if (i >= 0) {
+	        return Long.valueOf(s.substring(0, i));
+	    } else {
+	        return -1;
+	    }
+	}
 
 }

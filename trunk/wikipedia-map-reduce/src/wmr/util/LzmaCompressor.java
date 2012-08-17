@@ -45,8 +45,8 @@ public class LzmaCompressor {
     /*
      *
      */
-    public LzmaCompressor(int uncompressedLength) {
-    	this.uncompressedLength = uncompressedLength;
+    public LzmaCompressor(long length) {
+    	this.uncompressedLength = length;
     }
 
     /**
