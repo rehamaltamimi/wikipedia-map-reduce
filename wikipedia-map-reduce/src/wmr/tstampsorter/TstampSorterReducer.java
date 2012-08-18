@@ -38,9 +38,11 @@ public class TstampSorterReducer extends Reducer<Text, Text, Text, Text> {
     		out.flush();
     		out.close();
     		pipe.cleanup();
-    		String compressed = new String(pipe.getCompressed(), "UTF-8");
+    		byte[] compressed = pipe.getCompressed();
     		pipe = null;
     		context.write(new Text(pageId), new Text(Utils.escapeWhitespace(compressed)));
+    	} catch(Exception e) {
+			LOG.log(Level.WARNING, "Exception occurred during tstamp sorter reduce", e);
     	} finally {
     		try {
     			if (pipe != null) pipe.cleanup();

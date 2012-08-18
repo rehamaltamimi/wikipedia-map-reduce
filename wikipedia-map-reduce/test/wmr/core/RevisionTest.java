@@ -153,6 +153,12 @@ public class RevisionTest {
         assertEquals(last.getLocation(), 12231);
     }
 
+    @Test public void testHyperlinks2() {
+    	List<Hyperlink> links = makeRevision("\nOfficial website: http://www.songcontest.com/f\tf\n\n\n//Talk").getHyperlinks();
+    	System.err.println("link is '" + links.get(0).getUrl() + "'");
+    	assertEquals(links.size(), 1);
+    }
+
     @Test public void testSections() {
         Map<String, Integer> sections = palmerstonRev.getSections();
         assertEquals(sections.size(), 5);
