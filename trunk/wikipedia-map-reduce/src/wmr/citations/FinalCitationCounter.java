@@ -43,9 +43,9 @@ public class FinalCitationCounter extends Configured implements Tool {
                     context.progress();
                     try {
                         if (r.isRevert() || r.isReverted() || r.isVandalism()) {
+//                        	System.err.println("skipping " + r.getTimestamp());
                             continue;
                         }
-                        //System.err.println("doing revision " + rev.getId() + " at " + rev.getTimestamp());
                         Map<String, Integer> newCiteCounts = processRevision(page, r);
                         writeDiff(context, page, r, revIndex, citeCounts, newCiteCounts);
                         citeCounts = newCiteCounts;
@@ -160,7 +160,8 @@ public class FinalCitationCounter extends Configured implements Tool {
 
         
         job.setJarByClass(FinalCitationCounter.class);
-        job.setInputFormatClass(RevertAwareAllRevisionsInputFormat.class);
+        job.setInputFormatClass(AllRevisionsInputFormat.class);
+//        job.setInputFormatClass(RevertAwareAllRevisionsInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);

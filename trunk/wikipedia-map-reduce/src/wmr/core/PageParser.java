@@ -107,6 +107,7 @@ public class PageParser {
         }
         String id = matchTextElement("id", true);
         String timestamp = matchTextElement("timestamp", true);
+//        System.err.println("timestamp is " + timestamp);
         User contributor = readContributor();
         String minor = matchTextElement("minor", false);
         String comment = matchTextElement("comment", false);

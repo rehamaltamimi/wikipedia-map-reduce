@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Logger;
 
 import org.apache.hadoop.io.LongWritable;
@@ -37,90 +38,142 @@ public class TstampSorterMapper extends Mapper<LongWritable, Text, Text, Text> {
         try {
         	pipe = new LzmaDecompresser(record.getBytes(), length);
         	reader = new BufferedReader(new InputStreamReader(pipe.decompress(), "UTF-8"));
-        	long nChars = 0;
         	
         	// write header
         	ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        	while (true) {
-        		String line = reader.readLine();
-        		if (line == null) {
-    				LOG.warning("EOF encountered in header for article " + pageId);
-        			return;
-        		}
-        		buffer.write(line.getBytes("UTF-8"));
-        		buffer.write('\n');
-        		
-        		// on to revisions....
-        		if (line.trim().equals("<page>")) {
-        			break;
-        		}
-        	} 
-        	nChars += writeRevision(context, pageId, TstampSorterMain.KEY_HEADER, null, buffer);
+        	long nChars = writeHeader(context, pageId, 0, buffer);
+        	if (nChars < 0) {
+        		return;
+        	}
         	
         	// write revisions
-        	buffer.reset();
-        	String tstamp = null;
-        	boolean capped = false;
-        	while (true) {
-        		String line = reader.readLine();
-        		if (line == null) {
-    				LOG.warning("EOF encountered in body for article " + pageId);
-        			return;
-        		}
-        		String trimmed = line.trim();
-				if (trimmed.equals("</page>")) {
-					buffer.reset();
-					buffer.write(line.getBytes("UTF-8"));
-            		buffer.write('\n');
-        			break;
-        		} else if(trimmed.equals("</revision>")) {
-        			if (tstamp == null || tstamp.length() < 4) {
-        				LOG.warning("no timestamp encountered for article " + pageId);
-        				tstamp = "1990-01-01T01:01:01Z";
-        			}
-					buffer.write(line.getBytes("UTF-8"));
-            		buffer.write('\n');
-        			nChars += writeRevision(context, pageId, TstampSorterMain.KEY_REVISION, tstamp, buffer);
-        			
-        			buffer.reset();
-        			tstamp = null;
-        			capped = false;
-        		} else {
-        			if (!capped) {
-        				if (buffer.size() + line.length() > TstampSorterMain.MAX_LENGTH) {
-            				LOG.warning("capping revision for " + pageId + " at length " + TstampSorterMain.MAX_LENGTH);
-            				capped = true;
-        				} else {
-    						buffer.write(line.getBytes("UTF-8"));
-    	            		buffer.write('\n');
-        				}
-        			}
-        			if (trimmed.startsWith("<timestamp>") && trimmed.endsWith("</timestamp>")) {
-        				int l = "<timestamp>".length();
-        				tstamp = trimmed.substring(l, trimmed.length() - (l + 1));
-        			}
-        		}
+        	nChars = writeRevisions(context, pageId, buffer, nChars);
+        	if (nChars < 0) {
+        		return;
         	}
 
-        	// write footer
-        	while (true) {
-        		String line = reader.readLine();
-        		if (line == null) {
-        			break;
-        		}
-				buffer.write(line.getBytes("UTF-8"));
-        		buffer.write('\n');
-        	}
-        	nChars += writeRevision(context, pageId, TstampSorterMain.KEY_FOOTER, null, buffer);
-        	buffer.reset();
-        	buffer.write(("" + nChars).getBytes());
-        	writeRevision(context, pageId, TstampSorterMain.KEY_LENGTH, null, buffer);
+        	writeFooter(context, pageId, nChars, buffer);
         } finally {
         	closePipe();
         }
     }
 
-	private int writeRevision(Mapper.Context context, String pageId, char field, String tstamp, ByteArrayOutputStream buffer) throws IOException, InterruptedException {
+	private long writeRevisions(Mapper.Context context, String pageId,
+			ByteArrayOutputStream buffer, long nChars) throws IOException,
+			UnsupportedEncodingException, InterruptedException {
+		
+		String tstamp = null;
+		long numTruncated = 0;
+		
+		while (true) {
+			String line = reader.readLine();
+			if (line == null) {
+				LOG.warning("EOF encountered in body for article " + pageId);
+				return -1;
+			}
+			String trimmed = line.trim();
+			
+			// are we finished with revisions?
+			if (trimmed.equals("</page>")) {
+				buffer.reset();
+				buffer.write(line.getBytes("UTF-8"));
+				buffer.write('\n');
+				break;
+			}
+			
+			if (trimmed.equals("</revision>")) { // end of revision
+				if (tstamp == null || tstamp.length() < 4) {
+					LOG.warning("no timestamp encountered for article " + pageId);
+					tstamp = "1990-01-01T01:01:01Z";
+				}
+				boolean valid = true;
+				if (numTruncated > 0) {
+					LOG.warning("truncated revision of pageid " + pageId + ", rev " + tstamp + 
+							" to " + TstampSorterMain.MAX_LENGTH + 
+							" (truncated " + numTruncated + " bytes)");
+					String current = buffer.toString();
+					if (current.indexOf("<text") < 0) {
+						LOG.warning("did not reach text segment before reaching byte limit for " + pageId + " rev " + tstamp);
+						valid = false;
+					} else if (current.indexOf("</text>") < 0) {
+						buffer.write("      </text>\n".getBytes());
+					}
+				} 
+				if (valid) {
+					buffer.write(line.getBytes("UTF-8"));
+		    		buffer.write('\n');
+					nChars += writeSegment(context, pageId, TstampSorterMain.KEY_REVISION, tstamp, buffer);
+				}
+				
+				buffer.reset();
+				tstamp = null;
+				numTruncated = 0;
+			} else {	// middle of revision
+				if (numTruncated > 0) {
+					numTruncated += line.length();
+				} else if (buffer.size() + line.length() > TstampSorterMain.MAX_LENGTH) {
+					numTruncated = Math.max(line.length(), 1);
+				} else {
+					buffer.write(line.getBytes("UTF-8"));
+	        		buffer.write('\n');
+				}
+				if (trimmed.startsWith("<timestamp>") && trimmed.endsWith("</timestamp>")) {
+					int l = "<timestamp>".length();
+					tstamp = trimmed.substring(l, trimmed.length() - (l + 1));
+				}
+			}
+		}
+		return nChars;
+	}
+
+	private long writeHeader(Mapper.Context context, String pageId,
+			long nChars, ByteArrayOutputStream buffer) throws IOException,
+			UnsupportedEncodingException, InterruptedException {
+		
+		String line = null;
+		while (true) {
+			line = reader.readLine();
+			if (line == null) {
+				LOG.warning("EOF encountered in header for article " + pageId);
+				return -1;
+			}
+			// on to revisions....
+			if (line.trim().equals("<revision>")) {
+				break;
+			}
+			
+			buffer.write(line.getBytes("UTF-8"));
+			buffer.write('\n');			
+		} 
+		nChars += writeSegment(context, pageId, TstampSorterMain.KEY_HEADER, null, buffer);
+		
+		// push the first "<revision>" tag into the buffer.
+		buffer.reset();
+		buffer.write(line.getBytes("UTF-8"));
+		buffer.write('\n');
+		
+		return nChars;
+	}
+
+	private void writeFooter(Mapper.Context context, String pageId,
+			long nChars, ByteArrayOutputStream buffer) throws IOException,
+			UnsupportedEncodingException, InterruptedException {
+		// write footer
+		while (true) {
+			String line = reader.readLine();
+			if (line == null) {
+				break;
+			}
+			buffer.write(line.getBytes("UTF-8"));
+			buffer.write('\n');
+		}
+		nChars += writeSegment(context, pageId, TstampSorterMain.KEY_FOOTER, null, buffer);
+		buffer.reset();
+		buffer.write(("" + nChars).getBytes());
+		writeSegment(context, pageId, TstampSorterMain.KEY_LENGTH, null, buffer);
+	}
+
+	private int writeSegment(Mapper.Context context, String pageId, char field, String tstamp, ByteArrayOutputStream buffer) throws IOException, InterruptedException {
 		byte[] escaped = Utils.escapeWhitespace(buffer.toByteArray());
 		String key = pageId.toString() + " " + field;
 		if (tstamp != null) key += tstamp;

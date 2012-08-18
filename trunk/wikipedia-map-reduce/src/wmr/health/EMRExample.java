@@ -36,19 +36,18 @@ public class EMRExample extends Configured implements Tool {
             Page article = revs.getPage();
             context.progress();
             
-            if (article.isNormalPage()) {
+//            if (article.isNormalPage()) {
                 for (Revision rev : revs.getRevisions()) {
                     context.progress();
                     if (rev == null) {
                         continue;
                     }
                     User u = rev.getContributor();
-                    if (!u.isBot() && !u.isAnonymous()) {
-                        String key = u.getName();
-                        String val = "" + rev.getTimestamp();
-                        context.write(new Text(key), new Text(val));
-                    }
-                }
+//                    if (!u.isBot() && !u.isAnonymous()) {
+                        String key = article.getId() + " " + rev.getTimestamp();
+                        context.write(new Text(key), new Text("foo"));
+//                    }
+//                }
 
             }
         }
