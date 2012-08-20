@@ -160,8 +160,8 @@ public class FinalCitationCounter extends Configured implements Tool {
 
         
         job.setJarByClass(FinalCitationCounter.class);
-        job.setInputFormatClass(AllRevisionsInputFormat.class);
-//        job.setInputFormatClass(RevertAwareAllRevisionsInputFormat.class);
+//        job.setInputFormatClass(AllRevisionsInputFormat.class);
+        job.setInputFormatClass(RevertAwareAllRevisionsInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
         job.setMapOutputKeyClass(Text.class);
         job.setMapOutputValueClass(Text.class);
