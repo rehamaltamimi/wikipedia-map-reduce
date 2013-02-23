@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import wmr.core.Page;
 import wmr.core.Revision;
 import wmr.templates.Template;
@@ -19,6 +20,20 @@ import wmr.util.Utils;
  * @author shilad
  */
 public class CitationParser {
+	public static String[] CITATION_TEMPLATE_PREFIXES = {
+		// english
+		"cite",
+		"citation",
+		
+		// arabic (also uses english templates)
+		"مراجع",
+		
+		// norwegian (also uses english templates)
+		"kilde",
+		
+		// spanish (also uses english templates)
+		"cita"
+	};
     
     public boolean isCitation(Template t) {
         if (t == null) {
@@ -28,8 +43,13 @@ public class CitationParser {
         if (words.length == 0) {
             return false;
         } else {
-            String name = words[0].toLowerCase();
-            return name.startsWith("cite") || name.startsWith("citation");
+            String firstWord = words[0].toLowerCase();
+            for (String prefix : CITATION_TEMPLATE_PREFIXES) {
+            	if (firstWord.startsWith(prefix)) {
+            		return true;
+            	}
+            }
+            return false;
         }
     }
 

@@ -39,8 +39,8 @@ public class User extends Vertex {
 		return coAuthor;
 	}
 
-        public boolean isBot() {
-            return (getName() != null) && (getName().toLowerCase().indexOf("bot") >= 0);
-        }
+    public boolean isBot() {
+        return (getName() != null) && (getName().toLowerCase().indexOf("bot") >= 0);
+    }
 
 }
