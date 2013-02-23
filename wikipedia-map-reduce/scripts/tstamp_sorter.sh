@@ -3,7 +3,7 @@ set -x
 bucket=s3://macalester                          # s3 bucket
 cites=$bucket/cites                             # everything for cites goes under here
 input=$bucket/wikipedia/en-2012-05-02/          # the processed full text input file
-ouput=$bucket/wikipedia/en-2012-05-02-sorted/   # output directory. CAREFUL - WILL BE OVERWRITTEN! 
+output=$bucket/wikipedia/en-2012-05-02-sorted/   # output directory. CAREFUL - WILL BE OVERWRITTEN! 
 logs=$cites/logs
 class=wmr.tstampsorter.TstampSorterMain
 

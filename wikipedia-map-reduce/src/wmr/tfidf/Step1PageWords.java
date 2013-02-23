@@ -75,7 +75,7 @@ public class Step1PageWords extends Configured implements Tool {
                 Map<String, Integer> counts = new HashMap<String, Integer>();
                 while (m.find()) {
                     String word = m.group().toLowerCase();
-                    if (Utils.STOP_WORDS.contains(word)) {
+                    if (Utils.STOP_WORDS_SET.contains(word)) {
                         continue;
                     }
                     word = Utils.stem(word);

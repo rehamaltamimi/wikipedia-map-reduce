@@ -29,6 +29,7 @@ public class TemplateTest {
      */
     private String citeWebString;
     private String nestedString;
+	private String newLineString;
     
     @Before public void setUp() {
         citeWebString = "{{cite web| last = Lepage | first = Denis | authorlink = | coauthors = | year = | url = http://www.bsc-eoc.org/avibase/avibase.jsp?region=sr&pg=checklist&list=clements | title =  Checklist of birds of Suriname | format = | work = Bird Checklists of the World | publisher = Avibase | accessdate = 26 April 2007 }}";
@@ -41,6 +42,15 @@ public class TemplateTest {
             "{{WP1.0 |class=GA |importance=high |category= |VA=yes }}" +
             "}}"
         );
+        newLineString = "{{Cite book\n" +
+                "| publisher = Omnibus,\n" +
+                "| isbn = 071194301x\n" +
+                "| last = Mabbett\n" +
+                "| first = Andy\n" +
+                "| title = The Complete Guide to the Music of Pink Floyd\n" +
+                "| location = London\n" +
+                "| date = 1995\n" +
+                "}}";
     }
     
     @Test public void testProcessTemplate() {
@@ -63,6 +73,13 @@ public class TemplateTest {
         assertEquals(4, children.size());
     }
     
+    @Test public void testNewlineString() {
+        Template t1 = TemplateParser.processTemplate(newLineString.substring(2, newLineString.length()-2),0,newLineString.length());
+        assertEquals(8, t1.getAllParams().keySet().size());
+        assertEquals(t1.getName(), "Cite book");
+        assertTrue(t1.hasParam("first"));
+        assertTrue(t1.hasParam("last"));
+    }    
  /*   {{cite web
  | last = Lepage
  | first = Denis
